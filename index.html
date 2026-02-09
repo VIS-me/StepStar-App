@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            /* Классический сине-голубой цвет Telegram */
             --tg-bg: #2481cc; 
             --tg-card: rgba(255, 255, 255, 0.15);
             --tg-accent: #ffffff;
@@ -33,59 +32,58 @@
 
         .content {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
         }
 
-        /* Общий стиль для всех блоков (эффект стекла) */
         .glass-panel {
             background: var(--tg-card);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
+            border-radius: 20px;
         }
 
         /* Профиль */
         .profile-section {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .avatar-wrap {
             position: relative;
-            width: 90px;
-            height: 90px;
-            margin: 0 auto 10px;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 8px;
         }
 
         .avatar-img {
             width: 100%;
             height: 100%;
-            border-radius: 28px;
+            border-radius: 24px;
             background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
+            font-size: 35px;
             border: 2px solid white;
             overflow: hidden;
         }
 
         .vip-tag {
             position: absolute;
-            bottom: -5px;
-            right: -5px;
+            bottom: -4px;
+            right: -4px;
             background: var(--vip-gold);
             color: #000;
-            padding: 2px 8px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 1px 6px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 800;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
 
         /* Баланс */
@@ -96,22 +94,22 @@
         }
 
         .balance-item {
-            padding: 12px;
-            border-radius: 18px;
+            padding: 10px;
+            border-radius: 16px;
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
         }
 
         /* Слоты */
         .slots-container {
-            padding: 15px;
+            padding: 12px;
         }
 
         .slots-title {
-            font-size: 11px;
+            font-size: 10px;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -119,63 +117,61 @@
         .slots-row {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
+            gap: 6px;
         }
 
         .slot {
             aspect-ratio: 1;
             background: rgba(255, 255, 255, 0.1);
-            border-radius: 14px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             position: relative;
         }
 
         .slot.locked { opacity: 0.4; }
         .slot.energy { border-color: var(--energy-purple); background: rgba(168, 85, 247, 0.1); }
         .slot.gold { border-color: var(--vip-gold); background: rgba(251, 191, 36, 0.1); }
+        
         .loss-mark {
             position: absolute;
             color: var(--loss-red);
-            font-size: 26px;
+            font-size: 22px;
             font-weight: bold;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-
-        /* Кнопки действий */
-        .action-grid {
+        /* ОДНА СТРОКА КНОПОК (4 колонки) */
+        .action-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr); /* 4 колонки в ряд */
+            gap: 8px;
         }
 
         .action-btn {
-            padding: 15px;
-            border-radius: 18px;
+            padding: 12px 4px;
+            border-radius: 16px;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             transition: transform 0.1s;
         }
         
-        .action-btn:active { transform: scale(0.95); }
-        .action-btn i { font-size: 26px; }
-        .action-btn span { font-size: 12px; font-weight: 600; }
+        .action-btn:active { transform: scale(0.92); }
+        .action-btn i { font-size: 22px; }
+        .action-btn span { font-size: 9px; font-weight: 600; text-align: center; }
 
-        /* Нижний Навбар */
+        /* Навбар */
         .nav-bar {
-            height: 75px;
-            background: rgba(28, 102, 163, 0.9);
+            height: 70px;
+            background: rgba(28, 102, 163, 0.95);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: env(safe-area-inset-bottom);
-            backdrop-filter: blur(15px);
         }
 
         .nav-tab {
@@ -185,27 +181,26 @@
             justify-content: center;
             color: rgba(255, 255, 255, 0.5);
             text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             gap: 4px;
         }
 
         .nav-tab.active { color: #ffffff; }
-        .nav-tab i { font-size: 22px; }
+        .nav-tab i { font-size: 20px; }
 
-        /* В разработке (Попап) */
+        /* Попап */
         .dev-popup {
             display: none;
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             background: #1c66a3;
-            padding: 30px;
-            border-radius: 28px;
+            padding: 25px;
+            border-radius: 24px;
             z-index: 1000;
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            width: 75%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            width: 70%;
         }
 
         .overlay {
@@ -226,13 +221,13 @@
                 <div class="avatar-img" id="avatar-box">👟</div>
                 <div class="vip-tag">VIP - <span id="vip-lvl">0</span></div>
             </div>
-            <h3 id="user-name" style="margin: 5px 0 0;">Name</h3>
-            <div id="user-rank" style="font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-top: 4px;">RANK</div>
+            <h3 id="user-name" style="margin: 0;">Name</h3>
+            <div id="user-rank" style="font-size: 11px; color: rgba(255, 255, 255, 0.7);">RANK</div>
         </div>
 
         <div class="balance-grid">
-            <div class="glass-panel balance-item"><span id="bal-stars">0</span> ⭐</div>
-            <div class="glass-panel balance-item"><span id="bal-energy">50</span> ⚡</div>
+            <div class="glass-panel balance-item"><span id="bal-stars">0</span> ⭐️</div>
+            <div class="glass-panel balance-item"><span id="bal-energy">50</span> ⚡️</div>
         </div>
 
         <div class="glass-panel slots-container">
@@ -249,15 +244,13 @@
             </div>
         </div>
 
-        <div class="action-grid">
+        <div class="action-row">
             <div class="glass-panel action-btn" onclick="openDev()"><i>⚔️</i><span id="txt-duel">Дуэль</span></div>
-
-<div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span id="txt-team">Команда</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span id="txt-team">Команда</span></div>
             <div class="glass-panel action-btn" onclick="openDev()"><i>🔥</i><span id="txt-marathon">Марафон</span></div>
             <div class="glass-panel action-btn" onclick="openDev()"><i>🛒</i><span id="txt-shop">Магазин</span></div>
         </div>
     </div>
-
     <nav class="nav-bar">
         <a href="#" class="nav-tab active" onclick="location.reload()"><i>🏠</i><span id="txt-home">Главная</span></a>
         <a href="#" class="nav-tab" onclick="openDev()"><i>📊</i><span id="txt-challenges">Челенджи</span></a>
@@ -267,18 +260,16 @@
     <div class="overlay" id="overlay" onclick="closeDev()"></div>
     <div class="dev-popup" id="dev-popup">
         <h3 id="txt-dev-title" style="margin-top: 0;">В разработке</h3>
-        <p id="txt-dev-desc" style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 20px;">Эта функция скоро появится!</p>
-        <button onclick="closeDev()" style="background: #ffffff; border: none; padding: 12px; border-radius: 14px; color: #2481cc; font-weight: bold; width: 100%; font-size: 16px;">OK</button>
+        <p id="txt-dev-desc" style="color: rgba(255,255,255,0.8); font-size: 13px;">Эта функция скоро появится!</p>
+        <button onclick="closeDev()" style="background: #ffffff; border: none; padding: 10px; border-radius: 12px; color: #2481cc; font-weight: bold; width: 100%; margin-top: 10px;">OK</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        // Установка цвета хедера и бэкграунда для самого Telegram
         tg.backgroundColor = '#2481cc';
         tg.headerColor = '#2481cc';
 
-        // Мультиязычность
         const lang = tg.initDataUnsafe.user?.language_code === 'ru' ? 'ru' : 'en';
         const i18n = {
             ru: {
@@ -310,8 +301,6 @@
         };
 
         const t = i18n[lang];
-        
-        // Заполнение данных из Telegram
         document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
         document.getElementById('user-rank').innerText = t.rank;
         document.getElementById('txt-available-slots').innerText = t.slots;
@@ -325,18 +314,15 @@
         document.getElementById('txt-dev-title').innerText = t.devTitle;
         document.getElementById('txt-dev-desc').innerText = t.devDesc;
 
-        // Показ фото профиля если есть
         if(tg.initDataUnsafe.user?.photo_url) {
             document.getElementById('avatar-box').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
         }
 
-        // Логика попапов
         function openDev() {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('dev-popup').style.display = 'block';
         }
-
-function closeDev() {
+        function closeDev() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('dev-popup').style.display = 'none';
         }
