@@ -3,236 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StepStar</title>
+    <title>StepStar - Главная</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --tg-bg: #2481cc; 
-            --tg-card: rgba(255, 255, 255, 0.15);
-            --tg-accent: #ffffff;
-            --tg-text: #ffffff;
-            --vip-gold: #fbbf24;
-            --loss-red: #ff4d4d;
+            --tg-bg: #2481cc; --tg-card: rgba(255, 255, 255, 0.15);
+            --tg-text: #ffffff; --vip-gold: #fbbf24;
         }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(180deg, #2481cc 0%, #1c66a3 100%);
-            color: var(--tg-text);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column;
-            height: 100vh; overflow: hidden;
+            color: var(--tg-text); margin: 0; padding: 12px;
+            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
         }
-
-        #main-container {
-            flex: 1;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        .page {
-            display: none;
-            padding: 12px;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .page.active {
-            display: flex;
-        }
-
-        .glass-panel {
-            background: var(--tg-card);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            padding: 16px;
-        }
-
-        .panel-title { 
-            font-size: 11px; font-weight: 600; opacity: 0.6; 
-            text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;
-        }
-
-        /* Аватар и профиль */
+        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 80px; }
+        .glass-panel { background: var(--tg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 16px; }
+        .panel-title { font-size: 11px; font-weight: 600; opacity: 0.6; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
+        
+        /* Профиль мини */
+        .profile-card { text-align: center; }
         .avatar-wrap { position: relative; width: 85px; height: 85px; margin: 0 auto 10px; }
-        .avatar-img { 
-            width: 100%; height: 100%; border-radius: 26px; 
-            background: rgba(255,255,255,0.2); border: 2px solid white; 
-            display: flex; align-items: center; justify-content: center; font-size: 38px;
-            overflow: hidden;
-        }
-        .vip-tag { 
-            position: absolute; bottom: -4px; right: -4px; background: var(--vip-gold); 
-            color: #000; padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; 
-        }
+        .avatar-img { width: 100%; height: 100%; border-radius: 26px; background: rgba(255,255,255,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden; }
+        .vip-tag { position: absolute; bottom: -4px; right: -4px; background: var(--vip-gold); color: #000; padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; }
 
-        /* Главная: Баланс */
+        /* Баланс и Слоты */
         .balance-content { display: flex; justify-content: space-around; align-items: center; }
         .balance-item { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 700; }
         .balance-divider { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); }
-
-        /* Главная: Слоты */
         .slots-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .slot { 
-            aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 14px; 
-            border: 1px solid rgba(255,255,255,0.1); display: flex; 
-            align-items: center; justify-content: center; font-size: 20px; 
-        }
+        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; }
         .slot.locked { opacity: 0.35; }
 
         /* Кнопки */
         .action-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .action-btn { padding: 14px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: 20px; text-align: center; cursor: pointer;}
-        .action-btn i { font-size: 24px; }
+        .action-btn { background: var(--tg-card); border: 1px solid rgba(255,255,255,0.2); padding: 14px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: 20px; text-decoration: none; color: white; }
+        .action-btn i { font-size: 24px; font-style: normal; }
         .action-btn span { font-size: 10px; font-weight: 600; }
 
-        /* Профиль */
-        .prof-header { text-align: center; padding: 10px 0; }
-        .stat-item {
-            display: flex; justify-content: space-between; padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        /* Навигация */
-        .nav-bar {
-            height: 75px; background: rgba(28, 102, 163, 0.98);
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); gap: 4px; cursor: pointer; }
+        /* Меню */
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(28, 102, 163, 0.98); display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: env(safe-area-inset-bottom); }
+        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); text-decoration: none; gap: 4px; }
         .nav-tab.active { color: #ffffff; }
-        .nav-tab i { font-size: 24px; }
+        .nav-tab i { font-size: 24px; font-style: normal; }
         .nav-tab span { font-size: 11px; }
-
-        /* Попап */
-        .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; }
-        .dev-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1c66a3; padding: 25px; border-radius: 24px; z-index: 1000; text-align: center; width: 75%; border: 1px solid rgba(255,255,255,0.3); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
-
-    <div id="main-container">
-        <div id="page-home" class="page active">
-            <div class="glass-panel" style="text-align: center;">
-                <div class="avatar-wrap">
-                    <div class="avatar-img common-avatar">👟</div>
-                    <div class="vip-tag">VIP - <span class="common-vip">0</span></div>
-                </div>
-                <h3 class="common-name" style="margin: 5px 0;">Name</h3>
-                <div class="common-rank" style="font-size:13px; opacity:0.7;">НОВИЧОК</div>
+    <div class="content">
+        <div class="glass-panel profile-card">
+            <div class="avatar-wrap">
+                <div class="avatar-img" id="user-photo">👟</div>
+                <div class="vip-tag">VIP - 0</div>
             </div>
-
-            <div class="glass-panel">
-                <div class="panel-title">Баланс:</div>
-                <div class="balance-content">
-                    <div class="balance-item"><span class="common-stars">0</span> ⭐️</div>
-                    <div class="balance-divider"></div>
-                    <div class="balance-item"><span class="common-energy">50</span> ⚡️</div>
-                </div>
-            </div>
-
-            <div class="glass-panel">
-                <div class="panel-title">Доступные челенджи:</div>
-                <div class="slots-row">
-                    <div class="slot">👟</div> 
-                    <div class="slot">👟</div> 
-                    <div class="slot locked">🔒</div> 
-                    <div class="slot locked">🔒</div> 
-                    <div class="slot locked">🔒</div>
-                </div>
-            </div>
-
-            <div class="action-row">
-                <div class="glass-panel action-btn" onclick="openDev()"><i>⚔️</i><span>Дуэль</span></div>
-                <div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span>Команда</span></div>
-                <div class="glass-panel action-btn" onclick="openDev()"><i>🔥</i><span>Марафон</span></div>
-                <div class="glass-panel action-btn" onclick="openDev()"><i>🛒</i><span>Магазин</span></div>
+            <h3 id="user-name" style="margin: 5px 0;">Runner</h3>
+            <div style="font-size:13px; opacity:0.7;">НОВИЧОК</div>
+        </div>
+        <div class="glass-panel">
+            <div class="panel-title">Баланс:</div>
+            <div class="balance-content">
+                <div class="balance-item">0 ⭐️</div>
+                <div class="balance-divider"></div>
+                <div class="balance-item">50 ⚡️</div>
             </div>
         </div>
 
-        <div id="page-profile" class="page">
-            <div class="prof-header">
-                <div class="avatar-wrap" style="width: 100px; height: 100px;">
-                    <div class="avatar-img common-avatar" style="font-size: 45px;">👟</div>
-                    <div class="vip-tag">VIP - <span class="common-vip">0</span></div>
-                </div>
-                <h2 class="common-name" style="margin: 10px 0;">Name</h2>
+        <div class="glass-panel">
+            <div class="panel-title">Доступные челенджи:</div>
+            <div class="slots-row">
+                <div class="slot">👟</div> <div class="slot">👟</div>
+                <div class="slot locked">🔒</div> <div class="slot locked">🔒</div> <div class="slot locked">🔒</div>
             </div>
+        </div>
 
-            <div class="glass-panel">
-                <div class="panel-title">Статистика игрока:</div>
-                <div class="stat-item"><span>Ранг</span><b class="common-rank">НОВИЧОК</b></div>
-                <div class="stat-item"><span>Звезды</span><b><span class="common-stars">0</span> ⭐️</b></div>
-                <div class="stat-item"><span>Энергия</span><b><span class="common-energy">50</span> ⚡️</b></div>
-            </div>
-            
-            <div class="glass-panel" onclick="openDev()" style="text-align: center; opacity: 0.8; cursor: pointer;">
-                ⚙️ Настройки аккаунта
-            </div>
+        <div class="action-row">
+            <a href="work.html" class="action-btn"><i>⚔️</i><span>Дуэль</span></a>
+            <a href="work.html" class="action-btn"><i>👥</i><span>Команда</span></a>
+            <a href="work.html" class="action-btn"><i>🔥</i><span>Марафон</span></a>
+            <a href="work.html" class="action-btn"><i>🛒</i><span>Магазин</span></a>
         </div>
     </div>
+
     <nav class="nav-bar">
-        <div class="nav-tab active" onclick="switchTab('home', this)">
-            <i>🏠</i><span>Главная</span>
-        </div>
-        <div class="nav-tab" onclick="openDev()">
-            <i>📊</i><span>Челенджи</span>
-        </div>
-        <div class="nav-tab" onclick="switchTab('profile', this)">
-            <i>👤</i><span>Профиль</span>
-        </div>
+        <a href="index.html" class="nav-tab active"><i>🏠</i><span>Главная</span></a>
+        <a href="work.html" class="nav-tab"><i>📊</i><span>Челенджи</span></a>
+        <a href="profile.html" class="nav-tab"><i>👤</i><span>Профиль</span></a>
     </nav>
-
-    <div class="overlay" id="overlay" onclick="closeDev()"></div>
-    <div class="dev-popup" id="dev-popup">
-        <h3 style="margin-top: 0;">Извините!</h3>
-        <p>Данный элемент находится в разработке.</p>
-        <button onclick="closeDev()" style="background:#fff; border:none; padding:12px; border-radius:12px; color:#2481cc; font-weight:bold; width:100%; cursor:pointer;">ОК</button>
-    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-
-        function updateAllData() {
-            const name = tg.initDataUnsafe.user?.first_name || "Runner";
-            const photo = tg.initDataUnsafe.user?.photo_url;
-
-            document.querySelectorAll('.common-name').forEach(el => el.innerText = name);
-            if(photo) {
-                const img = <img src="${photo}" style="width:100%; height:100%; object-fit:cover;">;
-                document.querySelectorAll('.common-avatar').forEach(el => el.innerHTML = img);
-            }
+        document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
+        if(tg.initDataUnsafe.user?.photo_url) {
+            document.getElementById('user-photo').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
         }
-
-        function switchTab(pageId, element) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            
-            const targetPage = document.getElementById('page-' + pageId);
-            if(targetPage) {
-                targetPage.classList.add('active');
-                element.classList.add('active');
-                tg.HapticFeedback.impactOccurred('light');
-            }
-        }
-
-        function openDev() {
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('dev-popup').style.display = 'block';
-            tg.HapticFeedback.notificationOccurred('warning');
-        }
-
-        function closeDev() {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('dev-popup').style.display = 'none';
-        }
-
-        window.onload = updateAllData;
     </script>
 </body>
 </html>
