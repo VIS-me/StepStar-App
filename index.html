@@ -2,47 +2,323 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>StepStar - Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #0f172a; color: white; margin: 0; padding-bottom: 80px; }
-        .header { padding: 20px; text-align: center; background: #1e293b; border-bottom: 1px solid #334155; }
-        .balance-card { background: linear-gradient(135deg, #3b82f6, #2563eb); margin: 20px; padding: 20px; border-radius: 20px; text-align: center; }
-        .balance-value { font-size: 36px; font-weight: bold; }
+        :root {
+            --tg-bg: #0f172a;
+            --tg-card: #1e293b;
+            --tg-accent: #38bdf8;
+            --tg-text: #f8fafc;
+            --energy-purple: #a855f7;
+            --vip-gold: #fbbf24;
+            --loss-red: #ef4444;
+            --win-green: #22c55e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-bg);
+            color: var(--tg-text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            user-select: none;
+        }
+
+        .content {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Профиль */
+        .profile-section {
+            text-align: center;
+            background: var(--tg-card);
+            padding: 20px;
+            border-radius: 24px;
+            position: relative;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 10px;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 25px;
+            background: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            border: 2px solid var(--tg-accent);
+        }
+
+        .vip-tag {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: var(--vip-gold);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* Баланс */
+        .balance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .balance-item {
+            background: var(--tg-card);
+            padding: 12px;
+            border-radius: 18px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* Слоты */
+        .slots-container {
+            background: var(--tg-card);
+            padding: 15px;
+            border-radius: 20px;
+        }
+
+        .slots-title {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .slots-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+        }
+
+        .slot {
+            aspect-ratio: 1;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 12px;
+            border: 1px solid #334155;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            position: relative;
+        }
+
+        .slot.locked { background: #0f172a; opacity: 0.5; }
+        .slot.energy { border-color: var(--energy-purple); }
+        .slot.gold { border-color: var(--vip-gold); background: rgba(251, 191, 36, 0.1); }
         
-        .nav-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px; }
-        .nav-item { background: #1e293b; padding: 25px; border-radius: 15px; text-align: center; font-weight: bold; border: 1px solid #334155; }
-        
-        /* Нижнее меню */
-        .tab-bar { position: fixed; bottom: 0; width: 100%; background: #1e293b; display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #334155; }
-        .tab { color: #94a3b8; font-size: 12px; text-align: center; flex: 1; }
-        .tab.active { color: #3b82f6; }
+        .loss-mark {
+            position: absolute;
+            color: var(--loss-red);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* Кнопки действий */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .action-btn {
+            background: var(--tg-card);
+            border: 1px solid #334155;
+            padding: 15px;
+            border-radius: 18px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .action-btn i { font-size: 24px; }
+        .action-btn span { font-size: 12px; font-weight: 500; }
+
+        /* Навбар */
+        .nav-bar {
+            height: 70px;
+            background: #1e293b;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border-top: 1px solid #334155;
+        }
+
+        .nav-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            text-decoration: none;
+            font-size: 11px;
+        }
+
+        .nav-tab.active { color: var(--tg-accent); }
+
+        /* В разработке */
+        .dev-popup {
+            display: none;
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--tg-card);
+            padding: 30px;
+            border-radius: 24px;
+            z-index: 1000;
+            text-align: center;
+            border: 1px solid var(--tg-accent);
+            width: 70%;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
-    <div class="header"><h3>StepStar</h3></div>
 
-    <div class="balance-card">
-        <div style="font-size: 14px; opacity: 0.8;">Баланс STARS</div>
-        <div class="balance-value">0 ⭐️</div>
+    <div class="content">
+        <div class="profile-section">
+            <div class="avatar-wrap">
+                <div class="avatar-img" id="avatar-box">👟</div>
+                <div class="vip-tag">VIP - <span id="vip-lvl">0</span></div>
+            </div>
+            <h3 id="user-name" style="margin: 5px 0 0;">Name</h3>
+            <div id="user-rank" style="font-size: 12px; color: #94a3b8;">НОВИЧОК</div>
+        </div>
+
+        <div class="balance-grid">
+            <div class="balance-item"><span id="bal-stars">0</span> ⭐️</div>
+            <div class="balance-item"><span id="bal-energy">50</span> ⚡️</div>
+        </div>
+
+        <div class="slots-container">
+            <div class="slots-title" id="txt-available-slots">Доступные челенджи</div>
+            <div class="slots-row">
+                <div class="slot">👟</div> <div class="slot">🏆</div> <div class="slot energy"> <span>👟</span>
+                    <span class="loss-mark">✕</span>
+                </div>
+                <div class="slot energy locked">🔒</div>
+                <div class="slot gold locked">🔒</div>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <div class="action-btn" onclick="openDev()"><i>⚔️</i><span id="txt-duel">Дуэль</span></div>
+            <div class="action-btn" onclick="openDev()"><i>👥</i><span id="txt-team">Команда</span></div>
+            <div class="action-btn" onclick="openDev()"><i>🔥</i><span id="txt-marathon">Марафон</span></div>
+            <div class="action-btn" onclick="openDev()"><i>🛒</i><span id="txt-shop">Магазин</span></div>
+        </div>
     </div>
 
-    <div class="nav-grid">
-        <div class="nav-item" onclick="alert('Раздел Споры')">🏆<br>Споры</div>
-        <div class="nav-item" onclick="alert('Раздел Магазин')">🛒<br>Магазин</div>
-    </div>
+    <nav class="nav-bar">
+        <a href="#" class="nav-tab active" onclick="location.reload()"><i>🏠</i><span id="txt-home">Главная</span></a>
+        <a href="#" class="nav-tab" onclick="openDev()"><i>📊</i><span id="txt-challenges">Челенджи</span></a>
+        <a href="#" class="nav-tab" onclick="openDev()"><i>👤</i><span id="txt-profile">Профиль</span></a>
+    </nav>
 
-    <div class="tab-bar">
-        <div class="tab active">🏠<br>Главная</div>
-        <div class="tab">📊<br>Челенджи</div>
-        <div class="tab">👤<br>Профиль</div>
+    <div class="overlay" id="overlay" onclick="closeDev()"></div>
+    <div class="dev-popup" id="dev-popup">
+        <h3 id="txt-dev-title">В разработке</h3>
+        <p id="txt-dev-desc">Эта функция скоро появится!</p>
+        <button onclick="closeDev()" style="background: var(--tg-accent); border: none; padding: 10px 20px; border-radius: 10px; color: white; width: 100%;">OK</button>
     </div>
-
     <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand(); // Разворачиваем на весь экран
-        tg.ready();
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.backgroundColor = '#0f172a';
+        tg.headerColor = '#0f172a';
+
+        // Мультиязычность
+        const lang = tg.initDataUnsafe.user?.language_code === 'ru' ? 'ru' : 'en';
+        const i18n = {
+            ru: {
+                rank: "НОВИЧОК",
+                slots: "Доступные челенджи",
+                duel: "Дуэль",
+                team: "Команда",
+                marathon: "Марафон",
+                shop: "Магазин",
+                home: "Главная",
+                challenges: "Челенджи",
+                profile: "Профиль",
+                devTitle: "В разработке",
+                devDesc: "Эта функция скоро появится!"
+            },
+            en: {
+                rank: "BEGINNER",
+                slots: "Available Challenges",
+                duel: "Duel",
+                team: "Team",
+                marathon: "Marathon",
+                shop: "Shop",
+                home: "Home",
+                challenges: "Challenges",
+                profile: "Profile",
+                devTitle: "Under Development",
+                devDesc: "This feature is coming soon!"
+            }
+        };
+
+        const t = i18n[lang];
+        
+        // Установка текстов
+        document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
+        document.getElementById('user-rank').innerText = t.rank;
+        document.getElementById('txt-available-slots').innerText = t.slots;
+        document.getElementById('txt-duel').innerText = t.duel;
+        document.getElementById('txt-team').innerText = t.team;
+        document.getElementById('txt-marathon').innerText = t.marathon;
+        document.getElementById('txt-shop').innerText = t.shop;
+        document.getElementById('txt-home').innerText = t.home;
+        document.getElementById('txt-challenges').innerText = t.challenges;
+        document.getElementById('txt-profile').innerText = t.profile;
+        document.getElementById('txt-dev-title').innerText = t.devTitle;
+        document.getElementById('txt-dev-desc').innerText = t.devDesc;
+
+        // Показ фото
+        if(tg.initDataUnsafe.user?.photo_url) {
+            document.getElementById('avatar-box').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; border-radius:25px; object-fit:cover;">;
+        }
+
+        function openDev() {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('dev-popup').style.display = 'block';
+        }
+
+        function closeDev() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('dev-popup').style.display = 'none';
+        }
     </script>
 </body>
 </html>
