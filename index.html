@@ -11,7 +11,6 @@
             --tg-card: rgba(255, 255, 255, 0.15);
             --tg-accent: #ffffff;
             --tg-text: #ffffff;
-            --energy-purple: #a855f7;
             --vip-gold: #fbbf24;
             --loss-red: #ff4d4d;
         }
@@ -20,23 +19,21 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(180deg, #2481cc 0%, #1c66a3 100%);
             color: var(--tg-text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            user-select: none;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+            height: 100vh; overflow: hidden; user-select: none;
         }
 
-        .content {
+        /* Навигация по страницам */
+        .page {
+            display: none;
             flex: 1;
             padding: 12px;
             overflow-y: auto;
-            display: flex;
             flex-direction: column;
             gap: 12px;
         }
+        .page.active { display: flex; }
 
         .glass-panel {
             background: var(--tg-card);
@@ -47,8 +44,12 @@
             padding: 14px;
         }
 
-        /* --- БЛОК ПРОФИЛЯ --- */
-        .profile-card { text-align: center; padding: 20px 15px; }
+        /* --- ОБЩИЕ СТИЛИ ЭЛЕМЕНТОВ --- */
+        .panel-title { 
+            font-size: 11px; font-weight: 600; opacity: 0.6; 
+            text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;
+        }
+
         .avatar-wrap { position: relative; width: 85px; height: 85px; margin: 0 auto 10px; }
         .avatar-img { 
             width: 100%; height: 100%; border-radius: 26px; 
@@ -59,177 +60,185 @@
         .vip-tag { 
             position: absolute; bottom: -4px; right: -4px; background: var(--vip-gold); 
             color: #000; padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; 
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
 
-        #user-name {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: -0.02em;
-        }
-
-        /* --- ВНУТРЕННИЕ ЗАГОЛОВКИ --- */
-        .panel-title { 
-            font-size: 11px; 
-            font-weight: 600; 
-            opacity: 0.6; 
-            text-transform: uppercase;
-            margin-bottom: 12px; 
-            letter-spacing: 0.5px;
-        }
-
-        /* --- ОБЪЕДИНЕННЫЙ БАЛАНС --- */
-        .balance-content {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .balance-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 19px;
-            font-weight: 700;
-        }
-        .balance-divider {
-            width: 1px;
-            height: 24px;
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        /* --- СЛОТЫ --- */
+        /* --- СТРАНИЦА: ГЛАВНАЯ --- */
+        .profile-card { text-align: center; padding: 20px 15px; }
+        .balance-content { display: flex; justify-content: space-around; align-items: center; }
+        .balance-item { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 700; }
+        .balance-divider { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); }
+        
         .slots-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .slot { 
             aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 14px; 
             border: 1px solid rgba(255,255,255,0.1); display: flex; 
             align-items: center; justify-content: center; font-size: 20px; 
-            position: relative;
         }
         .slot.locked { opacity: 0.35; }
-        .loss-mark { position: absolute; color: var(--loss-red); font-size: 24px; font-weight: bold; }
 
-        /* --- КНОПКИ ДЕЙСТВИЙ --- */
         .action-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .action-btn { 
-            padding: 14px 4px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            gap: 8px; 
-            transition: 0.1s; 
-            border-radius: 20px;
-        }
-        .action-btn:active { transform: scale(0.92); }
+        .action-btn { padding: 14px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: 20px; }
         .action-btn i { font-size: 24px; }
-        .action-btn span { font-size: 10px; font-weight: 600; text-align: center; }
+        .action-btn span { font-size: 10px; font-weight: 600; }
 
-        /* --- НАВИГАЦИЯ --- */
+        /* --- СТРАНИЦА: ПРОФИЛЬ --- */
+        .prof-header { text-align: center; padding: 20px 0; }
+        .prof-name { font-size: 24px; font-weight: 800; margin: 5px 0; }
+        .prof-id { font-size: 12px; opacity: 0.5; margin-bottom: 15px; }
+        
+        .stat-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-item:last-child { border-bottom: none; }
+        .stat-label { opacity: 0.7; font-size: 14px; }
+        .stat-value { font-weight: 700; font-size: 16px; }
+        /* --- НИЖНЕЕ МЕНЮ --- */
         .nav-bar {
             height: 70px; background: rgba(28, 102, 163, 0.95);
             display: grid; grid-template-columns: repeat(3, 1fr);
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: env(safe-area-inset-bottom);
         }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); text-decoration: none; font-size: 11px; gap: 4px; }
+        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.5); font-size: 11px; gap: 4px; cursor: pointer; }
         .nav-tab.active { color: #ffffff; }
         .nav-tab i { font-size: 22px; }
 
-        /* --- ПОПАП --- */
+        /* Попап */
         .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 999; }
         .dev-popup { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1c66a3; padding: 25px; border-radius: 24px; z-index: 1000; text-align: center; width: 70%; border: 1px solid rgba(255,255,255,0.3); }
     </style>
 </head>
 <body>
 
-    <div class="content">
+    <div id="page-home" class="page active">
         <div class="glass-panel profile-card">
             <div class="avatar-wrap">
-                <div class="avatar-img" id="home-avatar">👟</div>
-                <div class="vip-tag">VIP - <span id="vip-lvl">0</span></div>
+                <div class="avatar-img common-avatar">👟</div>
+                <div class="vip-tag">VIP - <span class="common-vip">0</span></div>
             </div>
-            <h3 id="user-name">Name</h3>
-            <div id="user-rank" style="font-size:13px; opacity:0.8; margin-top: 4px;">НОВИЧОК</div>
+            <h3 class="common-name">Name</h3>
+            <div class="common-rank" style="font-size:13px; opacity:0.8; margin-top: 4px;">НОВИЧОК</div>
         </div>
 
         <div class="glass-panel">
-            <div class="panel-title" id="txt-balance-head">Баланс:</div>
+            <div class="panel-title">Баланс:</div>
             <div class="balance-content">
-                <div class="balance-item">
-                    <span id="bal-stars">0</span> ⭐️
-                </div>
+                <div class="balance-item"><span class="common-stars">0</span> ⭐️</div>
                 <div class="balance-divider"></div>
-                <div class="balance-item">
-                    <span id="bal-energy">50</span> ⚡️
-                </div>
+                <div class="balance-item"><span class="common-energy">50</span> ⚡️</div>
             </div>
         </div>
 
         <div class="glass-panel">
-            <div class="panel-title" id="txt-slots">Доступные челенджи:</div>
+            <div class="panel-title">Доступные челенджи:</div>
             <div class="slots-row">
                 <div class="slot">👟</div> 
                 <div class="slot">👟</div> 
-                <div class="slot locked">🔒</div>
+                <div class="slot locked">🔒</div> 
                 <div class="slot locked">🔒</div> 
                 <div class="slot locked">🔒</div>
             </div>
         </div>
 
         <div class="action-row">
-            <div class="glass-panel action-btn" onclick="openDev()"><i>⚔️</i><span id="btn-duel">Дуэль</span></div>
-            <div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span id="btn-team">Команда</span></div>
-            <div class="glass-panel action-btn" onclick="openDev()"><i>🔥</i><span id="btn-mara">Марафон</span></div>
-            <div class="glass-panel action-btn" onclick="openDev()"><i>🛒</i><span id="btn-shop">Магазин</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>⚔️</i><span>Дуэль</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span>Команда</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>🔥</i><span>Марафон</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>🛒</i><span>Магазин</span></div>
         </div>
     </div>
 
+    <div id="page-profile" class="page">
+        <div class="prof-header">
+            <div class="avatar-wrap" style="width: 100px; height: 100px;">
+                <div class="avatar-img common-avatar" style="font-size: 45px; border-radius: 30px;">👟</div>
+                <div class="vip-tag" style="font-size: 12px; padding: 3px 10px;">VIP - <span class="common-vip">0</span></div>
+            </div>
+            <div class="prof-name common-name">Name</div>
+            <div class="prof-id">ID: 5829104</div>
+        </div>
+
+        <div class="glass-panel">
+            <div class="panel-title">Ваша статистика:</div>
+            <div class="stat-item">
+                <span class="stat-label">Ранг</span>
+                <span class="stat-value common-rank">НОВИЧОК</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Звезды</span>
+                <span class="stat-value"><span class="common-stars">0</span> ⭐️</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Энергия</span>
+                <span class="stat-value"><span class="common-energy">50</span> ⚡️</span>
+            </div>
+        </div>
+
+        <div class="glass-panel" onclick="openDev()" style="margin-top: 10px; text-align: center; color: rgba(255,255,255,0.7);">
+            ⚙️ Настройки аккаунта
+        </div>
+    </div>
     <nav class="nav-bar">
-        <div class="nav-tab active" onclick="location.reload()"><i>🏠</i><span id="nav-h">Главная</span></div>
-        <div class="nav-tab" onclick="openDev()"><i>📊</i><span id="nav-c">Челенджи</span></div>
-        <div class="nav-tab" onclick="openDev()"><i>👤</i><span id="nav-p">Профиль</span></div>
+        <div class="nav-tab active" onclick="switchTab('home', this)"><i>🏠</i><span>Главная</span></div>
+        <div class="nav-tab" onclick="openDev()"><i>📊</i><span>Челенджи</span></div>
+        <div class="nav-tab" onclick="switchTab('profile', this)"><i>👤</i><span>Профиль</span></div>
     </nav>
 
     <div class="overlay" id="overlay" onclick="closeDev()"></div>
     <div class="dev-popup" id="dev-popup">
-        <h3 id="dev-t">В разработке</h3>
-        <p id="dev-d">Скоро появится!</p>
-        <button onclick="closeDev()" style="background:#fff; border:none; padding:10px; border-radius:12px; color:#2481cc; font-weight:bold; width:100%;">OK</button>
+        <h3>В разработке</h3>
+        <p>Эта функция скоро появится!</p>
+        <button onclick="closeDev()" style="background:#fff; border:none; padding:10px; border-radius:12px; color:#2481cc; font-weight:bold; width:100%; cursor:pointer;">OK</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.backgroundColor = '#2481cc';
-        tg.headerColor = '#2481cc';
 
-        const lang = tg.initDataUnsafe.user?.language_code === 'ru' ? 'ru' : 'en';
-        const i18n = {
-            ru: { rank:"НОВИЧОК", balance:"Баланс:", slots:"Доступные челенджи:", duel:"Дуэль", team:"Команда", mara:"Марафон", shop:"Магазин", h:"Главная", c:"Челенджи", p:"Профиль", t:"В разработке", d:"Скоро появится!" },
-            en: { rank:"BEGINNER", balance:"Balance:", slots:"Available Challenges:", duel:"Duel", team:"Team", mara:"Marathon", shop:"Shop", h:"Home", c:"Challenges", p:"Profile", t:"In Progress", d:"Coming soon!" }
+        // Данные пользователя (источник истины)
+        const userData = {
+            name: tg.initDataUnsafe.user?.first_name || "Runner",
+            rank: "НОВИЧОК",
+            vip: 0,
+            stars: 0,
+            energy: 50,
+            photo: tg.initDataUnsafe.user?.photo_url
         };
 
-        const t = i18n[lang];
-        document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
-        document.getElementById('user-rank').innerText = t.rank;
-        document.getElementById('txt-balance-head').innerText = t.balance;
-        document.getElementById('txt-slots').innerText = t.slots;
-        document.getElementById('btn-duel').innerText = t.duel;
-        document.getElementById('btn-team').innerText = t.team;
-        document.getElementById('btn-mara').innerText = t.mara;
-        document.getElementById('btn-shop').innerText = t.shop;
-        document.getElementById('nav-h').innerText = t.h;
-        document.getElementById('nav-c').innerText = t.c;
-        document.getElementById('nav-p').innerText = t.p;
-        document.getElementById('dev-t').innerText = t.t;
-        document.getElementById('dev-d').innerText = t.d;
-
-        if(tg.initDataUnsafe.user?.photo_url) {
-            document.getElementById('home-avatar').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
+        // Функция обновления всех полей на всех экранах
+        function syncUI() {
+            document.querySelectorAll('.common-name').forEach(el => el.innerText = userData.name);
+            document.querySelectorAll('.common-rank').forEach(el => el.innerText = userData.rank);
+            document.querySelectorAll('.common-vip').forEach(el => el.innerText = userData.vip);
+            document.querySelectorAll('.common-stars').forEach(el => el.innerText = userData.stars);
+            document.querySelectorAll('.common-energy').forEach(el => el.innerText = userData.energy);
+            
+            if(userData.photo) {
+                const imgHtml = <img src="${userData.photo}" style="width:100%; height:100%; object-fit:cover;">;
+                document.querySelectorAll('.common-avatar').forEach(el => el.innerHTML = imgHtml);
+            }
         }
 
-        function openDev() { document.getElementById('overlay').style.display = 'block'; document.getElementById('dev-popup').style.display = 'block'; }
-        function closeDev() { document.getElementById('overlay').style.display = 'none'; document.getElementById('dev-popup').style.display = 'none'; }
+        // Переключение вкладок
+        function switchTab(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            
+            document.getElementById('page-' + pageId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function openDev() { 
+            document.getElementById('overlay').style.display = 'block'; 
+            document.getElementById('dev-popup').style.display = 'block'; 
+        }
+        function closeDev() { 
+            document.getElementById('overlay').style.display = 'none'; 
+            document.getElementById('dev-popup').style.display = 'none'; 
+        }
+
+        // Инициализация
+        syncUI();
     </script>
 </body>
 </html>
