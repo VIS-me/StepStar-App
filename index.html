@@ -1,3 +1,4 @@
+Ivan B. | Engineering, [09.02.2026 14:47]
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -7,19 +8,20 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --tg-bg: #0f172a;
-            --tg-card: #1e293b;
-            --tg-accent: #38bdf8;
-            --tg-text: #f8fafc;
+            /* Классический сине-голубой цвет Telegram */
+            --tg-bg: #2481cc; 
+            --tg-card: rgba(255, 255, 255, 0.15);
+            --tg-accent: #ffffff;
+            --tg-text: #ffffff;
             --energy-purple: #a855f7;
             --vip-gold: #fbbf24;
-            --loss-red: #ef4444;
-            --win-green: #22c55e;
+            --loss-red: #ff4d4d;
+            --win-green: #4ade80;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--tg-bg);
+            background: linear-gradient(180deg, #2481cc 0%, #1c66a3 100%);
             color: var(--tg-text);
             margin: 0;
             padding: 0;
@@ -27,6 +29,7 @@
             flex-direction: column;
             height: 100vh;
             user-select: none;
+            overflow: hidden;
         }
 
         .content {
@@ -38,13 +41,19 @@
             gap: 15px;
         }
 
+        /* Общий стиль для всех блоков (эффект стекла) */
+        .glass-panel {
+            background: var(--tg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+        }
+
         /* Профиль */
         .profile-section {
             text-align: center;
-            background: var(--tg-card);
             padding: 20px;
-            border-radius: 24px;
-            position: relative;
         }
 
         .avatar-wrap {
@@ -57,13 +66,14 @@
         .avatar-img {
             width: 100%;
             height: 100%;
-            border-radius: 25px;
-            background: #334155;
+            border-radius: 28px;
+            background: rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 40px;
-            border: 2px solid var(--tg-accent);
+            border: 2px solid white;
+            overflow: hidden;
         }
 
         .vip-tag {
@@ -74,8 +84,9 @@
             color: #000;
             padding: 2px 8px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         /* Баланс */
@@ -86,7 +97,6 @@
         }
 
         .balance-item {
-            background: var(--tg-card);
             padding: 12px;
             border-radius: 18px;
             text-align: center;
@@ -96,16 +106,15 @@
 
         /* Слоты */
         .slots-container {
-            background: var(--tg-card);
             padding: 15px;
-            border-radius: 20px;
         }
 
         .slots-title {
-            font-size: 12px;
-            color: #94a3b8;
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 10px;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .slots-row {
@@ -116,9 +125,9 @@
 
         .slot {
             aspect-ratio: 1;
-            background: rgba(15, 23, 42, 0.6);
-            border-radius: 12px;
-            border: 1px solid #334155;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -126,15 +135,18 @@
             position: relative;
         }
 
-        .slot.locked { background: #0f172a; opacity: 0.5; }
-        .slot.energy { border-color: var(--energy-purple); }
-        .slot.gold { border-color: var(--vip-gold); background: rgba(251, 191, 36, 0.1); }
+        .slot.locked { opacity: 0.4; }
+        .slot.energy { border-color: var(--energy-purple); background: rgba(168, 85, 247, 0.1); }
+
+Ivan B. | Engineering, [09.02.2026 14:47]
+.slot.gold { border-color: var(--vip-gold); background: rgba(251, 191, 36, 0.1); }
         
         .loss-mark {
             position: absolute;
             color: var(--loss-red);
-            font-size: 24px;
+            font-size: 26px;
             font-weight: bold;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
 
         /* Кнопки действий */
@@ -143,9 +155,8 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
         .action-btn {
-            background: var(--tg-card);
-            border: 1px solid #334155;
             padding: 15px;
             border-radius: 18px;
             color: white;
@@ -153,19 +164,22 @@
             flex-direction: column;
             align-items: center;
             gap: 5px;
-            cursor: pointer;
+            transition: transform 0.1s;
         }
+        
+        .action-btn:active { transform: scale(0.95); }
+        .action-btn i { font-size: 26px; }
+        .action-btn span { font-size: 12px; font-weight: 600; }
 
-        .action-btn i { font-size: 24px; }
-        .action-btn span { font-size: 12px; font-weight: 500; }
-
-        /* Навбар */
+        /* Нижний Навбар */
         .nav-bar {
-            height: 70px;
-            background: #1e293b;
+            height: 75px;
+            background: rgba(28, 102, 163, 0.9);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            border-top: 1px solid #334155;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: env(safe-area-inset-bottom);
+            backdrop-filter: blur(15px);
         }
 
         .nav-tab {
@@ -173,33 +187,37 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #64748b;
+            color: rgba(255, 255, 255, 0.5);
             text-decoration: none;
             font-size: 11px;
+            gap: 4px;
         }
 
-        .nav-tab.active { color: var(--tg-accent); }
+        .nav-tab.active { color: #ffffff; }
+        .nav-tab i { font-size: 22px; }
 
-        /* В разработке */
+        /* В разработке (Попап) */
         .dev-popup {
             display: none;
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: var(--tg-card);
+            background: #1c66a3;
             padding: 30px;
-            border-radius: 24px;
+            border-radius: 28px;
             z-index: 1000;
             text-align: center;
-            border: 1px solid var(--tg-accent);
-            width: 70%;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            width: 75%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
         .overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
             z-index: 999;
         }
     </style>
@@ -207,24 +225,27 @@
 <body>
 
     <div class="content">
-        <div class="profile-section">
+        <div class="glass-panel profile-section">
             <div class="avatar-wrap">
                 <div class="avatar-img" id="avatar-box">👟</div>
                 <div class="vip-tag">VIP - <span id="vip-lvl">0</span></div>
             </div>
             <h3 id="user-name" style="margin: 5px 0 0;">Name</h3>
-            <div id="user-rank" style="font-size: 12px; color: #94a3b8;">НОВИЧОК</div>
+            <div id="user-rank" style="font-size: 12px; color: rgba(255, 255, 255, 0.7); margin-top: 4px;">RANK</div>
         </div>
 
         <div class="balance-grid">
-            <div class="balance-item"><span id="bal-stars">0</span> ⭐️</div>
-            <div class="balance-item"><span id="bal-energy">50</span> ⚡️</div>
+            <div class="glass-panel balance-item"><span id="bal-stars">0</span> ⭐</div>
+            <div class="glass-panel balance-item"><span id="bal-energy">50</span> ⚡</div>
         </div>
 
-        <div class="slots-container">
+        <div class="glass-panel slots-container">
             <div class="slots-title" id="txt-available-slots">Доступные челенджи</div>
             <div class="slots-row">
-                <div class="slot">👟</div> <div class="slot">🏆</div> <div class="slot energy"> <span>👟</span>
+                <div class="slot">👟</div> 
+                <div class="slot">🏆</div> 
+                <div class="slot energy">
+                    <span>👟</span>
                     <span class="loss-mark">✕</span>
                 </div>
                 <div class="slot energy locked">🔒</div>
@@ -233,10 +254,12 @@
         </div>
 
         <div class="action-grid">
-            <div class="action-btn" onclick="openDev()"><i>⚔️</i><span id="txt-duel">Дуэль</span></div>
-            <div class="action-btn" onclick="openDev()"><i>👥</i><span id="txt-team">Команда</span></div>
-            <div class="action-btn" onclick="openDev()"><i>🔥</i><span id="txt-marathon">Марафон</span></div>
-            <div class="action-btn" onclick="openDev()"><i>🛒</i><span id="txt-shop">Магазин</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>⚔️</i><span id="txt-duel">Дуэль</span></div>
+
+Ivan B. | Engineering, [09.02.2026 14:47]
+<div class="glass-panel action-btn" onclick="openDev()"><i>👥</i><span id="txt-team">Команда</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>🔥</i><span id="txt-marathon">Марафон</span></div>
+            <div class="glass-panel action-btn" onclick="openDev()"><i>🛒</i><span id="txt-shop">Магазин</span></div>
         </div>
     </div>
 
@@ -248,15 +271,17 @@
 
     <div class="overlay" id="overlay" onclick="closeDev()"></div>
     <div class="dev-popup" id="dev-popup">
-        <h3 id="txt-dev-title">В разработке</h3>
-        <p id="txt-dev-desc">Эта функция скоро появится!</p>
-        <button onclick="closeDev()" style="background: var(--tg-accent); border: none; padding: 10px 20px; border-radius: 10px; color: white; width: 100%;">OK</button>
+        <h3 id="txt-dev-title" style="margin-top: 0;">В разработке</h3>
+        <p id="txt-dev-desc" style="color: rgba(255,255,255,0.8); font-size: 14px; margin-bottom: 20px;">Эта функция скоро появится!</p>
+        <button onclick="closeDev()" style="background: #ffffff; border: none; padding: 12px; border-radius: 14px; color: #2481cc; font-weight: bold; width: 100%; font-size: 16px;">OK</button>
     </div>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.backgroundColor = '#0f172a';
-        tg.headerColor = '#0f172a';
+        // Установка цвета хедера и бэкграунда для самого Telegram
+        tg.backgroundColor = '#2481cc';
+        tg.headerColor = '#2481cc';
 
         // Мультиязычность
         const lang = tg.initDataUnsafe.user?.language_code === 'ru' ? 'ru' : 'en';
@@ -291,7 +316,7 @@
 
         const t = i18n[lang];
         
-        // Установка текстов
+        // Заполнение данных из Telegram
         document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
         document.getElementById('user-rank').innerText = t.rank;
         document.getElementById('txt-available-slots').innerText = t.slots;
@@ -305,17 +330,19 @@
         document.getElementById('txt-dev-title').innerText = t.devTitle;
         document.getElementById('txt-dev-desc').innerText = t.devDesc;
 
-        // Показ фото
+        // Показ фото профиля если есть
         if(tg.initDataUnsafe.user?.photo_url) {
-            document.getElementById('avatar-box').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; border-radius:25px; object-fit:cover;">;
+            document.getElementById('avatar-box').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
         }
 
+        // Логика попапов
         function openDev() {
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('dev-popup').style.display = 'block';
         }
 
-        function closeDev() {
+Ivan B. | Engineering, [09.02.2026 14:47]
+function closeDev() {
             document.getElementById('overlay').style.display = 'none';
             document.getElementById('dev-popup').style.display = 'none';
         }
