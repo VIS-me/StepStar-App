@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StepStar - Профиль</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root { --tg-bg: #2481cc; --tg-card: rgba(255, 255, 255, 0.15); --tg-text: #ffffff; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(180deg, #2481cc 0%, #1c66a3 100%); color: var(--tg-text); margin: 0; padding: 12px; height: 100vh; }
+        .glass-panel { background: var(--tg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 16px; margin-top: 10px; }
+        .avatar-wrap { position: relative; width: 100px; height: 100px; margin: 20px auto 10px; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 30px; background: rgba(255,255,255,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 45px; overflow: hidden; }
+        .stat-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(28, 102, 163, 0.98); display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); text-decoration: none; font-size: 11px; gap: 4px; }
+        .nav-tab.active { color: #ffffff; }
+        .nav-tab i { font-style: normal; font-size: 24px; }
+    </style>
+</head>
+<body>
+    <div style="text-align: center;">
+        <div class="avatar-wrap"><div class="avatar-img" id="p-photo">👟</div></div>
+        <h2 id="p-name" style="margin: 10px 0;">Runner</h2>
+        <div style="opacity: 0.6; font-size: 12px;">ID: 5829104</div>
+    </div>
+    <div class="glass-panel">
+        <div class="stat-item"><span>Ранг</span><b>НОВИЧОК</b></div>
+        <div class="stat-item"><span>Звезды</span><b>0 ⭐️</b></div>
+        <div class="stat-item"><span>Энергия</span><b>50 ⚡️</b></div>
+    </div>
+    <nav class="nav-bar">
+        <a href="index.html" class="nav-tab"><i>🏠</i><span>Главная</span></a>
+        <a href="work.html" class="nav-tab"><i>📊</i><span>Челенджи</span></a>
+        <a href="profile.html" class="nav-tab active"><i>👤</i><span>Профиль</span></a>
+    </nav>
+    <script>
+        const tg = window.Telegram.WebApp;
+        document.getElementById('p-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
+        if(tg.initDataUnsafe.user?.photo_url) {
+            document.getElementById('p-photo').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
+        }
+    </script>
+</body>
+</html>
