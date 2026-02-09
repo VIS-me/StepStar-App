@@ -35,7 +35,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
 
         .glass-panel {
@@ -44,6 +44,7 @@
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
+            padding: 14px;
         }
 
         /* --- БЛОК ПРОФИЛЯ --- */
@@ -68,21 +69,19 @@
             letter-spacing: -0.02em;
         }
 
-        /* --- СИНХРОНИЗИРОВАННЫЕ ЗАГОЛОВКИ С ВОЗВРАЩЕННОЙ ПРОЗРАЧНОСТЬЮ --- */
-        .section-title { 
-            font-size: 11px; /* Чуть меньше для изящности */
+        /* --- ВНУТРЕННИЕ ЗАГОЛОВКИ --- */
+        .panel-title { 
+            font-size: 11px; 
             font-weight: 600; 
-            opacity: 0.7; /* Вернул как было */
+            opacity: 0.6; 
             text-transform: uppercase;
-            margin-bottom: 8px; 
-            padding-left: 4px; 
+            margin-bottom: 12px; 
             letter-spacing: 0.5px;
         }
 
         /* --- ОБЪЕДИНЕННЫЙ БАЛАНС --- */
-        .balance-container {
+        .balance-content {
             display: flex;
-            padding: 14px;
             justify-content: space-around;
             align-items: center;
         }
@@ -95,12 +94,11 @@
         }
         .balance-divider {
             width: 1px;
-            height: 28px;
+            height: 24px;
             background: rgba(255, 255, 255, 0.2);
         }
 
         /* --- СЛОТЫ --- */
-        .slots-container { padding: 14px; }
         .slots-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .slot { 
             aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 14px; 
@@ -110,9 +108,18 @@
         }
         .slot.locked { opacity: 0.35; }
         .loss-mark { position: absolute; color: var(--loss-red); font-size: 24px; font-weight: bold; }
+
         /* --- КНОПКИ ДЕЙСТВИЙ --- */
         .action-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .action-btn { padding: 14px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; transition: 0.1s; }
+        .action-btn { 
+            padding: 14px 4px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 8px; 
+            transition: 0.1s; 
+            border-radius: 20px;
+        }
         .action-btn:active { transform: scale(0.92); }
         .action-btn i { font-size: 24px; }
         .action-btn span { font-size: 10px; font-weight: 600; text-align: center; }
@@ -145,9 +152,9 @@
             <div id="user-rank" style="font-size:13px; opacity:0.8; margin-top: 4px;">НОВИЧОК</div>
         </div>
 
-        <div class="balance-wrap">
-            <div class="section-title" id="txt-balance-head">Баланс:</div>
-            <div class="glass-panel balance-container">
+        <div class="glass-panel">
+            <div class="panel-title" id="txt-balance-head">Баланс:</div>
+            <div class="balance-content">
                 <div class="balance-item">
                     <span id="bal-stars">0</span> ⭐️
                 </div>
@@ -158,19 +165,17 @@
             </div>
         </div>
 
-        <div class="slots-wrap">
-            <div class="section-title" id="txt-slots">Доступные челенджи:</div>
-            <div class="glass-panel slots-container">
-                <div class="slots-row">
-                    <div class="slot">👟</div> 
-                    <div class="slot">🏆</div> 
-                    <div class="slot">
-                        <span>👟</span>
-                        <span class="loss-mark">✕</span>
-                    </div>
-                    <div class="slot locked">🔒</div> 
-                    <div class="slot locked">🔒</div>
+        <div class="glass-panel">
+            <div class="panel-title" id="txt-slots">Доступные челенджи:</div>
+            <div class="slots-row">
+                <div class="slot">👟</div> 
+                <div class="slot">🏆</div> 
+                <div class="slot">
+                    <span>👟</span>
+                    <span class="loss-mark">✕</span>
                 </div>
+                <div class="slot locked">🔒</div> 
+                <div class="slot locked">🔒</div>
             </div>
         </div>
 
@@ -187,6 +192,7 @@
         <div class="nav-tab" onclick="openDev()"><i>📊</i><span id="nav-c">Челенджи</span></div>
         <div class="nav-tab" onclick="openDev()"><i>👤</i><span id="nav-p">Профиль</span></div>
     </nav>
+
     <div class="overlay" id="overlay" onclick="closeDev()"></div>
     <div class="dev-popup" id="dev-popup">
         <h3 id="dev-t">В разработке</h3>
