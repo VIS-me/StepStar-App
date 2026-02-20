@@ -28,15 +28,25 @@
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
         // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
-        function shareResult(steps) {
+       async function shareResult(steps) {
     const message = t('shareMsg', appLang).replace('{n}', steps);
     
-    // Пытаемся отправить в Сторис (это самый современный метод)
-    if (tg.shareToStory) {
-        tg.shareToStory("https://t.me/твой_бот", { text: message });
+    // Проверяем, поддерживает ли браузер (телефона) системную отправку
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'StepStar',
+                text: message,
+                url: 'https://t.me/твой_бот' // Ссылка на твоего бота
+            });
+            tg.HapticFeedback.notificationOccurred('success');
+        } catch (err) {
+            // Если юзер отменил или ошибка — просто ничего не делаем
+            console.log("Share cancelled");
+        }
     } else {
-        // Если сторис недоступны, используем улучшенный вызов чатов
-        tg.switchInlineQuery(message, ["users", "groups"]);
+        // Резервный вариант, если системный Share не сработал
+        tg.switchInlineQuery(message);
     }
 }
 
