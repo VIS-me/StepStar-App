@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -23,8 +24,9 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
+        tg.ready();
 
-        // Наше "хранилище" (потом будет на сервере)
+        // Имитация состояния пользователя
         let userState = {
             frame: 'blue',
             steps: 6420
@@ -32,12 +34,12 @@
 
         function navigate(pageId, el) {
             const app = document.getElementById('app');
-            const user = tg.initDataUnsafe?.user || { first_name: "User" };
+            const user = tg.initDataUnsafe?.user || { first_name: "Ivan B." };
             
-            // Собираем страницу
+            // Отрисовка страницы
             app.innerHTML = Pages[pageId](user, userState);
             
-            // Подсветка меню
+            // Подсветка кнопок
             if(el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
@@ -47,13 +49,12 @@
 
         function changeFrame(colorName) {
             userState.frame = colorName;
-            // Сразу перерисовываем, чтобы увидеть результат
             navigate('prof'); 
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Запуск
-        navigate('home');
+        // Стартуем с главной
+        window.onload = () => navigate('home');
     </script>
 </body>
 </html>
