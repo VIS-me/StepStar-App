@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,158 +8,50 @@
 </head>
 <body>
 
-    <div id="page-home" class="page active">
-        <div style="text-align: center; margin: 20px 0;">
-            <div class="avatar-wrapper">
-                <div class="profile-frame"></div>
-                <img id="main-avatar" class="user-avatar" src="" style="display:none;">
-            </div>
-            <h3 id="main-username">User</h3>
-        </div>
-
-        <div class="progress-container">
-            <svg width="230" height="230" class="progress-ring">
-                <circle stroke="rgba(0,0,0,0.05)" stroke-width="14" fill="transparent" r="100" cx="115" cy="115"/>
-                <circle id="ring-progress" class="progress-ring__circle" stroke="var(--main-color)" stroke-width="14" fill="transparent" r="100" cx="115" cy="115"/>
-            </svg>
-            <div class="steps-content">
-                <h1 id="steps-count">0</h1>
-                <p id="label-steps">steps</p>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-item"><span id="val-kcal">0</span><label id="label-kcal">kcal</label></div>
-            <div class="stat-item"><span id="val-km">0.0</span><label id="label-km">km</label></div>
-            <div class="stat-item"><span id="val-min">0</span><label id="label-min">min</label></div>
-        </div>
-
-        <div style="padding: 20px;">
-            <button id="share-btn" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--main-color); color:white; font-weight:bold;">Share</button>
-        </div>
-    </div>
-
-    <div id="page-rank" class="page">
-        <h2 style="text-align:center;" id="tab-rank-title">Rank</h2>
-        <div style="margin: 20px; background: var(--secondary-bg); border-radius: 25px; padding: 25px; text-align: center; border: 2px solid var(--gold);">
-            <div class="avatar-wrapper" style="width:110px; height:110px;">
-                <div class="profile-frame" style="border-color: var(--gold);"></div>
-                <img class="user-avatar" src="https://via.placeholder.com/100" style="width:94px; height:94px;">
-            </div>
-            <h3 id="winner-name" style="margin:10px 0 0;">Champion</h3>
-            <p id="label-winner" style="color:var(--main-color); font-weight:bold;">Winner of the week</p>
-        </div>
-    </div>
-
-    <div id="page-tour" class="page">
-        <h2 style="text-align:center;" id="tab-tour-title">Tournament</h2>
-        <div style="text-align:center; margin-top:100px;">
-            <span style="font-size:60px;">🏁</span>
-            <p id="label-no-tour" style="color:gray;">No active tournaments</p>
-        </div>
-    </div>
-
-    <div id="page-prof" class="page">
-        <h2 style="text-align:center;" id="tab-prof-title">Profile</h2>
-        <div class="avatar-wrapper" style="width:110px; height:110px;">
-            <div class="profile-frame"></div>
-            <img id="user-avatar-prof" class="user-avatar" src="" style="width:94px; height:94px; display:none;">
-        </div>
-        <h3 id="user-name-prof" style="text-align:center; margin-top:15px;">User</h3>
-        <button id="btn-shop" style="margin: 20px auto; display:block; padding:12px 30px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold;">Shop ✨</button>
-    </div>
+    <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
-        <div class="tab-item active" data-page="home"><i>🏠</i><span id="tab-home">Home</span></div>
-        <div class="tab-item" data-page="rank"><i>🏆</i><span id="tab-rank">Rank</span></div>
-        <div class="tab-item" data-page="tour"><i>🏁</i><span id="tab-tour">Tour</span></div>
-        <div class="tab-item" data-page="prof"><i>👤</i><span id="tab-prof">Profile</span></div>
+        <div class="tab-item active" onclick="navigate('home')"><i>🏠</i><span>Home</span></div>
+        <div class="tab-item" onclick="navigate('rank')"><i>🏆</i><span>Rank</span></div>
+        <div class="tab-item" onclick="navigate('tour')"><i>🏁</i><span>Tour</span></div>
+        <div class="tab-item" onclick="navigate('prof')"><i>👤</i><span>Profile</span></div>
     </div>
+
+    <script src="assets.js"></script>
+    <script src="pages.js"></script>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
 
-        const lang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
-        const ui = {
-            ru: {
-                steps: "шагов", kcal: "ккал", km: "км", min: "мин", btn: "Поделиться",
-                home: "Главная", rank: "Рейтинг", tour: "Турнир", prof: "Профиль",
-                winner: "Победитель недели 👑", noTour: "Турниров пока нет", shop: "Магазин ✨",
-                shareT: "Я иду к цели в StepStar! Присоединяйся! 👟"
-            },
-            en: {
-                steps: "steps", kcal: "kcal", km: "km", min: "min", btn: "Share",
-                home: "Home", rank: "Rank", tour: "Tour", prof: "Profile",
-                winner: "Winner of the week 👑", noTour: "No active tournaments", shop: "Shop ✨",
-                shareT: "I'm hitting my goals in StepStar! Join me! 👟"
-            }
+        // Текущее состояние пользователя (потом будет приходить из базы)
+        let userState = {
+            frame: 'blue', // По умолчанию голубая
+            steps: 6200
         };
 
-        function applyLang() {
-            const t = ui[lang];
-            document.getElementById('label-steps').innerText = t.steps;
-            document.getElementById('label-kcal').innerText = t.kcal;
-            document.getElementById('label-km').innerText = t.km;
-            document.getElementById('label-min').innerText = t.min;
-            document.getElementById('share-btn').innerText = t.btn;
-            document.getElementById('tab-home').innerText = t.home;
-            document.getElementById('tab-rank').innerText = t.rank;
-            document.getElementById('tab-tour').innerText = t.tour;
-            document.getElementById('tab-prof').innerText = t.prof;
-            document.getElementById('tab-rank-title').innerText = t.rank;
-            document.getElementById('tab-tour-title').innerText = t.tour;
-            document.getElementById('tab-prof-title').innerText = t.prof;
-            document.getElementById('label-winner').innerText = t.winner;
-            document.getElementById('label-no-tour').innerText = t.noTour;
-            document.getElementById('btn-shop').innerText = t.shop;
+        function navigate(pageId) {
+            const app = document.getElementById('app');
+            const user = tg.initDataUnsafe?.user || { first_name: "User" };
+            
+            // Отрисовываем нужную страницу из модуля pages.js
+            app.innerHTML = Pages[pageId](user, userState);
+            
+            // Визуальное переключение кнопок меню
+            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+            // (логика подсветки активной кнопки)
+            tg.HapticFeedback.impactOccurred('light');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            applyLang();
-            
-            // Навигация
-            document.querySelectorAll('.tab-item').forEach(tab => {
-                tab.onclick = () => {
-                    const pageId = tab.getAttribute('data-page');
-                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                    document.getElementById('page-' + pageId).classList.add('active');
-                    tab.classList.add('active');
-                    tg.HapticFeedback.impactOccurred('light');
-                };
-            });
+        // Функция покупки/смены рамки
+        function changeFrame(color) {
+            userState.frame = color;
+            navigate('prof'); // Перерисовываем страницу профиля
+            tg.HapticFeedback.notificationOccurred('success');
+        }
 
-            // Поделиться (Открывает выбор чата)
-            document.getElementById('share-btn').onclick = () => {
-                tg.switchInlineQuery(ui[lang].shareT);
-            };
-
-            // Данные пользователя
-            const user = tg.initDataUnsafe?.user;
-            if(user) {
-                document.getElementById('main-username').innerText = user.first_name;
-                document.getElementById('user-name-prof').innerText = user.first_name;
-                if(user.photo_url) {
-                    document.getElementById('main-avatar').src = user.photo_url;
-                    document.getElementById('main-avatar').style.display = 'block';
-                    document.getElementById('user-avatar-prof').src = user.photo_url;
-                    document.getElementById('user-avatar-prof').style.display = 'block';
-                }
-            }
-
-            // Прогресс кольца
-            let s = 6200;
-            document.getElementById('steps-count').innerText = s.toLocaleString();
-            document.getElementById('val-kcal').innerText = Math.round(s * 0.04);
-            document.getElementById('val-km').innerText = (s * 0.0007).toFixed(1);
-            document.getElementById('val-min').innerText = Math.round(s / 100);
-            
-            const circle = document.getElementById('ring-progress');
-            const circumference = 2 * Math.PI * 100;
-            circle.style.strokeDashoffset = circumference - ((s/10000) * circumference);
-        });
+        // Стартовая страница
+        navigate('home');
     </script>
 </body>
 </html>
