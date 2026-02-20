@@ -40,9 +40,9 @@ const Pages = {
 
     // СТРАНИЦА РЕЙТИНГА (Стиль WeRun)
     rank: (user, state, lang) => {
-        // Данные лидера (используем фото юзера для теста, если нет другого)
-        const leader = { name: "Дмитрий", steps: 85400, photo: user.photo_url || "" };
-        const myRank = { pos: 124, steps: state.steps };
+        // Заглушки данных
+        const leader = { name: "Дмитрий", steps: 85400, photo: "" }; // Фото чемпиона
+        const myRank = { pos: 124, steps: state.steps }; // Твоё место
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400, photo: "" },
             { pos: 2, name: "Мария", steps: 10200, photo: "" },
@@ -78,7 +78,7 @@ const Pages = {
                 ${topFriends.map(f => `
                     <div class="rank-item">
                         <span class="rank-pos">${f.pos}</span>
-                        <div class="rank-photo" style="background: #444;"></div>
+                        <div class="rank-photo" style="${f.photo ? `background-image: url(${f.photo})` : 'background: #444;'}"></div>
                         <span class="rank-name">${f.name}</span>
                         <span class="rank-steps">${f.steps.toLocaleString()}</span>
                     </div>
@@ -92,30 +92,3 @@ const Pages = {
         <div class="page-content center-flex">
             <span style="font-size:60px; margin-bottom:20px;">🏁</span>
             <p style="color:gray;">${t('noTour', lang)}</p>
-        </div>`,
-
-    // СТРАНИЦА ПРОФИЛЯ + МАГАЗИН
-    prof: (user, state, lang) => `
-        <div class="page-content">
-            <h2 class="title-center">${t('prof', lang)}</h2>
-            <div class="avatar-wrapper" style="width:110px; height:110px;">
-                <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
-                <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
-            </div>
-            <h3 class="centered-name">${user.first_name || 'User'}</h3>
-            
-            <div class="shop-container">
-                <h4 style="margin:0 0 15px 0;">${t('shop', lang)}</h4>
-                <div class="shop-grid">
-                    <div class="shop-item" onclick="changeFrame('blue')">
-                        <div class="preview-circle" style="border: 4px solid #248bcf"></div>
-                        <span>Blue</span>
-                    </div>
-                    <div class="shop-item" onclick="changeFrame('pink')">
-                        <div class="preview-circle" style="border: 4px solid #ff69b4"></div>
-                        <span>Pink</span>
-                    </div>
-                </div>
-            </div>
-        </div>`
-};
