@@ -9,11 +9,12 @@
 <body>
 
     <div id="page-home" class="page active">
-        <div class="user-main-info" style="text-align: center; margin: 15px 0;">
+        <div style="text-align: center; margin: 20px 0;">
             <div class="avatar-wrapper">
-                <div class="profile-frame default-skin"></div> <img id="main-avatar" class="user-avatar" src="" style="display:none;">
+                <div class="profile-frame"></div>
+                <img id="main-avatar" class="user-avatar" src="" style="display:none;">
             </div>
-            <h3 id="main-username" style="margin: 10px 0;">User</h3>
+            <h3 id="main-username">User</h3>
         </div>
 
         <div class="progress-container">
@@ -33,8 +34,8 @@
             <div class="stat-item"><span id="val-min">0</span><label id="label-min">min</label></div>
         </div>
 
-        <div style="padding: 15px;">
-            <button id="share-btn" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--main-color); color:white; font-weight:bold; font-size:16px;">Share with Friends</button>
+        <div style="padding: 20px;">
+            <button id="share-btn" style="width:100%; padding:18px; border-radius:18px; border:none; background:var(--main-color); color:white; font-weight:bold;">Share</button>
         </div>
     </div>
 
@@ -42,24 +43,30 @@
         <h2 style="text-align:center;" id="tab-rank-title">Rank</h2>
         <div style="margin: 20px; background: var(--secondary-bg); border-radius: 25px; padding: 25px; text-align: center; border: 2px solid var(--gold);">
             <div class="avatar-wrapper" style="width:110px; height:110px;">
-                <div class="profile-frame" style="border-color: var(--gold); border-width: 4px;"></div>
-                <img id="winner-photo" class="user-avatar" src="https://via.placeholder.com/100" style="width:94px; height:94px;">
+                <div class="profile-frame" style="border-color: var(--gold);"></div>
+                <img class="user-avatar" src="https://via.placeholder.com/100" style="width:94px; height:94px;">
             </div>
-            <h3 id="winner-name" style="margin:10px 0 0;">Champion Name</h3>
-            <p id="winner-steps-val" style="color:var(--main-color); font-weight:bold;">12,500 steps</p>
+            <h3 id="winner-name" style="margin:10px 0 0;">Champion</h3>
+            <p id="label-winner" style="color:var(--main-color); font-weight:bold;">Winner of the week</p>
+        </div>
+    </div>
+
+    <div id="page-tour" class="page">
+        <h2 style="text-align:center;" id="tab-tour-title">Tournament</h2>
+        <div style="text-align:center; margin-top:100px;">
+            <span style="font-size:60px;">🏁</span>
+            <p id="label-no-tour" style="color:gray;">No active tournaments</p>
         </div>
     </div>
 
     <div id="page-prof" class="page">
         <h2 style="text-align:center;" id="tab-prof-title">Profile</h2>
-        <div class="avatar-wrapper" style="width:120px; height:120px;">
-            <div id="prof-frame" class="profile-frame default-skin"></div>
-            <img id="user-avatar-prof" class="user-avatar" src="" style="width:104px; height:104px; display:none;">
+        <div class="avatar-wrapper" style="width:110px; height:110px;">
+            <div class="profile-frame"></div>
+            <img id="user-avatar-prof" class="user-avatar" src="" style="width:94px; height:94px; display:none;">
         </div>
         <h3 id="user-name-prof" style="text-align:center; margin-top:15px;">User</h3>
-        <div style="text-align:center; margin-top:20px;">
-            <button id="btn-shop" style="padding:12px 30px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold;">Shop ✨</button>
-        </div>
+        <button id="btn-shop" style="margin: 20px auto; display:block; padding:12px 30px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold;">Shop ✨</button>
     </div>
 
     <div class="tab-bar">
@@ -76,31 +83,57 @@
 
         const lang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
         const ui = {
-            ru: { share: "Я иду к цели в StepStar! Присоединяйся! 👟" },
-            en: { share: "I'm hitting my goals in StepStar! Join me! 👟" }
+            ru: {
+                steps: "шагов", kcal: "ккал", km: "км", min: "мин", btn: "Поделиться",
+                home: "Главная", rank: "Рейтинг", tour: "Турнир", prof: "Профиль",
+                winner: "Победитель недели 👑", noTour: "Турниров пока нет", shop: "Магазин ✨",
+                shareT: "Я иду к цели в StepStar! Присоединяйся! 👟"
+            },
+            en: {
+                steps: "steps", kcal: "kcal", km: "km", min: "min", btn: "Share",
+                home: "Home", rank: "Rank", tour: "Tour", prof: "Profile",
+                winner: "Winner of the week 👑", noTour: "No active tournaments", shop: "Shop ✨",
+                shareT: "I'm hitting my goals in StepStar! Join me! 👟"
+            }
         };
 
+        function applyLang() {
+            const t = ui[lang];
+            document.getElementById('label-steps').innerText = t.steps;
+            document.getElementById('label-kcal').innerText = t.kcal;
+            document.getElementById('label-km').innerText = t.km;
+            document.getElementById('label-min').innerText = t.min;
+            document.getElementById('share-btn').innerText = t.btn;
+            document.getElementById('tab-home').innerText = t.home;
+            document.getElementById('tab-rank').innerText = t.rank;
+            document.getElementById('tab-tour').innerText = t.tour;
+            document.getElementById('tab-prof').innerText = t.prof;
+            document.getElementById('tab-rank-title').innerText = t.rank;
+            document.getElementById('tab-tour-title').innerText = t.tour;
+            document.getElementById('tab-prof-title').innerText = t.prof;
+            document.getElementById('label-winner').innerText = t.winner;
+            document.getElementById('label-no-tour').innerText = t.noTour;
+            document.getElementById('btn-shop').innerText = t.shop;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Кнопки навигации
+            applyLang();
+            
+            // Навигация
             document.querySelectorAll('.tab-item').forEach(tab => {
                 tab.onclick = () => {
                     const pageId = tab.getAttribute('data-page');
                     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                     document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-                    const targetPage = document.getElementById('page-' + pageId);
-                    if(targetPage) {
-                        targetPage.classList.add('active');
-                        tab.classList.add('active');
-                        tg.HapticFeedback.impactOccurred('light');
-                    }
+                    document.getElementById('page-' + pageId).classList.add('active');
+                    tab.classList.add('active');
+                    tg.HapticFeedback.impactOccurred('light');
                 };
             });
 
-            // Кнопка поделиться (Исправлено для выбора друзей)
+            // Поделиться (Открывает выбор чата)
             document.getElementById('share-btn').onclick = () => {
-                const text = ui[lang].share;
-                // switchInlineQuery с пустым вторым параметром открывает список чатов
-                tg.switchInlineQuery(text); 
+                tg.switchInlineQuery(ui[lang].shareT);
             };
 
             // Данные пользователя
@@ -109,24 +142,23 @@
                 document.getElementById('main-username').innerText = user.first_name;
                 document.getElementById('user-name-prof').innerText = user.first_name;
                 if(user.photo_url) {
-                    const ids = ['main-avatar', 'user-avatar-prof'];
-                    ids.forEach(id => {
-                        const el = document.getElementById(id);
-                        if(el) { el.src = user.photo_url; el.style.display = 'block'; }
-                    });
+                    document.getElementById('main-avatar').src = user.photo_url;
+                    document.getElementById('main-avatar').style.display = 'block';
+                    document.getElementById('user-avatar-prof').src = user.photo_url;
+                    document.getElementById('user-avatar-prof').style.display = 'block';
                 }
             }
 
-            // Кольцо прогресса
+            // Прогресс кольца
             let s = 6200;
-            const circle = document.getElementById('ring-progress');
-            const circumference = 2 * Math.PI * 100;
-            circle.style.strokeDashoffset = circumference - ( (s/10000) * circumference);
-
             document.getElementById('steps-count').innerText = s.toLocaleString();
             document.getElementById('val-kcal').innerText = Math.round(s * 0.04);
             document.getElementById('val-km').innerText = (s * 0.0007).toFixed(1);
             document.getElementById('val-min').innerText = Math.round(s / 100);
+            
+            const circle = document.getElementById('ring-progress');
+            const circumference = 2 * Math.PI * 100;
+            circle.style.strokeDashoffset = circumference - ((s/10000) * circumference);
         });
     </script>
 </body>
