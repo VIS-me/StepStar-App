@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -20,48 +21,58 @@
     <script src="pages.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
+        // Инициализация с защитой
+        const tg = window.Telegram ? window.Telegram.WebApp : null;
         
-        // Временное состояние (пока нет БД)
         let userState = { frame: 'blue', steps: 6420 };
-        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
+        const appLang = (tg && tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
-        // Кнопка поделиться (ведет на твоего бота)
         function shareResult(steps) {
             const botUsername = 'StepStarAppBot'; 
             const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
             const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
-            tg.openTelegramLink(shareUrl);
+            if (tg) tg.openTelegramLink(shareUrl);
         }
 
         function navigate(pageId, el) {
             const app = document.getElementById('app');
-            const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
-            app.innerHTML = Pages[pageId](user, userState, appLang);
+            // Проверка наличия данных пользователя
+            const user = (tg && tg.initDataUnsafe?.user) ? tg.initDataUnsafe.user : { first_name: "User", photo_url: "" };
+            
+            if (Pages[pageId]) {
+                app.innerHTML = Pages[pageId](user, userState, appLang);
+            }
             
             document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
             if(el) el.classList.add('active');
             
-            tg.HapticFeedback.impactOccurred('light');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         function changeFrame(color) {
             userState.frame = color;
             navigate('prof');
-            tg.HapticFeedback.notificationOccurred('success');
+            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
-        window.onload = () => {
-            tg.expand();
-            tg.ready();
-            setTimeout(() => {
-                document.getElementById('txt-home').innerText = t('home', appLang);
-                document.getElementById('txt-rank').innerText = t('rank', appLang);
-                document.getElementById('txt-tour').innerText = t('tour', appLang);
-                document.getElementById('txt-prof').innerText = t('prof', appLang);
-                navigate('home', document.getElementById('btn-home'));
-            }, 100);
-        };
+        // Запуск приложения
+        function initApp() {
+            if (tg) {
+                tg.expand();
+                tg.ready();
+            }
+            
+            // Заполняем тексты меню
+            document.getElementById('txt-home').innerText = t('home', appLang);
+            document.getElementById('txt-rank').innerText = t('rank', appLang);
+            document.getElementById('txt-tour').innerText = t('tour', appLang);
+            document.getElementById('txt-prof').innerText = t('prof', appLang);
+            
+            navigate('home', document.getElementById('btn-home'));
+        }
+
+        // Ждем полной загрузки всех файлов
+        window.addEventListener('load', initApp);
     </script>
 </body>
 </html>
