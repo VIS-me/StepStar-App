@@ -1,5 +1,5 @@
 const Pages = {
-    // Рендер Главной
+    // ГЛАВНАЯ СТРАНИЦА
     home: (user, state, lang) => {
         const kcal = Math.round(state.steps * 0.04);
         const km = (state.steps * 0.0007).toFixed(1);
@@ -38,29 +38,58 @@ const Pages = {
         </div>`;
     },
 
-    // Рендер Рейтинга
-    rank: (user, state, lang) => `
-        <div class="page-content">
-            <h2 class="title-center">${t('rank', lang)}</h2>
-            <div class="winner-card">
-                <div class="avatar-wrapper" style="width:110px; height:110px;">
-                    <div class="profile-frame" style="border: #FFD700 5px solid;"></div>
-                    <img src="https://via.placeholder.com/100" class="user-avatar" style="width:94px; height:94px;">
-                    <div class="winner-badge">👑</div>
-                </div>
-                <h3 class="centered-name">${t('champion', lang)}</h3>
-                <p style="text-align:center; color:#248bcf; font-weight:bold;">12,500 ${t('steps', lang)}</p>
-            </div>
-        </div>`,
+    // СТРАНИЦА РЕЙТИНГА (Стиль WeRun)
+    rank: (user, state, lang) => {
+        const leader = { name: "Дмитрий", steps: 85400, photo: "https://via.placeholder.com/100" };
+        const myRank = { pos: 124, steps: state.steps };
+        const topFriends = [
+            { pos: 1, name: "Алексей", steps: 12400, photo: "https://via.placeholder.com/50" },
+            { pos: 2, name: "Мария", steps: 10200, photo: "https://via.placeholder.com/50" },
+            { pos: 3, name: "Иван К.", steps: 9800, photo: "https://via.placeholder.com/50" }
+        ];
 
-    // Рендер Турнира
+        return `
+        <div class="page-content">
+            <div class="leader-header">
+                <div class="leader-avatar-box">
+                    <img src="${leader.photo}" class="leader-photo">
+                </div>
+                <h3 class="leader-name">${leader.name} ${t('winner', lang)}</h3>
+                <p class="leader-steps">${leader.steps.toLocaleString()} ${t('steps', lang)}</p>
+            </div>
+
+            <div class="user-rank-bar">
+                <div class="user-rank-info">
+                    <span class="user-rank-pos">#${myRank.pos}</span>
+                    <span class="user-rank-name">${user.first_name || 'User'}</span>
+                </div>
+                <div class="user-rank-score">
+                    <strong>${myRank.steps.toLocaleString()}</strong>
+                    <span>${t('steps', lang)}</span>
+                </div>
+            </div>
+
+            <div class="friends-rank-list">
+                ${topFriends.map(f => `
+                    <div class="rank-item">
+                        <span class="rank-pos">${f.pos}</span>
+                        <img src="${f.photo}" class="rank-photo">
+                        <span class="rank-name">${f.name}</span>
+                        <span class="rank-steps">${f.steps.toLocaleString()}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    },
+
+    // СТРАНИЦА ТУРНИРОВ
     tour: (user, state, lang) => `
         <div class="page-content center-flex">
-            <span style="font-size:60px;">🏁</span>
+            <span style="font-size:60px; margin-bottom:20px;">🏁</span>
             <p style="color:gray;">${t('noTour', lang)}</p>
         </div>`,
 
-    // Рендер Профиля + Магазин
+    // СТРАНИЦА ПРОФИЛЯ + МАГАЗИН
     prof: (user, state, lang) => `
         <div class="page-content">
             <h2 class="title-center">${t('prof', lang)}</h2>
@@ -71,7 +100,7 @@ const Pages = {
             <h3 class="centered-name">${user.first_name || 'User'}</h3>
             
             <div class="shop-container">
-                <h4 style="margin:0 0 10px 0;">${t('shop', lang)}</h4>
+                <h4 style="margin:0 0 15px 0;">${t('shop', lang)}</h4>
                 <div class="shop-grid">
                     <div class="shop-item" onclick="changeFrame('blue')">
                         <div class="preview-circle" style="border: 4px solid #248bcf"></div>
