@@ -11,10 +11,10 @@
     <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
-        <div class="tab-item active" onclick="navigate('home')"><i>🏠</i><span>Home</span></div>
-        <div class="tab-item" onclick="navigate('rank')"><i>🏆</i><span>Rank</span></div>
-        <div class="tab-item" onclick="navigate('tour')"><i>🏁</i><span>Tour</span></div>
-        <div class="tab-item" onclick="navigate('prof')"><i>👤</i><span>Profile</span></div>
+        <div class="tab-item active" onclick="navigate('home', this)"><i>🏠</i><span>Home</span></div>
+        <div class="tab-item" onclick="navigate('rank', this)"><i>🏆</i><span>Rank</span></div>
+        <div class="tab-item" onclick="navigate('tour', this)"><i>🏁</i><span>Tour</span></div>
+        <div class="tab-item" onclick="navigate('prof', this)"><i>👤</i><span>Profile</span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -24,33 +24,35 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Текущее состояние пользователя (потом будет приходить из базы)
+        // Наше "хранилище" (потом будет на сервере)
         let userState = {
-            frame: 'blue', // По умолчанию голубая
-            steps: 6200
+            frame: 'blue',
+            steps: 6420
         };
 
-        function navigate(pageId) {
+        function navigate(pageId, el) {
             const app = document.getElementById('app');
             const user = tg.initDataUnsafe?.user || { first_name: "User" };
             
-            // Отрисовываем нужную страницу из модуля pages.js
+            // Собираем страницу
             app.innerHTML = Pages[pageId](user, userState);
             
-            // Визуальное переключение кнопок меню
-            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-            // (логика подсветки активной кнопки)
+            // Подсветка меню
+            if(el) {
+                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Функция покупки/смены рамки
-        function changeFrame(color) {
-            userState.frame = color;
-            navigate('prof'); // Перерисовываем страницу профиля
+        function changeFrame(colorName) {
+            userState.frame = colorName;
+            // Сразу перерисовываем, чтобы увидеть результат
+            navigate('prof'); 
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Стартовая страница
+        // Запуск
         navigate('home');
     </script>
 </body>
