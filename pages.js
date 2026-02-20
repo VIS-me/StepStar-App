@@ -1,6 +1,5 @@
 const Pages = {
-    // Вкладка ГЛАВНАЯ
-    home: (user, state) => {
+    home: (user, state, lang) => {
         const kcal = Math.round(state.steps * 0.04);
         const km = (state.steps * 0.0007).toFixed(1);
         const min = Math.round(state.steps / 100);
@@ -23,51 +22,48 @@ const Pages = {
                 </svg>
                 <div class="steps-content">
                     <h1>${state.steps.toLocaleString()}</h1>
-                    <p>steps</p>
+                    <p>${t('steps', lang)}</p>
                 </div>
             </div>
 
             <div class="stats-grid">
-                <div class="stat-item"><span>${kcal}</span><label>kcal</label></div>
-                <div class="stat-item"><span>${km}</span><label>km</label></div>
-                <div class="stat-item"><span>${min}</span><label>min</label></div>
+                <div class="stat-item"><span>${kcal}</span><label>${t('kcal', lang)}</label></div>
+                <div class="stat-item"><span>${km}</span><label>${t('km', lang)}</label></div>
+                <div class="stat-item"><span>${min}</span><label>${t('min', lang)}</label></div>
             </div>
 
             <div class="button-container">
-                <button class="main-button" onclick="tg.switchInlineQuery('Я прошел ${state.steps} шагов в StepStar! 👟')">Share Result</button>
+                <button class="main-button" onclick="tg.switchInlineQuery('${t('shareText', lang).replace('{n}', state.steps)}')">${t('shareBtn', lang)}</button>
             </div>
         </div>
     `;
     },
 
-    // Вкладка РЕЙТИНГ
-    rank: (user, state) => `
+    rank: (user, state, lang) => `
         <div class="page-content">
-            <h2 style="text-align:center;">Rank</h2>
+            <h2 style="text-align:center;">${t('rank', lang)}</h2>
             <div class="winner-card">
                 <div class="avatar-wrapper" style="width:110px; height:110px;">
                     <div class="profile-frame" style="border: var(--gold) 5px solid;"></div>
                     <img src="https://via.placeholder.com/100" class="user-avatar" style="width:94px; height:94px;">
                     <div class="winner-badge">👑</div>
                 </div>
-                <h3 style="text-align:center; margin-top:15px;">Weekly Champion</h3>
-                <p style="text-align:center; color:var(--main-color); font-weight:bold;">12,500 steps</p>
+                <h3 style="text-align:center; margin-top:15px;">${t('champion', lang)}</h3>
+                <p style="text-align:center; color:var(--main-color); font-weight:bold;">12,500 ${t('steps', lang)}</p>
             </div>
         </div>
     `,
 
-    // Вкладка ТУРНИР
-    tour: () => `
+    tour: (user, state, lang) => `
         <div class="page-content" style="text-align:center; padding-top:100px;">
             <span style="font-size:60px;">🏁</span>
-            <p style="color:gray;">No active tournaments</p>
+            <p style="color:gray;">${t('noTour', lang)}</p>
         </div>
     `,
 
-    // Вкладка ПРОФИЛЬ
-    prof: (user, state) => `
+    prof: (user, state, lang) => `
         <div class="page-content">
-            <h2 style="text-align:center;">Profile</h2>
+            <h2 style="text-align:center;">${t('prof', lang)}</h2>
             <div class="avatar-wrapper" style="width:110px; height:110px;">
                 <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
                 <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
@@ -75,7 +71,7 @@ const Pages = {
             <h3 style="text-align:center; margin-top:15px;">${user.first_name}</h3>
             
             <div class="shop-container">
-                <h4>Shop ✨</h4>
+                <h4>${t('shop', lang)}</h4>
                 <div class="shop-grid">
                     <div class="shop-item" onclick="changeFrame('blue')">
                         <div class="preview-circle" style="border: ${Assets.frames.blue}"></div>
