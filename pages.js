@@ -40,21 +40,26 @@ const Pages = {
 
     // СТРАНИЦА РЕЙТИНГА (Стиль WeRun)
     rank: (user, state, lang) => {
-        const leader = { name: "Дмитрий", steps: 85400, photo: "https://via.placeholder.com/100" };
+        // Данные лидера (используем фото юзера для теста, если нет другого)
+        const leader = { name: "Дмитрий", steps: 85400, photo: user.photo_url || "" };
         const myRank = { pos: 124, steps: state.steps };
         const topFriends = [
-            { pos: 1, name: "Алексей", steps: 12400, photo: "https://via.placeholder.com/50" },
-            { pos: 2, name: "Мария", steps: 10200, photo: "https://via.placeholder.com/50" },
-            { pos: 3, name: "Иван К.", steps: 9800, photo: "https://via.placeholder.com/50" }
+            { pos: 1, name: "Алексей", steps: 12400, photo: "" },
+            { pos: 2, name: "Мария", steps: 10200, photo: "" },
+            { pos: 3, name: "Иван К.", steps: 9800, photo: "" }
         ];
 
         return `
-        <div class="page-content">
+        <div class="page-content rank-page">
+            <h2 class="title-center">${t('rank', lang)}</h2>
+            
             <div class="leader-header">
                 <div class="leader-avatar-box">
-                    <img src="${leader.photo}" class="leader-photo">
+                    <img src="${leader.photo}" class="leader-photo" style="${leader.photo ? '' : 'background: #333;'}">
+                    <span class="crown-icon">👑</span>
                 </div>
-                <h3 class="leader-name">${leader.name} ${t('winner', lang)}</h3>
+                <h3 class="leader-name">${leader.name}</h3>
+                <p class="leader-label">${t('champion', lang)}</p>
                 <p class="leader-steps">${leader.steps.toLocaleString()} ${t('steps', lang)}</p>
             </div>
 
@@ -73,7 +78,7 @@ const Pages = {
                 ${topFriends.map(f => `
                     <div class="rank-item">
                         <span class="rank-pos">${f.pos}</span>
-                        <img src="${f.photo}" class="rank-photo">
+                        <div class="rank-photo" style="background: #444;"></div>
                         <span class="rank-name">${f.name}</span>
                         <span class="rank-steps">${f.steps.toLocaleString()}</span>
                     </div>
