@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
@@ -23,32 +22,21 @@
     <script>
         const tg = window.Telegram.WebApp;
         
-        // Текущие данные (состояние)
+        // Временное состояние (пока нет БД)
         let userState = { frame: 'blue', steps: 6420 };
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
-        // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
-       function shareResult(steps) {
-    // 1. Указываем юзернейм твоего бота БЕЗ символа @
-    const botUsername = 'StepStarAppBot'; 
-    
-    // 2. Берем текст сообщения из словаря и подставляем число шагов
-    const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
-    
-    // 3. Формируем прямую ссылку на пересылку
-    // url — это ссылка, которую человек нажмет в чате (ссылка на бота)
-    // text — это сопроводительный текст сообщения
-    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
-    
-    // 4. Открываем это через метод Telegram, чтобы приложение не закрылось
-    tg.openTelegramLink(shareUrl);
-}
+        // Кнопка поделиться (ведет на твоего бота)
+        function shareResult(steps) {
+            const botUsername = 'StepStarAppBot'; 
+            const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
+            const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
+            tg.openTelegramLink(shareUrl);
+        }
 
-        // Переход между страницами
         function navigate(pageId, el) {
             const app = document.getElementById('app');
-            const user = tg.initDataUnsafe?.user || { first_name: "Ivan B." };
-            
+            const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
             app.innerHTML = Pages[pageId](user, userState, appLang);
             
             document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
@@ -57,25 +45,20 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Покупка/смена рамки
         function changeFrame(color) {
             userState.frame = color;
             navigate('prof');
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Запуск при загрузке
         window.onload = () => {
             tg.expand();
             tg.ready();
-
-            // Принудительная задержка 100мс для стабильности рендера
             setTimeout(() => {
                 document.getElementById('txt-home').innerText = t('home', appLang);
                 document.getElementById('txt-rank').innerText = t('rank', appLang);
                 document.getElementById('txt-tour').innerText = t('tour', appLang);
                 document.getElementById('txt-prof').innerText = t('prof', appLang);
-
                 navigate('home', document.getElementById('btn-home'));
             }, 100);
         };
