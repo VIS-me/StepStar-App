@@ -29,10 +29,18 @@
 
         // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
        function shareResult(steps) {
-    const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
-    const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/твой_бот') + '&text=' + message;
+    // 1. Указываем юзернейм твоего бота БЕЗ символа @
+    const botUsername = 'StepStarAppBot'; 
     
-    // Это откроет окно пересылки, но приложение останется в фоне
+    // 2. Берем текст сообщения из словаря и подставляем число шагов
+    const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
+    
+    // 3. Формируем прямую ссылку на пересылку
+    // url — это ссылка, которую человек нажмет в чате (ссылка на бота)
+    // text — это сопроводительный текст сообщения
+    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
+    
+    // 4. Открываем это через метод Telegram, чтобы приложение не закрылось
     tg.openTelegramLink(shareUrl);
 }
 
