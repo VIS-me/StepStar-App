@@ -3,45 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StepStar App</title>
+    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* Добавим немного стиля для аватарки прямо тут */
-        .user-block {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        #user-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 3px solid var(--tg-theme-button-color, #248bcf);
-            display: none; /* Спрячем, пока не загрузится */
-        }
-        #user-name {
-            margin-top: 10px;
-            font-weight: bold;
-            font-size: 1.2em;
-        }
-    </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="user-block">
-            <img id="user-avatar" src="" alt="Avatar">
-            <div id="user-name"></div>
+    <div id="page-home" class="page active">
+        <div class="progress-container">
+            <svg width="220" height="220" class="progress-ring">
+                <circle stroke="rgba(0,0,0,0.05)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/>
+                <circle id="ring-progress" class="progress-ring__circle" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/>
+            </svg>
+            <div class="steps-content">
+                <h1 id="steps-count">0</h1>
+                <p id="label-steps">steps</p>
+            </div>
         </div>
-
-        <div class="steps-box">
-            <span id="steps-count">0</span>
-            <p id="steps-label">steps today</p>
+        <div class="stats-grid">
+            <div class="stat-item"><span id="val-kcal">0</span><label id="label-kcal">kcal</label></div>
+            <div class="stat-item"><span id="val-km">0.0</span><label id="label-km">km</label></div>
+            <div class="stat-item"><span id="val-min">0</span><label id="label-min">min</label></div>
         </div>
+        <div style="padding: 20px;">
+            <button id="share-btn" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold;">Share Result</button>
+        </div>
+    </div>
 
-        <button id="share-btn">...</button>
+    <div id="page-rank" class="page">
+        <h2 style="text-align:center;" id="tab-rank-title">Rank</h2>
+        <div class="winner-card">
+            <div class="crown-badge" id="label-winner">Winner of the week</div>
+            <img id="winner-photo" src="https://via.placeholder.com/100" style="width:90px; height:90px; border-radius:20px; border:3px solid white; margin-bottom:10px;">
+            <h3 id="winner-name" style="margin:0;">Searching...</h3>
+            <p id="winner-steps-val" style="margin:5px 0 0; color:var(--main-color); font-weight:bold;">0 steps</p>
+        </div>
+        <div id="friends-list" style="padding: 20px; text-align:center; color:gray;" id="label-friends">
+            Your friends will appear here
+        </div>
+    </div>
+
+    <div id="page-tour" class="page">
+        <h2 style="text-align:center;" id="tab-tour-title">Tournament</h2>
+        <div style="text-align:center; margin-top:50px;">
+            <span style="font-size:50px;">🏁</span>
+            <p id="label-no-tour">No active tournaments</p>
+        </div>
+    </div>
+
+    <div id="page-prof" class="page">
+        <h2 style="text-align:center;" id="tab-prof-title">Profile</h2>
+        <div style="text-align:center;">
+            <div style="position:relative; width:100px; height:100px; margin:0 auto;">
+                <img id="user-avatar" src="" style="width:80px; height:80px; border-radius:50%; position:absolute; top:10px; left:10px; z-index:1;">
+                <div id="user-frame" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; border: 4px solid transparent; border-radius:50%;"></div>
+            </div>
+            <h3 id="user-name">User</h3>
+            <button class="shop-btn" id="btn-shop">Shop ✨</button>
+        </div>
+    </div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" onclick="showPage('home', this)"><i>🏠</i><span id="tab-home">Home</span></div>
+        <div class="tab-item" onclick="showPage('rank', this)"><i>🏆</i><span id="tab-rank">Rank</span></div>
+        <div class="tab-item" onclick="showPage('tour', this)"><i>🏁</i><span id="tab-tour">Tour</span></div>
+        <div class="tab-item" onclick="showPage('prof', this)"><i>👤</i><span id="tab-prof">Profile</span></div>
     </div>
 
     <script>
@@ -49,46 +75,71 @@
         tg.expand();
         tg.ready();
 
-        // 1. Получаем данные пользователя
-        const user = tg.initDataUnsafe?.user;
-        const userLanguage = user?.language_code || 'en';
-        
-        // 2. Выводим имя и аватарку
-        if (user) {
-            document.getElementById('user-name').innerText = user.first_name;
-            if (user.photo_url) {
-                const img = document.getElementById('user-avatar');
-                img.src = user.photo_url;
-                img.style.display = 'block'; // Показываем, если фото есть
-            }
-        }
-
-        // 3. Переводы
-        const shareBtn = document.getElementById('share-btn');
-        const labelElement = document.getElementById('steps-label');
-
-        const translations = {
+        const lang = tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'en';
+        const ui = {
             ru: {
-                label: "шагов сегодня",
-                button: "Отправить результат",
-                shareText: `Я прошел 0 шагов в StepStar! 👟`
+                steps: "шагов", kcal: "ккал", km: "км", min: "мин", btn: "Поделиться",
+                home: "Главная", rank: "Рейтинг", tour: "Турнир", prof: "Профиль",
+                winner: "Победитель недели 👑", noTour: "Турниров пока нет",
+                friends: "Здесь будет список друзей", shop: "Магазин ✨"
             },
             en: {
-                label: "steps today",
-                button: "Share result",
-                shareText: `I walked 0 steps in StepStar! 👟`
+                steps: "steps", kcal: "kcal", km: "km", min: "min", btn: "Share Result",
+                home: "Home", rank: "Rank", tour: "Tour", prof: "Profile",
+                winner: "Winner of the week 👑", noTour: "No active tournaments",
+                friends: "Friends list coming soon", shop: "Shop ✨"
             }
         };
 
-        const lang = userLanguage === 'ru' ? 'ru' : 'en';
-        labelElement.innerText = translations[lang].label;
-        shareBtn.innerText = translations[lang].button;
+        function applyLang() {
+            const t = ui[lang];
+            document.getElementById('label-steps').innerText = t.steps;
+            document.getElementById('label-kcal').innerText = t.kcal;
+            document.getElementById('label-km').innerText = t.km;
+            document.getElementById('label-min').innerText = t.min;
+            document.getElementById('share-btn').innerText = t.btn;
+            document.getElementById('tab-home').innerText = t.home;
+            document.getElementById('tab-rank').innerText = t.rank;
+            document.getElementById('tab-tour').innerText = t.tour;
+            document.getElementById('tab-prof').innerText = t.prof;
+            document.getElementById('tab-rank-title').innerText = t.rank;
+            document.getElementById('tab-tour-title').innerText = t.tour;
+            document.getElementById('tab-prof-title').innerText = t.prof;
+            document.getElementById('label-winner').innerText = t.winner;
+            document.getElementById('label-no-tour').innerText = t.noTour;
+            document.getElementById('btn-shop').innerText = t.shop;
+        }
 
-        // 4. Логика кнопки
-        shareBtn.addEventListener('click', () => {
-            tg.switchInlineQuery(translations[lang].shareText, ["users", "groups"]);
-        });
+        function showPage(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            tg.HapticFeedback.impactOccurred('light');
+        }
 
+        function setProgress(pct) {
+            const circle = document.getElementById('ring-progress');
+            const circumference = 2 * Math.PI * 100;
+            circle.style.strokeDashoffset = circumference - (pct * circumference);
+        }
+
+        // Загрузка данных
+        const user = tg.initDataUnsafe?.user;
+        if(user) {
+            document.getElementById('user-name').innerText = user.first_name;
+            if(user.photo_url) document.getElementById('user-avatar').src = user.photo_url;
+        }
+
+        // Демо-данные
+        let s = 6200;
+        document.getElementById('steps-count').innerText = s.toLocaleString();
+        document.getElementById('val-kcal').innerText = Math.round(s * 0.04);
+        document.getElementById('val-km').innerText = (s * 0.0007).toFixed(1);
+        document.getElementById('val-min').innerText = Math.round(s / 100);
+        setTimeout(() => setProgress(s/10000), 300);
+
+        applyLang();
         tg.setHeaderColor('secondary_bg_color');
     </script>
 </body>
