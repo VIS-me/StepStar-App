@@ -28,26 +28,25 @@
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
         // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
-       async function shareResult(steps) {
+       function shareResult(steps) {
     const message = t('shareMsg', appLang).replace('{n}', steps);
     
-    // Проверяем, поддерживает ли браузер (телефона) системную отправку
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: 'StepStar',
-                text: message,
-                url: 'https://t.me/твой_бот' // Ссылка на твоего бота
+    // Вызываем официальное окно Telegram внутри приложения
+    tg.showPopup({
+        title: t('shareBtn', appLang),
+        message: message,
+        buttons: [
+            {id: 'copy', type: 'default', text: 'Copy Text'}, // В RU будет подставлено позже
+            {id: 'close', type: 'destructive', text: 'Close'}
+        ]
+    }, function(buttonId) {
+        if (buttonId === 'copy') {
+            // Копируем текст в буфер обмена
+            navigator.clipboard.writeText(message).then(() => {
+                tg.showAlert('Copied to clipboard! / Скопировано!');
             });
-            tg.HapticFeedback.notificationOccurred('success');
-        } catch (err) {
-            // Если юзер отменил или ошибка — просто ничего не делаем
-            console.log("Share cancelled");
         }
-    } else {
-        // Резервный вариант, если системный Share не сработал
-        tg.switchInlineQuery(message);
-    }
+    });
 }
 
         // Переход между страницами
