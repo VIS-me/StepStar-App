@@ -10,6 +10,11 @@
 <body>
 
     <div id="page-home" class="page active">
+        <div class="user-main-info" style="text-align: center; margin-bottom: 10px; margin-top: 10px;">
+            <img id="main-avatar" src="" style="width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--main-color); display: none; margin: 0 auto;">
+            <h3 id="main-username" style="margin: 8px 0; font-size: 18px; font-weight: 700;">User</h3>
+        </div>
+
         <div class="progress-container">
             <svg width="220" height="220" class="progress-ring">
                 <circle stroke="rgba(0,0,0,0.05)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/>
@@ -20,13 +25,15 @@
                 <p id="label-steps">steps</p>
             </div>
         </div>
+
         <div class="stats-grid">
             <div class="stat-item"><span id="val-kcal">0</span><label id="label-kcal">kcal</label></div>
             <div class="stat-item"><span id="val-km">0.0</span><label id="label-km">km</label></div>
             <div class="stat-item"><span id="val-min">0</span><label id="label-min">min</label></div>
         </div>
+
         <div style="padding: 20px;">
-            <button id="share-btn" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold;">Share Result</button>
+            <button id="share-btn" style="width:100%; padding:15px; border-radius:15px; border:none; background:var(--main-color); color:white; font-weight:bold; cursor:pointer;">Share Result</button>
         </div>
     </div>
 
@@ -38,8 +45,8 @@
             <h3 id="winner-name" style="margin:0;">Searching...</h3>
             <p id="winner-steps-val" style="margin:5px 0 0; color:var(--main-color); font-weight:bold;">0 steps</p>
         </div>
-        <div id="friends-list" style="padding: 20px; text-align:center; color:gray;" id="label-friends">
-            Your friends will appear here
+        <div id="friends-list" style="padding: 20px; text-align:center; color:gray;">
+            <span id="label-friends">Your friends will appear here</span>
         </div>
     </div>
 
@@ -55,19 +62,19 @@
         <h2 style="text-align:center;" id="tab-prof-title">Profile</h2>
         <div style="text-align:center;">
             <div style="position:relative; width:100px; height:100px; margin:0 auto;">
-                <img id="user-avatar" src="" style="width:80px; height:80px; border-radius:50%; position:absolute; top:10px; left:10px; z-index:1;">
+                <img id="user-avatar-prof" src="" style="width:80px; height:80px; border-radius:50%; position:absolute; top:10px; left:10px; z-index:1; display:none;">
                 <div id="user-frame" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; border: 4px solid transparent; border-radius:50%;"></div>
             </div>
-            <h3 id="user-name">User</h3>
+            <h3 id="user-name-prof" style="margin-top: 15px;">User</h3>
             <button class="shop-btn" id="btn-shop">Shop ✨</button>
         </div>
     </div>
 
     <div class="tab-bar">
-        <div class="tab-item active" onclick="showPage('home', this)"><i>🏠</i><span id="tab-home">Home</span></div>
-        <div class="tab-item" onclick="showPage('rank', this)"><i>🏆</i><span id="tab-rank">Rank</span></div>
-        <div class="tab-item" onclick="showPage('tour', this)"><i>🏁</i><span id="tab-tour">Tour</span></div>
-        <div class="tab-item" onclick="showPage('prof', this)"><i>👤</i><span id="tab-prof">Profile</span></div>
+        <div class="tab-item active" data-page="home"><i>🏠</i><span id="tab-home">Home</span></div>
+        <div class="tab-item" data-page="rank"><i>🏆</i><span id="tab-rank">Rank</span></div>
+        <div class="tab-item" data-page="tour"><i>🏁</i><span id="tab-tour">Tour</span></div>
+        <div class="tab-item" data-page="prof"><i>👤</i><span id="tab-prof">Profile</span></div>
     </div>
 
     <script>
@@ -75,22 +82,40 @@
         tg.expand();
         tg.ready();
 
-        const lang = tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'en';
+        const lang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
         const ui = {
             ru: {
                 steps: "шагов", kcal: "ккал", km: "км", min: "мин", btn: "Поделиться",
                 home: "Главная", rank: "Рейтинг", tour: "Турнир", prof: "Профиль",
                 winner: "Победитель недели 👑", noTour: "Турниров пока нет",
-                friends: "Здесь будет список друзей", shop: "Магазин ✨"
+                friends: "Здесь будет список друзей", shop: "Магазин ✨",
+                shareT: "Я прошел 6200 шагов в StepStar! 👟"
             },
             en: {
                 steps: "steps", kcal: "kcal", km: "km", min: "min", btn: "Share Result",
                 home: "Home", rank: "Rank", tour: "Tour", prof: "Profile",
                 winner: "Winner of the week 👑", noTour: "No active tournaments",
-                friends: "Friends list coming soon", shop: "Shop ✨"
+                friends: "Friends list coming soon", shop: "Shop ✨",
+                shareT: "I walked 6200 steps in StepStar! 👟"
             }
         };
 
+        // Навигация
+        function setupNavigation() {
+            const tabs = document.querySelectorAll('.tab-item');
+            tabs.forEach(tab => {
+                tab.onclick = () => {
+                    const pageId = tab.getAttribute('data-page');
+                    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                    document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                    document.getElementById('page-' + pageId).classList.add('active');
+                    tab.classList.add('active');
+                    if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                };
+            });
+        }
+
+        // Тексты
         function applyLang() {
             const t = ui[lang];
             document.getElementById('label-steps').innerText = t.steps;
@@ -108,39 +133,54 @@
             document.getElementById('label-winner').innerText = t.winner;
             document.getElementById('label-no-tour').innerText = t.noTour;
             document.getElementById('btn-shop').innerText = t.shop;
+            document.getElementById('label-friends').innerText = t.friends;
         }
 
-        function showPage(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById('page-' + pageId).classList.add('active');
-            document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
-            el.classList.add('active');
-            tg.HapticFeedback.impactOccurred('light');
-        }
-
+        // Прогресс
         function setProgress(pct) {
             const circle = document.getElementById('ring-progress');
+            if(!circle) return;
             const circumference = 2 * Math.PI * 100;
             circle.style.strokeDashoffset = circumference - (pct * circumference);
         }
 
-        // Загрузка данных
-        const user = tg.initDataUnsafe?.user;
-        if(user) {
-            document.getElementById('user-name').innerText = user.first_name;
-            if(user.photo_url) document.getElementById('user-avatar').src = user.photo_url;
-        }
+        // Основной запуск
+        document.addEventListener('DOMContentLoaded', () => {
+            applyLang();
+            setupNavigation();
 
-        // Демо-данные
-        let s = 6200;
-        document.getElementById('steps-count').innerText = s.toLocaleString();
-        document.getElementById('val-kcal').innerText = Math.round(s * 0.04);
-        document.getElementById('val-km').innerText = (s * 0.0007).toFixed(1);
-        document.getElementById('val-min').innerText = Math.round(s / 100);
-        setTimeout(() => setProgress(s/10000), 300);
+            document.getElementById('share-btn').onclick = () => {
+                tg.switchInlineQuery(ui[lang].shareT);
+            };
 
-        applyLang();
-        tg.setHeaderColor('secondary_bg_color');
+            // Загрузка данных пользователя во все места
+            const user = tg.initDataUnsafe?.user;
+            if(user) {
+                // Имя
+                document.getElementById('main-username').innerText = user.first_name;
+                document.getElementById('user-name-prof').innerText = user.first_name;
+                
+                // Фото (если есть)
+                if(user.photo_url) {
+                    const avatars = ['main-avatar', 'user-avatar-prof'];
+                    avatars.forEach(id => {
+                        const el = document.getElementById(id);
+                        el.src = user.photo_url;
+                        el.style.display = 'block';
+                    });
+                }
+            }
+
+            // Имитация шагов
+            let s = 6200;
+            document.getElementById('steps-count').innerText = s.toLocaleString();
+            document.getElementById('val-kcal').innerText = Math.round(s * 0.04);
+            document.getElementById('val-km').innerText = (s * 0.0007).toFixed(1);
+            document.getElementById('val-min').innerText = Math.round(s / 100);
+            setTimeout(() => setProgress(s/10000), 300);
+
+            tg.setHeaderColor('secondary_bg_color');
+        });
     </script>
 </body>
 </html>
