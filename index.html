@@ -29,24 +29,11 @@
 
         // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
        function shareResult(steps) {
-    const message = t('shareMsg', appLang).replace('{n}', steps);
+    const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
+    const shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent('https://t.me/твой_бот') + '&text=' + message;
     
-    // Вызываем официальное окно Telegram внутри приложения
-    tg.showPopup({
-        title: t('shareBtn', appLang),
-        message: message,
-        buttons: [
-            {id: 'copy', type: 'default', text: 'Copy Text'}, // В RU будет подставлено позже
-            {id: 'close', type: 'destructive', text: 'Close'}
-        ]
-    }, function(buttonId) {
-        if (buttonId === 'copy') {
-            // Копируем текст в буфер обмена
-            navigator.clipboard.writeText(message).then(() => {
-                tg.showAlert('Copied to clipboard! / Скопировано!');
-            });
-        }
-    });
+    // Это откроет окно пересылки, но приложение останется в фоне
+    tg.openTelegramLink(shareUrl);
 }
 
         // Переход между страницами
