@@ -2,45 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StepStar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>StepStar App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
-        <div class="header">
-            <div class="cover"></div>
-            <div class="user-info">
-                <img id="user-photo" src="" alt="">
-                <h2 id="user-name">User</h2>
-            </div>
+
+    <div class="app-container">
+        <h1 id="title">StepStar</h1>
+        
+        <div class="steps-box">
+            <span id="steps-count">0</span>
+            <p id="steps-label">steps today</p>
         </div>
 
-        <div class="stats">
-            <h1 id="steps">0</h1>
-            <p>шагов сегодня</p>
-        </div>
-
-        <button id="share-btn">Отправить другу</button>
+        <button id="share-btn">...</button>
     </div>
 
     <script>
+        // 1. Инициализация Telegram Web App
         const tg = window.Telegram.WebApp;
-        tg.expand(); // Раскрыть на весь экран
+        tg.expand(); // Разворачиваем на весь экран
+        tg.ready();
 
-        // Берем данные из Телеграма
-        const user = tg.initDataUnsafe.user;
-        if (user) {
-            document.getElementById('user-name').innerText = user.first_name;
-            document.getElementById('user-photo').src = user.photo_url || 'https://via.placeholder.com/100';
-        }
+        // 2. Определяем язык пользователя
+        const userLanguage = tg.initDataUnsafe?.user?.language_code || 'en';
+        
+        // Находим элементы на странице
+        const titleElement = document.getElementById('title');
+        const labelElement = document.getElementById('steps-label');
+        const shareBtn = document.getElementById('share-btn');
 
-        // Кнопка "Поделиться"
-        document.getElementById('share-btn').addEventListener('click', () => {
-            // Это та самая магия, которая заставит бота отправить результат
-            tg.switchInlineQuery("Я прошел 5000 шагов в StepStar! 👟", ["users", "groups"]);
+        // 3. Словарь переводов
+        const translations = {
+            ru: {
+                title: "Шагомер",
+                label: "шагов сегодня",
+                button: "Отправить результат",
+                shareText: "Я прошел 0 шагов в StepStar! 👟"
+            },
+            en: {
+                title: "StepStar",
+                label: "steps today",
+                button: "Share result",
+                shareText: "I walked 0 steps in StepStar! 👟"
+            }
+        };
+
+        // Выбираем нужный перевод (если не русский, то английский)
+        const lang = userLanguage === 'ru' ? 'ru' : 'en';
+
+        // Применяем тексты
+        labelElement.innerText = translations[lang].label;
+        shareBtn.innerText = translations[lang].button;
+        if(lang === 'ru') titleElement.innerText = translations[lang].title;
+
+        // 4. Логика работы кнопки "Поделиться"
+        shareBtn.addEventListener('click', () => {
+            // Открывает выбор чата и подставляет текст
+            tg.switchInlineQuery(translations[lang].shareText, ["users", "groups"]);
         });
+
+        // Сообщаем Telegram о цвете статус-бара (под цвет темы)
+        tg.setHeaderColor('secondary_bg_color');
     </script>
 </body>
 </html>
