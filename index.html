@@ -1,100 +1,46 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StepStar - Главная</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        :root {
-            --tg-bg: #2481cc; --tg-card: rgba(255, 255, 255, 0.15);
-            --tg-text: #ffffff; --vip-gold: #fbbf24;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(180deg, #2481cc 0%, #1c66a3 100%);
-            color: var(--tg-text); margin: 0; padding: 12px;
-            display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-        }
-        .content { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-bottom: 80px; }
-        .glass-panel { background: var(--tg-card); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 16px; }
-        .panel-title { font-size: 11px; font-weight: 600; opacity: 0.6; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
-        
-        /* Профиль мини */
-        .profile-card { text-align: center; }
-        .avatar-wrap { position: relative; width: 85px; height: 85px; margin: 0 auto 10px; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 26px; background: rgba(255,255,255,0.2); border: 2px solid white; display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden; }
-        .vip-tag { position: absolute; bottom: -4px; right: -4px; background: var(--vip-gold); color: #000; padding: 2px 7px; border-radius: 7px; font-size: 11px; font-weight: 800; }
-
-        /* Баланс и Слоты */
-        .balance-content { display: flex; justify-content: space-around; align-items: center; }
-        .balance-item { display: flex; align-items: center; gap: 8px; font-size: 19px; font-weight: 700; }
-        .balance-divider { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); }
-        .slots-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-        .slot { aspect-ratio: 1; background: rgba(255,255,255,0.1); border-radius: 14px; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .slot.locked { opacity: 0.35; }
-
-        /* Кнопки */
-        .action-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .action-btn { background: var(--tg-card); border: 1px solid rgba(255,255,255,0.2); padding: 14px 4px; display: flex; flex-direction: column; align-items: center; gap: 8px; border-radius: 20px; text-decoration: none; color: white; }
-        .action-btn i { font-size: 24px; font-style: normal; }
-        .action-btn span { font-size: 10px; font-weight: 600; }
-
-        /* Меню */
-        .nav-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(28, 102, 163, 0.98); display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: env(safe-area-inset-bottom); }
-        .nav-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; color: rgba(255,255,255,0.4); text-decoration: none; gap: 4px; }
-        .nav-tab.active { color: #ffffff; }
-        .nav-tab i { font-size: 24px; font-style: normal; }
-        .nav-tab span { font-size: 11px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="content">
-        <div class="glass-panel profile-card">
-            <div class="avatar-wrap">
-                <div class="avatar-img" id="user-photo">👟</div>
-                <div class="vip-tag">VIP - 0</div>
-            </div>
-            <h3 id="user-name" style="margin: 5px 0;">Runner</h3>
-            <div style="font-size:13px; opacity:0.7;">НОВИЧОК</div>
-        </div>
-        <div class="glass-panel">
-            <div class="panel-title">Баланс:</div>
-            <div class="balance-content">
-                <div class="balance-item">0 ⭐️</div>
-                <div class="balance-divider"></div>
-                <div class="balance-item">50 ⚡️</div>
+    <div id="app">
+        <div class="header">
+            <div class="cover"></div>
+            <div class="user-info">
+                <img id="user-photo" src="" alt="">
+                <h2 id="user-name">User</h2>
             </div>
         </div>
 
-        <div class="glass-panel">
-            <div class="panel-title">Доступные челенджи:</div>
-            <div class="slots-row">
-                <div class="slot">👟</div> <div class="slot">👟</div>
-                <div class="slot locked">🔒</div> <div class="slot locked">🔒</div> <div class="slot locked">🔒</div>
-            </div>
+        <div class="stats">
+            <h1 id="steps">0</h1>
+            <p>шагов сегодня</p>
         </div>
 
-        <div class="action-row">
-            <a href="work.html" class="action-btn"><i>⚔️</i><span>Дуэль</span></a>
-            <a href="work.html" class="action-btn"><i>👥</i><span>Команда</span></a>
-            <a href="work.html" class="action-btn"><i>🔥</i><span>Марафон</span></a>
-            <a href="work.html" class="action-btn"><i>🛒</i><span>Магазин</span></a>
-        </div>
+        <button id="share-btn">Отправить другу</button>
     </div>
-
-    <nav class="nav-bar">
-        <a href="index.html" class="nav-tab active"><i>🏠</i><span>Главная</span></a>
-        <a href="work.html" class="nav-tab"><i>📊</i><span>Челенджи</span></a>
-        <a href="profile.html" class="nav-tab"><i>👤</i><span>Профиль</span></a>
-    </nav>
 
     <script>
         const tg = window.Telegram.WebApp;
-        document.getElementById('user-name').innerText = tg.initDataUnsafe.user?.first_name || "Runner";
-        if(tg.initDataUnsafe.user?.photo_url) {
-            document.getElementById('user-photo').innerHTML = <img src="${tg.initDataUnsafe.user.photo_url}" style="width:100%; height:100%; object-fit:cover;">;
+        tg.expand(); // Раскрыть на весь экран
+
+        // Берем данные из Телеграма
+        const user = tg.initDataUnsafe.user;
+        if (user) {
+            document.getElementById('user-name').innerText = user.first_name;
+            document.getElementById('user-photo').src = user.photo_url || 'https://via.placeholder.com/100';
         }
+
+        // Кнопка "Поделиться"
+        document.getElementById('share-btn').addEventListener('click', () => {
+            // Это та самая магия, которая заставит бота отправить результат
+            tg.switchInlineQuery("Я прошел 5000 шагов в StepStar! 👟", ["users", "groups"]);
+        });
     </script>
 </body>
 </html>
