@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -12,10 +11,10 @@
     <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
-        <div class="tab-item active" onclick="navigate('home', this)"><i>🏠</i><span>Home</span></div>
-        <div class="tab-item" onclick="navigate('rank', this)"><i>🏆</i><span>Rank</span></div>
-        <div class="tab-item" onclick="navigate('tour', this)"><i>🏁</i><span>Tour</span></div>
-        <div class="tab-item" onclick="navigate('prof', this)"><i>👤</i><span>Profile</span></div>
+        <div class="tab-item active" id="tab-home-btn" onclick="navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
+        <div class="tab-item" id="tab-rank-btn" onclick="navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
+        <div class="tab-item" id="tab-tour-btn" onclick="navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
+        <div class="tab-item" id="tab-prof-btn" onclick="navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -26,20 +25,27 @@
         tg.expand();
         tg.ready();
 
-        // Имитация состояния пользователя
+        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
+
         let userState = {
             frame: 'blue',
             steps: 6420
         };
 
+        function updateMenu() {
+            document.getElementById('txt-home').innerText = t('home', appLang);
+            document.getElementById('txt-rank').innerText = t('rank', appLang);
+            document.getElementById('txt-tour').innerText = t('tour', appLang);
+            document.getElementById('txt-prof').innerText = t('prof', appLang);
+        }
+
         function navigate(pageId, el) {
             const app = document.getElementById('app');
             const user = tg.initDataUnsafe?.user || { first_name: "Ivan B." };
             
-            // Отрисовка страницы
-            app.innerHTML = Pages[pageId](user, userState);
+            // Теперь передаем appLang в модуль страниц
+            app.innerHTML = Pages[pageId](user, userState, appLang);
             
-            // Подсветка кнопок
             if(el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
@@ -53,8 +59,10 @@
             tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Стартуем с главной
-        window.onload = () => navigate('home');
+        window.onload = () => {
+            updateMenu(); // Переводим меню
+            navigate('home'); // Рисуем главную
+        };
     </script>
 </body>
 </html>
