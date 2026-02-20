@@ -1,36 +1,36 @@
 const Assets = {
+    // Настройки рамок (border)
     frames: {
         blue: "4px solid #248bcf",
         pink: "4px solid #ff69b4",
-        gold: "5px solid #FFD700",
-        none: "4px solid transparent"
+        gold: "5px solid #FFD700"
     },
-    // Словарь переводов
+    // Словарь (Мультиязычность)
     i18n: {
         ru: {
             steps: "шагов", kcal: "ккал", km: "км", min: "мин",
-            shareBtn: "Поделиться", shareText: "Я прошел {n} шагов в StepStar! 👟",
-            rank: "Рейтинг", tour: "Турнир", prof: "Профиль",
-            home: "Главная", winner: "Победитель недели 👑",
-            noTour: "Турниров пока нет", shop: "Магазин ✨",
-            champion: "Чемпион недели"
+            shareBtn: "Поделиться результатом", 
+            shareMsg: "Я прошел уже {n} шагов в StepStar! 👟",
+            rank: "Рейтинг", tour: "Турнир", prof: "Профиль", home: "Главная",
+            champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин ✨"
         },
         en: {
             steps: "steps", kcal: "kcal", km: "km", min: "min",
-            shareBtn: "Share Result", shareText: "I walked {n} steps in StepStar! 👟",
-            rank: "Rank", tour: "Tour", prof: "Profile",
-            home: "Home", winner: "Winner of the week 👑",
-            noTour: "No active tournaments", shop: "Shop ✨",
-            champion: "Weekly Champion"
+            shareBtn: "Share Result", 
+            shareMsg: "I've walked {n} steps in StepStar! 👟",
+            rank: "Rank", tour: "Tour", prof: "Profile", home: "Home",
+            champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop ✨"
         }
     }
 };
 
-function getFrameStyle(frameName) {
-    return Assets.frames[frameName] || Assets.frames.blue;
+// Функция-помощник для поиска текста
+function t(key, lang) {
+    const l = Assets.i18n[lang] ? lang : 'en';
+    return Assets.i18n[l][key] || key;
 }
 
-// Функция для получения текста на нужном языке
-function t(key, lang = 'en') {
-    return Assets.i18n[lang][key] || Assets.i18n['en'][key];
+// Получение стиля рамки
+function getFrameStyle(name) {
+    return Assets.frames[name] || Assets.frames.blue;
 }
