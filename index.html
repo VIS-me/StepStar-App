@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -11,10 +11,10 @@
     <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
-        <div class="tab-item active" id="tab-home-btn" onclick="navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
-        <div class="tab-item" id="tab-rank-btn" onclick="navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
-        <div class="tab-item" id="tab-tour-btn" onclick="navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
-        <div class="tab-item" id="tab-prof-btn" onclick="navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
+        <div class="tab-item active" id="btn-home" onclick="navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
+        <div class="tab-item" id="btn-rank" onclick="navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
+        <div class="tab-item" id="btn-tour" onclick="navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
+        <div class="tab-item" id="btn-prof" onclick="navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -22,46 +22,53 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.expand();
-        tg.ready();
-
+        
+        // Текущие данные (состояние)
+        let userState = { frame: 'blue', steps: 6420 };
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
-        let userState = {
-            frame: 'blue',
-            steps: 6420
-        };
-
-        function updateMenu() {
-            document.getElementById('txt-home').innerText = t('home', appLang);
-            document.getElementById('txt-rank').innerText = t('rank', appLang);
-            document.getElementById('txt-tour').innerText = t('tour', appLang);
-            document.getElementById('txt-prof').innerText = t('prof', appLang);
+        // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
+        function shareResult(steps) {
+            const message = t('shareMsg', appLang).replace('{n}', steps);
+            // switchInlineQuery не закрывает приложение, если юзер выберет чат. 
+            // Но лучше использовать стандартный метод:
+            tg.switchInlineQuery(message, ["users", "groups", "channels"]);
         }
 
+        // Переход между страницами
         function navigate(pageId, el) {
             const app = document.getElementById('app');
             const user = tg.initDataUnsafe?.user || { first_name: "Ivan B." };
             
-            // Теперь передаем appLang в модуль страниц
             app.innerHTML = Pages[pageId](user, userState, appLang);
             
-            if(el) {
-                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-            }
+            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+            if(el) el.classList.add('active');
+            
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        function changeFrame(colorName) {
-            userState.frame = colorName;
-            navigate('prof'); 
+        // Покупка/смена рамки
+        function changeFrame(color) {
+            userState.frame = color;
+            navigate('prof');
             tg.HapticFeedback.notificationOccurred('success');
         }
 
+        // Запуск при загрузке
         window.onload = () => {
-            updateMenu(); // Переводим меню
-            navigate('home'); // Рисуем главную
+            tg.expand();
+            tg.ready();
+
+            // Принудительная задержка 100мс для стабильности рендера
+            setTimeout(() => {
+                document.getElementById('txt-home').innerText = t('home', appLang);
+                document.getElementById('txt-rank').innerText = t('rank', appLang);
+                document.getElementById('txt-tour').innerText = t('tour', appLang);
+                document.getElementById('txt-prof').innerText = t('prof', appLang);
+
+                navigate('home', document.getElementById('btn-home'));
+            }, 100);
         };
     </script>
 </body>
