@@ -1,153 +1,53 @@
 :root {
     --main-color: #248bcf;
-    --bg-color: var(--tg-theme-bg-color, #ffffff);
-    --text-color: var(--tg-theme-text-color, #000000);
-    --secondary-bg: var(--tg-theme-secondary-bg-color, #f4f4f5);
-    --gold: #FFD700;
+    --bg-color: #1a1c20;
+    --text-color: #ffffff;
+    --secondary-bg: rgba(255,255,255,0.05);
 }
 
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background: var(--bg-color);
-    color: var(--text-color);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    margin: 0; padding: 0;
+    font-family: -apple-system, system-ui, sans-serif;
+    background: var(--bg-color); color: var(--text-color);
+    height: 100vh; display: flex; flex-direction: column; overflow: hidden;
 }
 
-.app-viewport {
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px 0;
-}
+.app-viewport { flex: 1; overflow-y: auto; width: 100%; display: flex; flex-direction: column; }
 
-.home-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+/* Центрирование контента */
+.home-center { display: flex; flex-direction: column; align-items: center; width: 100%; padding-top: 20px; }
+.centered-name { width: 100%; text-align: center; margin: 10px 0; font-size: 22px; }
+.title-center { text-align: center; width: 100%; }
+.center-flex { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 
-/* ИМЯ ПО ЦЕНТРУ */
-.user-main-info {
-    text-align: center;
-    width: 100%;
-    margin-bottom: 10px;
-}
+/* Аватар */
+.avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; }
+.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; box-sizing: border-box; }
+.user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
 
-.centered-name {
-    margin: 10px 0;
-    font-size: 22px;
-    font-weight: bold;
-}
-
-/* АВАТАР И РАМКИ */
-.avatar-wrapper {
-    position: relative;
-    width: 90px;
-    height: 90px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.profile-frame {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    z-index: 2;
-    box-sizing: border-box;
-}
-
-.user-avatar {
-    width: 82%;
-    height: 82%;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-/* КОЛЬЦО ШАГОВ */
-.progress-container {
-    position: relative;
-    width: 230px;
-    height: 230px;
-    margin: 10px auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+/* Кольцо */
+.progress-container { position: relative; width: 240px; height: 240px; margin: 10px auto; display: flex; align-items: center; justify-content: center; }
 .progress-ring { transform: rotate(-90deg); }
-.progress-ring__circle {
-    stroke-dasharray: 628;
-    transition: 0.5s;
-    stroke-linecap: round;
-}
+.progress-ring__circle { stroke-dasharray: 628; transition: stroke-dashoffset 0.5s ease; stroke-linecap: round; }
+.steps-content { position: absolute; text-align: center; }
+.steps-content h1 { font-size: 44px; margin: 0; }
 
-.steps-content {
-    position: absolute;
-    text-align: center;
-}
+/* Сетка и Кнопка */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; width: 90%; margin: 20px auto; }
+.stat-item { background: var(--secondary-bg); padding: 15px; border-radius: 20px; text-align: center; }
+.stat-item span { display: block; font-size: 18px; font-weight: bold; }
+.stat-item label { font-size: 12px; opacity: 0.5; }
 
-.steps-content h1 { font-size: 40px; margin: 0; font-weight: 800; }
-.steps-content p { margin: 0; color: gray; }
+.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: bold; margin-bottom: 20px; }
 
-/* СЕТКА СТАТИСТИКИ */
-.stats-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    width: 90%;
-    margin: 20px 0;
-}
+/* Магазин */
+.shop-container { margin: 20px; background: var(--secondary-bg); padding: 20px; border-radius: 25px; width: 85%; }
+.shop-grid { display: flex; gap: 15px; }
+.shop-item { background: rgba(0,0,0,0.2); flex: 1; padding: 15px; border-radius: 20px; text-align: center; }
+.preview-circle { width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 10px; }
 
-.stat-item {
-    background: var(--secondary-bg);
-    padding: 12px;
-    border-radius: 18px;
-    text-align: center;
-}
-
-.stat-item span { display: block; font-weight: bold; font-size: 18px; }
-.stat-item label { font-size: 12px; color: gray; }
-
-/* КНОПКА */
-.button-container {
-    width: 100%;
-    padding: 0 20px;
-    box-sizing: border-box;
-}
-
-.main-button {
-    width: 100%;
-    background: var(--main-color);
-    color: white;
-    border: none;
-    padding: 16px;
-    border-radius: 18px;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-/* МАГАЗИН */
-.shop-container { margin: 20px; padding: 15px; background: var(--secondary-bg); border-radius: 20px; }
-.shop-grid { display: flex; gap: 10px; margin-top: 10px; }
-.shop-item { background: var(--bg-color); flex: 1; padding: 10px; border-radius: 15px; text-align: center; }
-.preview-circle { width: 35px; height: 35px; border-radius: 50%; margin: 0 auto 5px; }
-
-/* МЕНЮ */
-.tab-bar {
-    height: 70px;
-    display: flex;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    background: var(--bg-color);
-    padding-bottom: env(safe-area-inset-bottom);
-}
-
-.tab-item { flex: 1; text-align: center; padding-top: 10px; color: #999; }
-.tab-item.active { color: var(--main-color); font-weight: bold; }
-.tab-item i { display: block; font-size: 24px; font-style: normal; }
-.tab-item span { font-size: 10px; }
+/* Меню */
+.tab-bar { height: 75px; display: flex; background: #15171a; border-top: 1px solid rgba(255,255,255,0.05); padding-bottom: env(safe-area-inset-bottom); }
+.tab-item { flex: 1; text-align: center; padding-top: 10px; color: #555; font-size: 10px; }
+.tab-item.active { color: var(--main-color); }
+.tab-item i { display: block; font-size: 22px; font-style: normal; margin-bottom: 2px; }
