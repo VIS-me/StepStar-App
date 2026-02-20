@@ -35,7 +35,6 @@ const Pages = {
     },
 
     rank: (user, state, lang) => {
-        // Заглушка лидера (фото высокого качества)
         const leader = { 
             name: "Дмитрий", 
             steps: 85400, 
