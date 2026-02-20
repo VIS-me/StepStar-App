@@ -29,11 +29,16 @@
 
         // Логика кнопки "Поделиться" (Чтобы не закрывалось!)
         function shareResult(steps) {
-            const message = t('shareMsg', appLang).replace('{n}', steps);
-            // switchInlineQuery не закрывает приложение, если юзер выберет чат. 
-            // Но лучше использовать стандартный метод:
-            tg.switchInlineQuery(message, ["users", "groups", "channels"]);
-        }
+    const message = t('shareMsg', appLang).replace('{n}', steps);
+    
+    // Пытаемся отправить в Сторис (это самый современный метод)
+    if (tg.shareToStory) {
+        tg.shareToStory("https://t.me/твой_бот", { text: message });
+    } else {
+        // Если сторис недоступны, используем улучшенный вызов чатов
+        tg.switchInlineQuery(message, ["users", "groups"]);
+    }
+}
 
         // Переход между страницами
         function navigate(pageId, el) {
