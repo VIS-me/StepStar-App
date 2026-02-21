@@ -64,13 +64,13 @@ const Pages = {
                 </div>
             </div>
 
-            <div class="user-rank-bar">
-                <span>#124 ${user.first_name}</span>
-                <strong>${state.steps.toLocaleString()}</strong>
+            <div class="user-rank-bar" style="display: flex; justify-content: space-between; align-items: center; padding: 15px 25px; background: rgba(36, 139, 207, 0.15); margin: 10px 20px; border-radius: 15px;">
+                <span style="font-weight: 600;">#124 ${user.first_name}</span>
+                <strong style="color: var(--main-color); font-size: 18px;">${state.steps.toLocaleString()}</strong>
             </div>
 
             <div class="top-ten-list">
-                <div style="padding: 15px 20px; opacity: 0.5; font-size: 12px; font-weight: bold;">FRIENDS</div>
+                <div style="padding: 15px 20px; opacity: 0.5; font-size: 12px; font-weight: bold;">${lang === 'ru' ? 'ДРУЗЬЯ' : 'FRIENDS'}</div>
                 ${friends.map(f => `
                     <div class="table-row">
                         <span class="t-pos">${f.pos}</span>
@@ -102,18 +102,19 @@ const Pages = {
                 <div class="leader-overlay">
                     <div class="leader-info">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
-                        <h2 class="leader-name-big">Champion_2024</h2>
+                        <h2 class="leader-name-big">Champion_2026</h2>
                     </div>
                 </div>
             </div>
 
-            <div class="join-tournament-card">
-                <div class="join-controls">
-                    <button class="participate-btn" onclick="processTournamentJoin(50)">
+            <div class="join-tournament-card" style="margin: 0 20px 20px;">
+                <div class="join-controls" style="display: flex; gap: 10px; align-items: stretch; width: 100%;">
+                    <button class="participate-btn" style="flex: 2; margin: 0;" onclick="processTournamentJoin(50)">
                         ${t('joinBtn', lang)} 50 💰
                     </button>
-                    <div class="prize-pool-badge">
-                        <span class="prize-amount">💰 5,000</span>
+                    <div class="prize-pool-badge" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); border-radius: 16px; padding: 5px;">
+                        <span style="font-size: 10px; opacity: 0.6;">PRIZE</span>
+                        <span class="prize-amount" style="font-weight: bold; color: var(--accent-gold);">💰 5,000</span>
                     </div>
                 </div>
             </div>
@@ -180,19 +181,19 @@ const Pages = {
     // --- МАГАЗИН ---
     shop: (user, state, lang) => `
         <div class="page-content">
-            <h2 class="title-center">${t('shop', lang)}</h2>
-            <div class="shop-grid-large">
-                <div class="shop-card ${state.frame === 'blue' ? 'owned' : ''}" onclick="changeFrame('blue')">
-                    <div class="avatar-wrapper" style="width:60px; height:60px">
-                        <div class="profile-frame" style="border: ${Assets.frames.blue}"></div>
+            <h2 class="title-center" style="text-align:center; margin: 20px 0;">${t('shop', lang)}</h2>
+            <div class="shop-grid-large" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;">
+                <div class="shop-card ${state.frame === 'blue' ? 'owned' : ''}" onclick="changeFrame('blue')" style="background: var(--secondary-bg); padding: 20px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="avatar-wrapper" style="width:60px; height:60px; margin: 0 auto;">
+                        <div class="profile-frame" style="border: ${Assets.frames.blue}; border-radius: 50%;"></div>
                     </div>
-                    <p>Blue Frame</p>
+                    <p style="margin-top: 10px; font-size: 13px;">Blue Frame</p>
                 </div>
-                <div class="shop-card ${state.frame === 'gold' ? 'owned' : ''}" onclick="changeFrame('gold')">
-                    <div class="avatar-wrapper" style="width:60px; height:60px">
-                        <div class="profile-frame" style="border: ${Assets.frames.gold}"></div>
+                <div class="shop-card ${state.frame === 'gold' ? 'owned' : ''}" onclick="changeFrame('gold')" style="background: var(--secondary-bg); padding: 20px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.05);">
+                    <div class="avatar-wrapper" style="width:60px; height:60px; margin: 0 auto;">
+                        <div class="profile-frame" style="border: ${Assets.frames.gold}; border-radius: 50%;"></div>
                     </div>
-                    <p>Gold Frame</p>
+                    <p style="margin-top: 10px; font-size: 13px;">Gold Frame</p>
                 </div>
             </div>
             <button class="main-button" onclick="navigate('prof')">Back</button>
