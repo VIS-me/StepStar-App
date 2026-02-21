@@ -2,7 +2,6 @@ const Home = {
     render: (user, state, lang) => {
         const goal = 10000;
         const steps = state.steps || 0;
-        // Расчет прогресса (длина окружности 628)
         const offset = 628 - (628 * Math.min(steps / goal, 1));
         
         return `
@@ -15,17 +14,15 @@ const Home = {
                 <span class="user-name-mini">${user.first_name || 'User'}</span>
             </div>
 
-            <div class="progress-section">
-                <div class="progress-container">
-                    <svg width="240" height="240" class="progress-ring">
-                        <circle stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="100" cx="120" cy="120"/>
-                        <circle class="progress-ring__circle" stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="120" cy="120" 
-                            style="stroke-dasharray: 628; stroke-dashoffset: ${offset};"/>
-                    </svg>
-                    <div class="steps-data">
-                        <h1 class="steps-count">${steps.toLocaleString()}</h1>
-                        <p class="steps-label">${t('steps', lang)}</p>
-                    </div>
+            <div class="progress-container">
+                <svg width="240" height="240" class="progress-ring">
+                    <circle stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="100" cx="120" cy="120"/>
+                    <circle class="progress-ring__circle" stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="120" cy="120" 
+                        style="stroke-dasharray: 628; stroke-dashoffset: ${offset};"/>
+                </svg>
+                <div class="steps-data">
+                    <h1 class="steps-count">${steps.toLocaleString()}</h1>
+                    <p class="steps-label">${t('steps', lang)}</p>
                 </div>
             </div>
 
@@ -44,9 +41,7 @@ const Home = {
                 </div>
             </div>
 
-            <button class="share-btn-main" onclick="shareResult(${steps})">
-                ${t('shareBtn', lang)}
-            </button>
+            <button class="share-btn-main" onclick="shareResult(${steps})">${t('shareBtn', lang)}</button>
         </div>`;
     }
 };
