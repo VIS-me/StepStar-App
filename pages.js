@@ -50,35 +50,52 @@ const Pages = {
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400 },
             { pos: 2, name: "Мария", steps: 10200 },
-            { pos: 3, name: "Иван К.", steps: 9800 }
+            { pos: 3, name: "Иван К.", steps: 9800 },
+            { pos: 4, name: "Елена", steps: 8500 },
+            { pos: 5, name: "Сергей", steps: 7200 }
         ];
+
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('${leader.photo}')">
-                <div class="leader-overlay">
+                <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('champion', lang)}</span>
                         <h2 class="leader-name-big">${leader.name}</h2>
-                        <div class="leader-stat"><span class="stat-num">${leader.steps.toLocaleString()}</span><span class="stat-desc">${t('steps', lang)}</span></div>
+                        <div class="leader-stat" style="opacity:0.8; font-size:14px;">
+                            ${leader.steps.toLocaleString()} ${t('steps', lang)}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="user-rank-bar">
-                <div class="user-rank-info"><span class="user-rank-pos">#124</span><span class="user-rank-name">${user.first_name || 'User'}</span></div>
-                <div class="user-rank-score"><strong>${state.steps.toLocaleString()}</strong><span>${t('steps', lang)}</span></div>
-            </div>
-            <div class="friends-rank-list">
-                ${topFriends.map(f => `
-                    <div class="rank-item">
-                        <span class="rank-pos">${f.pos}</span>
-                        <div class="rank-photo-mini"></div>
-                        <span class="rank-name">${f.name}</span>
-                        <span class="rank-steps">${f.steps.toLocaleString()}</span>
+
+            <div style="padding: 0 20px 100px;">
+                <div class="user-rank-bar" style="margin-top: -30px; position: relative; z-index: 10; backdrop-filter: blur(15px); background: rgba(36, 139, 207, 0.2);">
+                    <div class="user-rank-info">
+                        <span class="user-rank-pos" style="font-weight:bold; color: var(--main-color); margin-right:10px;">#124</span>
+                        <span class="user-rank-name">${user.first_name || 'User'}</span>
                     </div>
-                `).join('')}
-                <div class="invite-link-wrapper" onclick="inviteFriends()">
-                    <span class="invite-icon">➕</span>
-                    <span class="invite-text">${t('invite', lang)}</span>
+                    <div class="user-rank-score">
+                        <strong>${state.steps.toLocaleString()}</strong> 
+                        <span style="font-size:12px; opacity:0.7;">${t('steps', lang)}</span>
+                    </div>
+                </div>
+
+                <div class="top-ten-list">
+                    <h4 class="table-title">${lang === 'ru' ? 'РЕЙТИНГ ДРУЗЕЙ' : (lang === 'uk' ? 'РЕЙТИНГ ДРУЗІВ' : 'FRIENDS RANK')}</h4>
+                    ${topFriends.map(f => `
+                        <div class="table-row">
+                            <span class="t-pos">${f.pos}</span>
+                            <div class="rank-photo-mini" style="width:30px; height:30px; background:#333; border-radius:50%; margin-right:12px;"></div>
+                            <span class="t-name">${f.name}</span>
+                            <span class="t-steps">${f.steps.toLocaleString()}</span>
+                        </div>
+                    `).join('')}
+                    
+                    <div class="invite-link-wrapper" onclick="inviteFriends()" style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                        <span class="invite-icon">➕</span>
+                        <span class="invite-text">${t('invite', lang)}</span>
+                    </div>
                 </div>
             </div>
         </div>`;
