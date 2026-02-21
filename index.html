@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>StepStar</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" class="app-viewport"></div>
+
+    <div class="tab-bar">
+        <div class="tab-item active" id="btn-home" onclick="navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
+        <div class="tab-item" id="btn-rank" onclick="navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
+        <div class="tab-item" id="btn-tour" onclick="navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
+        <div class="tab-item" id="btn-prof" onclick="navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
+    </div>
+
+    <script src="assets.js"></script>
+    <script src="home.js"></script>
+    <script src="rank.js"></script>
+    <script src="tour.js"></script>
+    <script src="prof.js"></script>
+    <script src="shop.js"></script>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        let userState = { frame: 'blue', steps: 6420, coins: 150 };
+        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru' || tg.initDataUnsafe?.user?.language_code === 'uk') ? tg.initDataUnsafe.user.language_code : 'en';
+
+        const Pages = { home: Home.render, rank: Rank.render, tour: Tour.render, prof: Prof.render, shop: Shop.render };
+
+        function navigate(pageId, el) {
+            const user = tg.initDataUnsafe?.user || { first_name: "User" };
+            document.getElementById('app').innerHTML = Pages[pageId](user, userState, appLang);
+            if (el) {
+                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+            if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function processTournamentJoin(fee) {
+            if (userState.coins >= fee) {
+                tg.showConfirm(t('confirmJoin', appLang).replace('{n}', fee), (ok) => {
+                    if (ok) {
+                        userState.coins -= fee;
+                        tg.showAlert(t('joinSuccess', appLang));
+                        navigate('tour');
+                    }
+                });
+            } else tg.showAlert(t('noCoins', appLang));
+        }
+
+        function changeFrame(id) {
+            const item = Shop.items.find(i => i.id === id);
+            if (userState.frame === id) return;
+            if (userState.coins >= item.price) {
+                userState.coins -= item.price;
+                userState.frame = id;
+                navigate('shop');
+                tg.HapticFeedback?.notificationOccurred('success');
+            } else tg.showAlert(t('noCoins', appLang));
+        }
+
+        function inviteFriends() {
+            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', appLang).replace('{n}', userState.steps))}`;
+            tg.openTelegramLink(url);
+        }
+
+        function shareResult(n) {
+            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', appLang).replace('{n}', n))}`;
+            tg.openTelegramLink(url);
+        }
+
+        window.onload = () => {
+            tg.expand();
+            ['home', 'rank', 'tour', 'prof'].forEach(id => {
+                const el = document.getElementById('txt-' + id);
+                if (el) el.innerText = t(id, appLang);
+            });
+            navigate('home', document.getElementById('btn-home'));
+        };
+    </script>
+</body>
+</html>
