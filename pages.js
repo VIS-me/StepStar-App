@@ -60,7 +60,7 @@ const Pages = {
 
         return `
         <div class="page-content rank-page">
-            <div class="leader-banner" style="background-image: url('${leader.photo}')">
+            <div class="leader-banner" style="background-image: url('${leader.photo}'); border-radius: 0;">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('champion', lang)}</span>
@@ -115,7 +115,7 @@ const Pages = {
 
         return `
         <div class="page-content tour-page">
-            <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
+            <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}'); border-radius: 0;">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
