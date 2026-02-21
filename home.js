@@ -6,7 +6,6 @@ const Home = {
         <div class="page-content home-page">
             <img src="${user.photo_url || ''}" class="main-avatar-big">
             <div class="home-name">${user.first_name}</div>
-
             <div style="position:relative; width:240px; height:240px; display:flex; align-items:center; justify-content:center;">
                 <svg width="240" height="240" style="transform: rotate(-90deg);">
                     <circle stroke="rgba(255,255,255,0.05)" stroke-width="12" fill="transparent" r="100" cx="120" cy="120"/>
@@ -18,7 +17,6 @@ const Home = {
                     <div style="opacity:0.5; font-size:12px;">${t('steps', lang)}</div>
                 </div>
             </div>
-
             <button class="blue-btn" style="width:100%; margin-top:40px; padding:18px; border-radius:20px;">${t('shareBtn', lang)}</button>
         </div>`;
     }
