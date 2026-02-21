@@ -1,14 +1,3 @@
-// ПАНЕЛЬ УПРАВЛЕНИЯ ТУРНИРОМ
-const currentTournament = {
-    isActive: true, 
-    fee: 50,        
-    prize: 10000,   
-    lastWinner: {
-        name: "Alexander",
-        photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop"
-    }
-};
-
 const Pages = {
     home: (user, state, lang) => {
         const kcal = Math.round(state.steps * 0.04);
@@ -51,7 +40,6 @@ const Pages = {
             steps: 85400, 
             photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" 
         };
-        
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400 },
             { pos: 2, name: "Мария", steps: 10200 },
@@ -105,14 +93,6 @@ const Pages = {
     },
 
     tour: (user, state, lang) => {
-        const top10 = [
-            { pos: 1, name: "Dmitry", steps: 12500 },
-            { pos: 2, name: "Sarah", steps: 11800 },
-            { pos: 3, name: "Mike", steps: 10200 },
-            { pos: 4, name: "Anna", steps: 9500 },
-            { pos: 5, name: "Ivan", steps: 8900 }
-        ];
-
         return `
         <div class="page-content tour-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
@@ -151,13 +131,11 @@ const Pages = {
 
                 <div class="top-ten-list">
                     <h4 class="table-title">TOP 10</h4>
-                    ${top10.map(p => `
-                        <div class="table-row">
-                            <span class="t-pos">${p.pos}</span>
-                            <span class="t-name">${p.name}</span>
-                            <span class="t-steps">${p.steps.toLocaleString()}</span>
-                        </div>
-                    `).join('')}
+                    <div class="table-row">
+                        <span class="t-pos">1</span>
+                        <span class="t-name">Dmitry</span>
+                        <span class="t-steps">12,500</span>
+                    </div>
                 </div>
             </div>
         </div>`;
@@ -166,48 +144,25 @@ const Pages = {
     prof: (user, state, lang) => `
         <div class="page-content">
             <h2 class="title-center">${t('prof', lang)}</h2>
+            
             <div class="avatar-wrapper" style="width:110px; height:110px; margin: 0 auto;">
                 <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
                 <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
             </div>
             <h3 class="centered-name">${user.first_name || 'User'}</h3>
 
-            <div class="wallet-mini-card">
-                <div class="wallet-info">
-                    <span class="wallet-label">${t('balance', lang)}</span>
-                    <span class="wallet-amount">💰 ${state.coins}</span>
+            <div style="padding: 0 20px 100px;">
+                <div class="wallet-mini-card" style="margin: 0 0 15px 0;">
+                    <div class="wallet-info">
+                        <span class="wallet-label">${t('balance', lang)}</span>
+                        <span class="wallet-amount">💰 ${state.coins}</span>
+                    </div>
+                    <button class="go-shop-btn" onclick="navigate('shop')">${t('shop', lang)} →</button>
                 </div>
-                <button class="go-shop-btn" onclick="navigate('shop')">${t('shop', lang)} →</button>
-            </div>
 
-            <div class="info-list">
-                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
-                <div class="info-item">🌍 Регион: <span>Global</span></div>
-            </div>
-        </div>`,
-
-    shop: (user, state, lang) => `
-        <div class="page-content">
-            <div class="shop-header">
-                <button class="back-btn" onclick="navigate('prof', document.getElementById('btn-prof'))">←</button>
-                <h2 class="title-shop">${t('shop', lang)}</h2>
-                <div class="balance-badge">💰 ${state.coins}</div>
-            </div>
-            <div class="shop-grid-large">
-                <div class="shop-card ${state.frame === 'blue' ? 'owned' : ''}" onclick="changeFrame('blue')">
-                    <div class="preview-circle" style="border: 4px solid #248bcf"></div>
-                    <span class="item-name">Blue Frame</span>
-                    <span class="item-price">0 💰</span>
-                </div>
-                <div class="shop-card ${state.frame === 'pink' ? 'owned' : ''}" onclick="changeFrame('pink')">
-                    <div class="preview-circle" style="border: 4px solid #ff69b4"></div>
-                    <span class="item-name">Pink Frame</span>
-                    <span class="item-price">50 💰</span>
-                </div>
-                <div class="shop-card ${state.frame === 'gold' ? 'owned' : ''}" onclick="changeFrame('gold')">
-                    <div class="preview-circle" style="border: 5px solid #FFD700"></div>
-                    <span class="item-name">Gold Frame</span>
-                    <span class="item-price">150 💰</span>
+                <div class="info-list" style="margin: 0;">
+                    <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
+                    <div class="info-item">🌍 Регион: <span>Global</span></div>
                 </div>
             </div>
         </div>`
