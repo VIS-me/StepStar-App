@@ -21,58 +21,60 @@
     <script src="pages.js"></script>
 
     <script>
-        // Инициализация с защитой
-        const tg = window.Telegram ? window.Telegram.WebApp : null;
-        
-        let userState = { frame: 'blue', steps: 6420 };
-        const appLang = (tg && tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
+        const tg = window.Telegram.WebApp;
+        // Добавили coins в состояние
+        let userState = { frame: 'blue', steps: 6420, coins: 150 };
+        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
         function shareResult(steps) {
             const botUsername = 'StepStarAppBot'; 
             const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
             const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
-            if (tg) tg.openTelegramLink(shareUrl);
+            tg.openTelegramLink(shareUrl);
         }
 
         function navigate(pageId, el) {
-            const app = document.getElementById('app');
-            // Проверка наличия данных пользователя
-            const user = (tg && tg.initDataUnsafe?.user) ? tg.initDataUnsafe.user : { first_name: "User", photo_url: "" };
-            
-            if (Pages[pageId]) {
-                app.innerHTML = Pages[pageId](user, userState, appLang);
+            try {
+                const app = document.getElementById('app');
+                const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+                
+                // Специальная логика для магазина
+                if (pageId === 'shop') {
+                    app.innerHTML = Pages.shop(user, userState, appLang);
+                    return;
+                }
+
+                if (typeof Pages !== 'undefined' && Pages[pageId]) {
+                    app.innerHTML = Pages[pageId](user, userState, appLang);
+                }
+
+                // Подсветка кнопок меню
+                if (el) {
+                    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                    el.classList.add('active');
+                }
+                
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            } catch (e) {
+                console.error("Navigation error:", e);
             }
-            
-            document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-            if(el) el.classList.add('active');
-            
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
         function changeFrame(color) {
             userState.frame = color;
-            navigate('prof');
-            if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            navigate('shop'); // Остаемся в магазине после выбора
+            tg.HapticFeedback.notificationOccurred('success');
         }
 
-        // Запуск приложения
-        function initApp() {
-            if (tg) {
-                tg.expand();
-                tg.ready();
-            }
-            
-            // Заполняем тексты меню
+        window.onload = () => {
+            tg.expand();
+            tg.ready();
             document.getElementById('txt-home').innerText = t('home', appLang);
             document.getElementById('txt-rank').innerText = t('rank', appLang);
             document.getElementById('txt-tour').innerText = t('tour', appLang);
             document.getElementById('txt-prof').innerText = t('prof', appLang);
-            
             navigate('home', document.getElementById('btn-home'));
-        }
-
-        // Ждем полной загрузки всех файлов
-        window.addEventListener('load', initApp);
+        };
     </script>
 </body>
 </html>
