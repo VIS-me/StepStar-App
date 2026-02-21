@@ -26,6 +26,18 @@
         let userState = { frame: 'blue', steps: 6420, coins: 150 };
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
+        // Функция приглашения друзей
+        function inviteFriends() {
+            const botUsername = 'StepStarAppBot'; 
+            const inviteText = encodeURIComponent("Привет! Давай считать шаги вместе в StepStar 👟");
+            const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${inviteText}`;
+            
+            if (tg) {
+                tg.openTelegramLink(inviteUrl);
+                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
+            }
+        }
+
         function shareResult(steps) {
             const botUsername = 'StepStarAppBot'; 
             const message = encodeURIComponent(t('shareMsg', appLang).replace('{n}', steps));
