@@ -1,31 +1,22 @@
 const Rank = {
     render: (user, state, lang) => `
-        <div class="page-content rank-page">
-            <div class="last-winner-section">
-                <div class="winner-avatar-container">
-                    <img src="https://via.placeholder.com/150" class="winner-img-big" style="border-color:var(--main-color)">
-                </div>
-                <div class="winner-label" style="color:var(--main-color)">TOP OF THE WEEK</div>
-                <div class="winner-name">Dmitry</div>
+        <div class="page-content">
+            <div class="hero-winner">
+                <img src="https://via.placeholder.com/150" class="hero-img">
+                <div style="color:var(--main-color); font-weight:bold; margin-top:10px;">TOP OF THE WEEK</div>
+                <div style="font-size:20px; font-weight:bold;">Dmitry</div>
             </div>
-
-            <div class="tournament-list-container">
-                <div class="table-row">
-                    <span style="width:30px; font-weight:bold; color:var(--main-color)">1</span>
-                    <span style="flex:1">Alex</span>
-                    <span style="font-weight:bold;">15,200</span>
+            
+            <div style="padding:20px;">
+                <div class="history-item" style="background:rgba(36,139,207,0.1); padding:15px; border-radius:15px; margin-bottom:15px; border-bottom:none;">
+                    <span>#124 You</span>
+                    <b>6,420 steps</b>
                 </div>
-                <div class="table-row">
-                    <span style="width:30px; font-weight:bold; color:var(--main-color)">2</span>
-                    <span style="flex:1">Maria</span>
-                    <span style="font-weight:bold;">14,100</span>
-                </div>
-            </div>
-
-            <div style="display:flex; justify-content:center; padding:30px;">
-                <div onclick="alert('Invite link copied!')" style="color:var(--main-color); font-weight:bold; display:flex; align-items:center; gap:8px;">
-                    <span style="background:var(--main-color); color:white; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center;">+</span>
-                    Invite Friends
+                <h4 style="opacity:0.5; margin-bottom:10px;">${t('topFriends', lang)}</h4>
+                <div class="shop-block" style="margin:0; padding:10px;">
+                    <div class="history-item"><span>1. Alex</span><b>15,200</b></div>
+                    <div class="history-item"><span>2. Maria</span><b>14,100</b></div>
+                    <div class="history-item" style="border:none;"><span>3. Ivan</span><b>12,000</b></div>
                 </div>
             </div>
         </div>`
