@@ -6,34 +6,33 @@ const Shop = {
                     <div style="opacity:0.6">${t('balance', lang)}</div>
                     <div style="font-size:22px; font-weight:bold;">${state.coins} 💰</div>
                 </div>
-                <button class="blue-btn" onclick="openGetCoinsModal()">${t('get', lang)}</button>
+                <button class="blue-btn" onclick="openGetCoinsModal()">Получить</button>
             </div>
+
             <div class="shop-block">
                 <h4 style="margin-top:0">Рамки аватара</h4>
-                <div class="shop-grid">
-                    <div class="item-card active"><div style="width:40px; height:40px; border:2px solid #248bcf; border-radius:50%; margin:auto;"></div><span class="check-mark">✓</span></div>
-                    <div class="item-card"><div style="width:40px; height:40px; border:2px solid #ff00ff; border-radius:50%; margin:auto;"></div><div style="font-size:10px; margin-top:5px;">50 💰</div></div>
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;">
+                    <div class="shop-item" onclick="changeFrame('blue')" style="background:rgba(0,0,0,0.2); padding:10px; border-radius:15px; text-align:center; border: 2px solid ${state.frame === 'blue' ? 'var(--main-color)' : 'transparent'}">
+                        <div style="width:40px; height:40px; border:${Assets.frames.blue}; border-radius:50%; margin:auto;"></div>
+                        <div style="font-size:10px; margin-top:5px;">0 💰</div>
+                    </div>
+                    <div class="shop-item" onclick="changeFrame('pink')" style="background:rgba(0,0,0,0.2); padding:10px; border-radius:15px; text-align:center; border: 2px solid ${state.frame === 'pink' ? 'var(--main-color)' : 'transparent'}">
+                        <div style="width:40px; height:40px; border:${Assets.frames.pink}; border-radius:50%; margin:auto;"></div>
+                        <div style="font-size:10px; margin-top:5px;">50 💰</div>
+                    </div>
+                    <div class="shop-item" onclick="changeFrame('gold')" style="background:rgba(0,0,0,0.2); padding:10px; border-radius:15px; text-align:center; border: 2px solid ${state.frame === 'gold' ? 'var(--main-color)' : 'transparent'}">
+                        <div style="width:40px; height:40px; border:${Assets.frames.gold}; border-radius:50%; margin:auto;"></div>
+                        <div style="font-size:10px; margin-top:5px;">150 💰</div>
+                    </div>
                 </div>
             </div>
+
             <div class="shop-block">
                 <h4 style="margin-top:0">Фоны</h4>
-                <div class="shop-grid"><div class="item-card active">Dark Night <span class="check-mark">✓</span></div><div class="item-card">Ocean 🌊</div></div>
-            </div>
-            <div class="shop-block">
-                <h4 style="margin-top:0">Аксессуары</h4>
-                <div class="shop-grid"><div class="item-card">👑 Корона</div><div class="item-card">🎓 Шапка</div></div>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; text-align:center; border:1px solid var(--main-color);">Dark Night ✓</div>
+                    <div style="background:rgba(255,255,255,0.05); padding:15px; border-radius:12px; text-align:center; opacity:0.5;">Ocean 🌊</div>
+                </div>
             </div>
         </div>`
 };
-
-function openGetCoinsModal() {
-    Telegram.WebApp.showPopup({
-        title: 'Пополнение',
-        message: 'Выберите действие',
-        buttons: [
-            {id: 'daily', type: 'default', text: 'Награда (+10 💰)'},
-            {id: 'stars', type: 'default', text: 'Купить 200 (100 ⭐)'},
-            {type: 'cancel'}
-        ]
-    }, (id) => { if(id === 'daily') alert('Монеты начислены!'); });
-}
