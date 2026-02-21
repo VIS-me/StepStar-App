@@ -8,35 +8,20 @@ const Shop = {
                 </div>
                 <button class="blue-btn" onclick="openGetCoinsModal()">${t('get', lang)}</button>
             </div>
-
             <div class="shop-block">
                 <h4 style="margin-top:0">Рамки аватара</h4>
                 <div class="shop-grid">
-                    <div class="item-card active" onclick="selectItem('frame', 'blue')">
-                        <div style="width:40px; height:40px; border:2px solid #248bcf; border-radius:50%; margin:auto;"></div>
-                        <span class="check-mark">✓</span>
-                    </div>
-                    <div class="item-card" onclick="buyItem('frame', 'pink', 50)">
-                        <div style="width:40px; height:40px; border:2px solid #ff00ff; border-radius:50%; margin:auto;"></div>
-                        <div style="font-size:10px; margin-top:5px;">50 💰</div>
-                    </div>
+                    <div class="item-card active"><div style="width:40px; height:40px; border:2px solid #248bcf; border-radius:50%; margin:auto;"></div><span class="check-mark">✓</span></div>
+                    <div class="item-card"><div style="width:40px; height:40px; border:2px solid #ff00ff; border-radius:50%; margin:auto;"></div><div style="font-size:10px; margin-top:5px;">50 💰</div></div>
                 </div>
             </div>
-
             <div class="shop-block">
                 <h4 style="margin-top:0">Фоны</h4>
-                <div class="shop-grid">
-                    <div class="item-card active">Dark Night <span class="check-mark">✓</span></div>
-                    <div class="item-card">Ocean 🌊</div>
-                </div>
+                <div class="shop-grid"><div class="item-card active">Dark Night <span class="check-mark">✓</span></div><div class="item-card">Ocean 🌊</div></div>
             </div>
-
             <div class="shop-block">
                 <h4 style="margin-top:0">Аксессуары</h4>
-                <div class="shop-grid">
-                    <div class="item-card">👑 Корона</div>
-                    <div class="item-card">🎓 Шапка</div>
-                </div>
+                <div class="shop-grid"><div class="item-card">👑 Корона</div><div class="item-card">🎓 Шапка</div></div>
             </div>
         </div>`
 };
@@ -50,8 +35,5 @@ function openGetCoinsModal() {
             {id: 'stars', type: 'default', text: 'Купить 200 (100 ⭐)'},
             {type: 'cancel'}
         ]
-    }, (id) => {
-        if(id === 'daily') alert('Монеты начислены!');
-        if(id === 'stars') alert('Переход к оплате звездами...');
-    });
+    }, (id) => { if(id === 'daily') alert('Монеты начислены!'); });
 }
