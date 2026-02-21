@@ -1,45 +1,32 @@
 const Tour = {
-    render: (user, state, lang) => {
-        const prizePool = "10,000";
-        const entryFee = 50;
-        return `
-        <div class="page-content tour-page">
-            <div class="last-winner-section">
-                <div class="winner-avatar-container">
-                    <span class="crown-icon">👑</span>
-                    <img src="https://via.placeholder.com/150" class="winner-img-big">
+    render: (user, state, lang) => `
+        <div class="page-content">
+            <div class="hero-winner">
+                <div style="position:relative">
+                    <span style="position:absolute; top:-20px; left:50%; transform:translateX(-50%); font-size:24px;">👑</span>
+                    <img src="https://via.placeholder.com/150" class="hero-img" style="border-color:var(--gold)">
                 </div>
-                <div class="winner-label">LAST WINNER</div>
-                <div class="winner-name">Alexander</div>
+                <div style="color:var(--gold); font-weight:bold; margin-top:10px;">TOURNAMENT WINNER</div>
+                <div style="font-size:20px; font-weight:bold;">Alexander</div>
             </div>
 
-            <div class="join-tournament-card">
-                <div class="join-controls">
-                    <button class="participate-btn" onclick="alert('Joining...')">Join</button>
-                    <div class="prize-pool-badge">
-                        <span class="prize-amount">${prizePool} 💰</span>
-                    </div>
+            <div class="shop-block" style="display:flex; justify-content:space-between; align-items:center;">
+                <button class="blue-btn" style="flex:1; margin-right:10px; padding:15px;">Join Tournament</button>
+                <div style="background:rgba(255,215,0,0.1); padding:10px; border-radius:12px; border:1px solid var(--gold); color:var(--gold); font-weight:bold;">
+                    10,000 💰
                 </div>
-                <div style="text-align:center; font-size:12px; opacity:0.4; margin-top:10px;">Entry: ${entryFee} coins</div>
             </div>
 
-            <div class="user-tour-rank">
-                <span>#452 You</span>
-                <span style="font-weight:bold;">6,420 steps</span>
-            </div>
-
-            <div class="tournament-list-container">
-                <div class="table-row">
-                    <span style="width:30px; color:var(--main-color); font-weight:bold;">1</span>
-                    <span style="flex:1">Dmitry</span>
-                    <span style="font-weight:bold;">12,500</span>
-                </div>
-                <div class="table-row">
-                    <span style="width:30px; color:var(--main-color); font-weight:bold;">2</span>
-                    <span style="flex:1">Sarah</span>
-                    <span style="font-weight:bold;">11,800</span>
+            <div style="padding:0 20px;">
+                <h4 style="opacity:0.5;">${t('topPlayers', lang)}</h4>
+                <div class="shop-block" style="margin:0; padding:10px;">
+                    ${[1,2,3,4,5,6,7,8,9,10].map(i => `
+                        <div class="history-item">
+                            <span>${i}. Player ${i}</span>
+                            <b>${(15000 - i*800).toLocaleString()}</b>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
-        </div>`;
-    }
+        </div>`
 };
