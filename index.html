@@ -23,28 +23,54 @@
     <script src="tour.js"></script>
     <script src="prof.js"></script>
     <script src="shop.js"></script>
-
-    <script>
+    <script src="achievements.js"></script> <script>
         const tg = window.Telegram.WebApp;
-        let userState = { frame: 'blue', steps: 6420, coins: 150 };
-        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru' || tg.initDataUnsafe?.user?.language_code === 'uk') ? tg.initDataUnsafe.user.language_code : 'en';
+        
+        // Глобальное состояние пользователя
+        let userState = { 
+            frame: 'blue', 
+            steps: 6420, 
+            coins: 150 
+        };
 
-        const Pages = { home: Home.render, rank: Rank.render, tour: Tour.render, prof: Prof.render, shop: Shop.render };
+        // Определение языка (RU, UK или EN)
+        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru' || tg.initDataUnsafe?.user?.language_code === 'uk') 
+            ? tg.initDataUnsafe.user.language_code 
+            : 'en';
 
+        // Реестр всех доступных страниц
+        const Pages = { 
+            home: Home.render, 
+            rank: Rank.render, 
+            tour: Tour.render, 
+            prof: Prof.render, 
+            shop: Shop.render,
+            achievements: Achievements.render // Добавлено в реестр
+        };
+
+        // Функция навигации
         function navigate(pageId, el) {
             const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
             const container = document.getElementById('app');
             
-            // Отрисовка
-            container.innerHTML = Pages[pageId](user, userState, appLang);
+            // Отрисовка страницы через соответствующий модуль
+            if (Pages[pageId]) {
+                container.innerHTML = Pages[pageId](user, userState, appLang);
+                // Прокрутка наверх при смене страницы
+                container.scrollTop = 0;
+            }
 
+            // Переключение активного класса в меню
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
+            
+            // Тактильная отдача
             if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         }
 
+        // Логика участия в турнире
         function processTournamentJoin(fee) {
             if (userState.coins >= fee) {
                 tg.showConfirm(t('confirmJoin', appLang).replace('{n}', fee), (ok) => {
@@ -54,37 +80,54 @@
                         navigate('tour');
                     }
                 });
-            } else tg.showAlert(t('noCoins', appLang));
+            } else {
+                tg.showAlert(t('noCoins', appLang));
+            }
         }
 
+        // Логика покупки/смены рамки
         function changeFrame(id) {
             const item = Shop.items.find(i => i.id === id);
+            if (!item) return;
             if (userState.frame === id) return;
+
             if (userState.coins >= item.price) {
                 userState.coins -= item.price;
                 userState.frame = id;
                 navigate('shop');
                 tg.HapticFeedback?.notificationOccurred('success');
-            } else tg.showAlert(t('noCoins', appLang));
+            } else {
+                tg.showAlert(t('noCoins', appLang));
+            }
         }
 
+        // Приглашение друзей
         function inviteFriends() {
-            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', appLang).replace('{n}', userState.steps))}`;
+            const msg = t('shareMsg', appLang).replace('{n}', userState.steps);
+            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(msg)}`;
             tg.openTelegramLink(url);
         }
 
+        // Поделиться результатом
         function shareResult(n) {
-            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', appLang).replace('{n}', n))}`;
+            const msg = t('shareMsg', appLang).replace('{n}', n);
+            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(msg)}`;
             tg.openTelegramLink(url);
         }
 
+        // Инициализация приложения
         window.onload = () => {
             tg.expand();
             tg.ready();
-            ['home', 'rank', 'tour', 'prof'].forEach(id => {
+
+            // Перевод подписей в таб-баре
+            const navMap = { 'home': 'home', 'rank': 'rank', 'tour': 'tour', 'prof': 'prof' };
+            Object.keys(navMap).forEach(id => {
                 const el = document.getElementById('txt-' + id);
-                if (el) el.innerText = t(id, appLang);
+                if (el) el.innerText = t(navMap[id], appLang);
             });
+
+            // Загрузка главной страницы по умолчанию
             navigate('home', document.getElementById('btn-home'));
         };
     </script>
