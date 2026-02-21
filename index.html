@@ -22,9 +22,39 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        // Добавили coins в состояние
+        // Состояние пользователя
         let userState = { frame: 'blue', steps: 6420, coins: 150 };
-        const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
+        
+        // Определение языка (RU, UK или EN)
+        const userLang = tg.initDataUnsafe?.user?.language_code;
+        const appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
+
+        // Логика вступления в турнир
+        function processTournamentJoin(fee) {
+            if (userState.coins >= fee) {
+                const confirmMsg = appLang === 'uk' ? `Списати ${fee} 💰 за участь?` : 
+                                  (appLang === 'ru' ? `Списать ${fee} 💰 за участие?` : `Spend ${fee} 💰 to join?`);
+                
+                tg.showConfirm(confirmMsg, (confirm) => {
+                    if (confirm) {
+                        userState.coins -= fee;
+                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                        
+                        const successMsg = appLang === 'uk' ? "Ви вступили в турнір!" : 
+                                          (appLang === 'ru' ? "Вы вступили в турнир!" : "Joined successfully!");
+                        
+                        tg.showAlert(successMsg);
+                        navigate('tour'); // Перерисовываем страницу, чтобы обновить баланс
+                    }
+                });
+            } else {
+                const errorMsg = appLang === 'uk' ? "Недостатньо монет!" : 
+                                 (appLang === 'ru' ? "Недостаточно монет!" : "Not enough coins!");
+                
+                tg.showAlert(errorMsg);
+                if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+            }
+        }
 
         // Функция приглашения друзей
         function inviteFriends() {
@@ -50,7 +80,6 @@
                 const app = document.getElementById('app');
                 const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
                 
-                // Специальная логика для магазина
                 if (pageId === 'shop') {
                     app.innerHTML = Pages.shop(user, userState, appLang);
                     return;
@@ -60,7 +89,6 @@
                     app.innerHTML = Pages[pageId](user, userState, appLang);
                 }
 
-                // Подсветка кнопок меню
                 if (el) {
                     document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                     el.classList.add('active');
@@ -74,8 +102,8 @@
 
         function changeFrame(color) {
             userState.frame = color;
-            navigate('shop'); // Остаемся в магазине после выбора
-            tg.HapticFeedback.notificationOccurred('success');
+            navigate('shop');
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
         }
 
         window.onload = () => {
