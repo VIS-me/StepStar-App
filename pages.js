@@ -1,4 +1,4 @@
-// ПАНЕЛЬ УПРАВЛЕНИЯ ТУРНИРОМ (Меняет админ)
+// ПАНЕЛЬ УПРАВЛЕНИЯ ТУРНИРОМ
 const currentTournament = {
     isActive: true, 
     fee: 50,        
@@ -46,13 +46,16 @@ const Pages = {
     },
 
     rank: (user, state, lang) => {
-        const leader = { name: "Дмитрий", steps: 85400, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" };
+        const leader = { 
+            name: "Дмитрий", 
+            steps: 85400, 
+            photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" 
+        };
+        
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400 },
             { pos: 2, name: "Мария", steps: 10200 },
-            { pos: 3, name: "Иван К.", steps: 9800 },
-            { pos: 4, name: "Елена", steps: 8500 },
-            { pos: 5, name: "Сергей", steps: 7200 }
+            { pos: 3, name: "Иван К.", steps: 9800 }
         ];
 
         return `
@@ -70,7 +73,7 @@ const Pages = {
             </div>
 
             <div style="padding: 0 20px 100px;">
-                <div class="user-rank-bar" style="margin-top: -30px; position: relative; z-index: 10; backdrop-filter: blur(15px); background: rgba(36, 139, 207, 0.2);">
+                <div class="user-rank-bar" style="margin-top: -30px;">
                     <div class="user-rank-info">
                         <span class="user-rank-pos" style="font-weight:bold; color: var(--main-color); margin-right:10px;">#124</span>
                         <span class="user-rank-name">${user.first_name || 'User'}</span>
@@ -82,7 +85,7 @@ const Pages = {
                 </div>
 
                 <div class="top-ten-list">
-                    <h4 class="table-title">${lang === 'ru' ? 'РЕЙТИНГ ДРУЗЕЙ' : (lang === 'uk' ? 'РЕЙТИНГ ДРУЗІВ' : 'FRIENDS RANK')}</h4>
+                    <h4 class="table-title">${lang === 'ru' ? 'ТОП 3 ДРУЗЕЙ' : (lang === 'uk' ? 'ТОП 3 ДРУЗІВ' : 'TOP 3 FRIENDS')}</h4>
                     ${topFriends.map(f => `
                         <div class="table-row">
                             <span class="t-pos">${f.pos}</span>
@@ -92,7 +95,7 @@ const Pages = {
                         </div>
                     `).join('')}
                     
-                    <div class="invite-link-wrapper" onclick="inviteFriends()" style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <div class="invite-link-wrapper" onclick="inviteFriends()" style="border-top: 1px solid rgba(255,255,255,0.05); padding: 15px;">
                         <span class="invite-icon">➕</span>
                         <span class="invite-text">${t('invite', lang)}</span>
                     </div>
@@ -111,9 +114,10 @@ const Pages = {
         ];
 
         return `
-        <div class="page-content rank-page">
+        <div class="page-content tour-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
-                <div class="leader-overlay" style="padding-bottom: 40px;"> <div class="leader-info-box">
+                <div class="leader-overlay" style="padding-bottom: 40px;"> 
+                    <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
                         <h2 class="leader-name-big">${currentTournament.lastWinner.name}</h2>
                         <div class="leader-stat" style="opacity:0.8; font-size:14px;">
