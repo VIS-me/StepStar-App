@@ -6,7 +6,6 @@ const Rank = {
                 <div style="color:var(--main-color); font-weight:bold; margin-top:10px;">TOP OF THE WEEK</div>
                 <div style="font-size:20px; font-weight:bold;">Dmitry</div>
             </div>
-            
             <div style="padding:20px;">
                 <div class="history-item" style="background:rgba(36,139,207,0.1); padding:15px; border-radius:15px; margin-bottom:15px; border-bottom:none;">
                     <span>#124 You</span>
