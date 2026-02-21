@@ -31,6 +31,12 @@ const Pages = {
 
     rank: (user, state, lang) => {
         const leader = { name: "Дмитрий", steps: 85400, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" };
+        // ВОЗВРАЩАЕМ ТОП-3
+        const topFriends = [
+            { pos: 1, name: "Алексей", steps: 12400 },
+            { pos: 2, name: "Мария", steps: 10200 },
+            { pos: 3, name: "Иван К.", steps: 9800 }
+        ];
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('${leader.photo}')">
@@ -43,25 +49,34 @@ const Pages = {
                 </div>
             </div>
             <div class="user-rank-bar">
-                <div class="user-rank-info"><span class="user-rank-pos">#124</span><span class="user-rank-name">${user.first_name}</span></div>
+                <div class="user-rank-info"><span class="user-rank-pos">#124</span><span class="user-rank-name">${user.first_name || 'User'}</span></div>
                 <div class="user-rank-score"><strong>${state.steps.toLocaleString()}</strong><span>${t('steps', lang)}</span></div>
             </div>
             <div class="friends-rank-list">
-                <div class="rank-item"><span class="rank-pos">1</span><div class="rank-photo-mini"></div><span class="rank-name">Алексей</span><span class="rank-steps">12,400</span></div>
+                ${topFriends.map(f => `
+                    <div class="rank-item">
+                        <span class="rank-pos">${f.pos}</span>
+                        <div class="rank-photo-mini"></div>
+                        <span class="rank-name">${f.name}</span>
+                        <span class="rank-steps">${f.steps.toLocaleString()}</span>
+                    </div>
+                `).join('')}
             </div>
         </div>`;
     },
 
     tour: (user, state, lang) => `
-        <div class="page-content center-flex">
-            <div style="font-size:60px; margin-bottom:20px;">🏁</div>
-            <p style="color:gray;">${t('noTour', lang)}</p>
+        <div class="page-content center-flex-tour">
+            <div class="no-data-box">
+                <span class="big-icon">🏁</span>
+                <p class="no-data-text">${t('noTour', lang)}</p>
+            </div>
         </div>`,
 
     prof: (user, state, lang) => `
         <div class="page-content">
             <h2 class="title-center">${t('prof', lang)}</h2>
-            <div class="avatar-wrapper" style="width:110px; height:110px;">
+            <div class="avatar-wrapper" style="width:110px; height:110px; margin: 0 auto;">
                 <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
                 <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
             </div>
@@ -75,9 +90,9 @@ const Pages = {
                 <button class="go-shop-btn" onclick="navigate('shop')">${t('shop', lang)} →</button>
             </div>
 
-            <div class="user-stats-list">
-                <div class="list-item"><span>ID:</span> <span>${user.id || '---'}</span></div>
-                <div class="list-item"><span>Status:</span> <span>Active</span></div>
+            <div class="info-list">
+                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
+                <div class="info-item">🌍 Регион: <span>Global</span></div>
             </div>
         </div>`,
 
