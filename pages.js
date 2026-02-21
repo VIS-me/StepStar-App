@@ -96,7 +96,7 @@ const Pages = {
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
-                <div class="leader-overlay">
+                <div class="leader-overlay" style="padding-bottom: 80px;">
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
                         <h2 class="leader-name-big">${currentTournament.lastWinner.name}</h2>
