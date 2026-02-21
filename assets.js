@@ -12,7 +12,8 @@ const Assets = {
             rank: "Рейтинг", tour: "Турнир", prof: "Профиль", home: "Главная",
             champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин ✨",
             balance: "Баланс", winner: "Победитель",
-            invite: "Пригласить друзей"
+            invite: "Пригласить друзей",
+            joinBtn: "Участвовать"
         },
         en: {
             steps: "steps", kcal: "kcal", km: "km", min: "min",
@@ -21,7 +22,8 @@ const Assets = {
             rank: "Rank", tour: "Tour", prof: "Profile", home: "Home",
             champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop ✨",
             balance: "Balance", winner: "Winner",
-            invite: "Invite Friends"
+            invite: "Invite Friends",
+            joinBtn: "Join for"
         },
         uk: {
             steps: "кроків", kcal: "ккал", km: "км", min: "хв",
@@ -30,7 +32,8 @@ const Assets = {
             rank: "Рейтинг", tour: "Турнір", prof: "Профіль", home: "Головна",
             champion: "Чемпіон тижня", noTour: "Турнірів поки немає", shop: "Магазин ✨",
             balance: "Баланс", winner: "Переможець",
-            invite: "Запросити друзів"
+            invite: "Запросити друзів",
+            joinBtn: "Брати участь"
         }
     }
 };
