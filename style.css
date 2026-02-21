@@ -26,187 +26,126 @@ body {
     overflow-y: auto; 
     width: 100%; 
     -webkit-overflow-scrolling: touch; 
-    padding-bottom: 90px; /* Отступ под таб-бар */
+    padding-bottom: 100px; /* Отступ увеличен для безопасности */
 }
 
-/* Аватар и заголовки */
-.avatar-wrapper { 
-    position: relative; 
-    width: 100px; 
-    height: 100px; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    margin: 0 auto; 
-}
-.profile-frame { 
-    position: absolute; 
-    width: 100%; 
-    height: 100%; 
-    border-radius: 50%; 
-    z-index: 2; 
-    pointer-events: none;
-}
-.user-avatar { 
-    width: 84%; 
-    height: 84%; 
-    border-radius: 50%; 
-    object-fit: cover; 
-}
-.centered-name { text-align: center; margin: 10px 0 20px; font-size: 22px; font-weight: 700; }
-.title-center { text-align: center; margin: 20px 0; }
+/* --- ГЛАВНАЯ (ИСПРАВЛЕННЫЙ КРУГ) --- */
+.home-center { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
 
-/* --- СТРАНИЦА ТУРНИРА --- */
-.tour-page { padding: 10px 20px; }
-
-.join-tournament-card {
-    background: var(--secondary-bg);
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-.join-controls { display: flex; align-items: center; gap: 12px; }
-
-.participate-btn {
-    flex: 2;
-    background: var(--main-color);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 15px;
-    font-weight: bold;
-    font-size: 15px;
-    transition: transform 0.1s;
-}
-.participate-btn:active { transform: scale(0.96); }
-
-.prize-pool-badge {
-    flex: 1;
-    background: rgba(255,215,0,0.1);
-    border: 1px solid rgba(255,215,0,0.3);
-    padding: 12px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-}
-.prize-amount { color: var(--accent-gold); font-weight: bold; font-size: 16px; }
-
-.user-rank-mini {
-    background: rgba(255,255,255,0.08);
-    margin: 0 20px 15px;
-    padding: 12px 20px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    border: 1px dashed rgba(255,255,255,0.2);
-}
-
-/* Таблицы лидеров */
-.top-ten-list { background: var(--secondary-bg); border-radius: 20px; overflow: hidden; margin: 0 20px 20px; }
-.table-row {
-    display: flex;
-    padding: 15px 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    align-items: center;
-}
-.rank-photo-mini { 
-    width: 35px; height: 35px; 
-    border-radius: 50%; background: #333; 
-    margin: 0 12px; flex-shrink: 0; 
-}
-.t-pos { width: 25px; font-weight: bold; color: var(--main-color); }
-.t-name { flex: 1; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-/* Рейтинг и Баннер */
-.leader-banner { 
-    width: 100%; 
-    height: 280px; 
-    background-size: cover; 
-    background-position: center; 
-    position: relative; 
-}
-.leader-overlay { 
-    width: 100%; height: 100%; 
-    background: linear-gradient(to top, var(--bg-color) 5%, transparent 90%); 
-    display: flex; align-items: flex-end; padding: 20px; 
-}
-.user-rank-bar { 
-    display: flex; justify-content: space-between; 
-    background: rgba(36, 139, 207, 0.25); 
-    margin: -30px 20px 20px; padding: 18px 20px; 
-    border-radius: 18px; position: relative; z-index: 5; 
-    backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Магазин */
-.shop-grid-large { 
-    display: grid; 
-    grid-template-columns: 1fr 1fr; 
-    gap: 12px; 
-    padding: 10px 20px 100px; 
-}
-.shop-card { 
-    background: var(--secondary-bg); 
-    padding: 20px; border-radius: 20px; 
-    display: flex; flex-direction: column; 
-    align-items: center; border: 2px solid transparent; 
-    transition: all 0.2s;
-}
-.shop-card:active { transform: scale(0.95); background: rgba(255,255,255,0.08); }
-.shop-card.owned { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
-
-/* Главная: Кольцо прогресса */
 .progress-container { 
     position: relative; 
     width: 240px; height: 240px; 
     margin: 20px auto; 
     display: flex; align-items: center; justify-content: center; 
 }
-.progress-ring { transform: rotate(-90deg); filter: drop-shadow(0 0 10px rgba(36, 139, 207, 0.3)); }
+.progress-ring { 
+    position: absolute; /* Чтобы не сдвигал текст */
+    transform: rotate(-90deg); 
+    filter: drop-shadow(0 0 10px rgba(36, 139, 207, 0.3)); 
+}
 .progress-ring__circle { 
     stroke-dasharray: 628; 
     transition: stroke-dashoffset 0.8s ease-out; 
     stroke-linecap: round; 
 }
+.steps-content {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
 .steps-content h1 { font-size: 48px; margin: 0; font-weight: 800; letter-spacing: -1px; }
+.steps-label { opacity: 0.5; font-size: 14px; text-transform: uppercase; }
 
-.stats-grid { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 10px; width: 92%; margin: 20px auto; 
-}
-.stat-item { 
-    background: var(--secondary-bg); 
-    padding: 15px 5px; border-radius: 18px; 
-    text-align: center; border: 1px solid rgba(255,255,255,0.03);
-}
+/* Аватар */
+.avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
+.user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
+.centered-name { text-align: center; margin: 10px 0 20px; font-size: 22px; font-weight: 700; }
 
-.main-button { 
-    width: 90%; background: var(--main-color); 
-    color: white; border: none; padding: 18px; 
-    border-radius: 20px; font-size: 16px; font-weight: bold; 
-    margin: 10px auto; display: block; 
-    box-shadow: 0 8px 20px rgba(36, 139, 207, 0.3);
+/* --- ПРОФИЛЬ (3 БЛОКА) --- */
+.info-block {
+    background: var(--secondary-bg);
+    margin: 15px 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    overflow: hidden;
 }
 
-/* Меню (Tab Bar) */
+/* Блок 1: Статистика */
+.info-item {
+    display: flex; justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    font-size: 15px;
+}
+.info-item:last-child { border-bottom: none; }
+.info-item span { font-weight: bold; color: var(--main-color); }
+
+/* Блок 2: Кошелек */
+.wallet-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px;
+}
+.wallet-info { display: flex; flex-direction: column; }
+.wallet-label { font-size: 11px; opacity: 0.5; text-transform: uppercase; margin-bottom: 4px; }
+.wallet-amount { font-size: 20px; font-weight: 800; color: var(--accent-gold); }
+.go-shop-btn { background: var(--main-color); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 13px; }
+
+/* Блок 3: Достижения */
+.achievement-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px;
+    cursor: pointer;
+}
+.achievement-row:active { background: rgba(255,255,255,0.03); }
+
+/* --- РЕЙТИНГ И ТУРНИР --- */
+.top-ten-list { background: var(--secondary-bg); border-radius: 20px; overflow: hidden; margin: 0 20px 20px; border: 1px solid rgba(255,255,255,0.05); }
+.table-row {
+    display: flex; padding: 15px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    align-items: center;
+}
+.rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; background: #333; margin: 0 12px; flex-shrink: 0; }
+.t-pos { width: 25px; font-weight: bold; color: var(--main-color); }
+.t-name { flex: 1; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Кнопка пригласить друга (внутри списка) */
+.invite-row-btn {
+    display: flex; align-items: center; justify-content: center;
+    padding: 18px; background: rgba(36, 139, 207, 0.1);
+    color: var(--main-color); font-weight: 700; cursor: pointer;
+}
+.invite-row-btn:active { background: rgba(36, 139, 207, 0.2); }
+
+/* Баннер лидера */
+.leader-banner { width: 100%; height: 280px; background-size: cover; background-position: center; position: relative; }
+.leader-overlay { 
+    width: 100%; height: 100%; 
+    background: linear-gradient(to top, var(--bg-color), transparent); 
+    display: flex; align-items: flex-end; padding: 20px; 
+}
+.crown-badge { background: var(--accent-gold); color: #000; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-bottom: 8px; display: inline-block; }
+.leader-name-big { font-size: 32px; margin: 0; font-weight: 900; }
+
+/* Стат-сетка (Кал, Км, Мин) */
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 92%; margin: 20px auto; }
+.stat-item { background: var(--secondary-bg); padding: 15px 5px; border-radius: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
+.stat-item span { display: block; font-size: 18px; font-weight: bold; }
+.stat-item label { font-size: 11px; opacity: 0.5; text-transform: uppercase; }
+
+/* Таб-бар */
 .tab-bar { 
-    height: 75px; 
-    display: flex; 
-    background: #15171a; 
+    height: 75px; display: flex; background: #15171a; 
     border-top: 1px solid rgba(255,255,255,0.05); 
     position: fixed; bottom: 0; width: 100%; 
-    padding-bottom: env(safe-area-inset-bottom); 
-    z-index: 1000; 
+    padding-bottom: env(safe-area-inset-bottom); z-index: 1000; 
 }
-.tab-item { 
-    flex: 1; text-align: center; 
-    padding-top: 12px; color: #555; font-size: 10px; 
-    transition: color 0.2s;
-}
+.tab-item { flex: 1; text-align: center; padding-top: 12px; color: #555; font-size: 10px; }
 .tab-item.active { color: var(--main-color); }
-.tab-item i { display: block; font-size: 22px; margin-bottom: 4px; }
+.tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
+
+.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: bold; margin: 10px auto; display: block; }
