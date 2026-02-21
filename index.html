@@ -22,9 +22,33 @@
 
     <script>
         const tg = window.Telegram.WebApp;
-        // Добавили coins в состояние
         let userState = { frame: 'blue', steps: 6420, coins: 150 };
         const appLang = (tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
+
+        function navigate(pageId, el) {
+            const app = document.getElementById('app');
+            const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            
+            // Логика отрисовки страниц из pages.js
+            if (pageId === 'shop') {
+                app.innerHTML = Pages.shop(user, userState, appLang);
+            } else if (Pages[pageId]) {
+                app.innerHTML = Pages[pageId](user, userState, appLang);
+            }
+
+            // Управление подсветкой меню
+            if (el) {
+                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+            tg.HapticFeedback.impactOccurred('light');
+        }
+
+        function changeFrame(color) {
+            userState.frame = color;
+            navigate('shop'); // Остаемся в магазине для визуального подтверждения
+            tg.HapticFeedback.notificationOccurred('success');
+        }
 
         function shareResult(steps) {
             const botUsername = 'StepStarAppBot'; 
@@ -33,46 +57,15 @@
             tg.openTelegramLink(shareUrl);
         }
 
-        function navigate(pageId, el) {
-            try {
-                const app = document.getElementById('app');
-                const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
-                
-                // Специальная логика для магазина
-                if (pageId === 'shop') {
-                    app.innerHTML = Pages.shop(user, userState, appLang);
-                    return;
-                }
-
-                if (typeof Pages !== 'undefined' && Pages[pageId]) {
-                    app.innerHTML = Pages[pageId](user, userState, appLang);
-                }
-
-                // Подсветка кнопок меню
-                if (el) {
-                    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-                    el.classList.add('active');
-                }
-                
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            } catch (e) {
-                console.error("Navigation error:", e);
-            }
-        }
-
-        function changeFrame(color) {
-            userState.frame = color;
-            navigate('shop'); // Остаемся в магазине после выбора
-            tg.HapticFeedback.notificationOccurred('success');
-        }
-
         window.onload = () => {
             tg.expand();
             tg.ready();
+            // Инициализация текстов меню из assets.js
             document.getElementById('txt-home').innerText = t('home', appLang);
             document.getElementById('txt-rank').innerText = t('rank', appLang);
             document.getElementById('txt-tour').innerText = t('tour', appLang);
             document.getElementById('txt-prof').innerText = t('prof', appLang);
+            // Стартовая страница
             navigate('home', document.getElementById('btn-home'));
         };
     </script>
