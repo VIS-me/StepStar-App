@@ -51,6 +51,7 @@ const Pages = {
             steps: 85400, 
             photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" 
         };
+        
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400 },
             { pos: 2, name: "Мария", steps: 10200 },
@@ -62,7 +63,7 @@ const Pages = {
             <div class="leader-banner" style="background-image: url('${leader.photo}')">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
-                        <span class="crown-badge">👑 ${lang === 'ru' ? 'Чемпион недели' : 'Weekly Champion'}</span>
+                        <span class="crown-badge">👑 ${t('champion', lang)}</span>
                         <h2 class="leader-name-big">${leader.name}</h2>
                         <div class="leader-stat" style="opacity:0.8; font-size:14px;">
                             ${leader.steps.toLocaleString()} ${t('steps', lang)}
@@ -75,7 +76,7 @@ const Pages = {
                 <div class="user-rank-bar" style="margin-top: -30px;">
                     <div class="user-rank-info">
                         <span class="user-rank-pos" style="font-weight:bold; color: var(--main-color); margin-right:10px;">#124</span>
-                        <span class="user-rank-name">${user.first_name || 'Ivan B.'}</span>
+                        <span class="user-rank-name">${user.first_name || 'User'}</span>
                     </div>
                     <div class="user-rank-score">
                         <strong>${state.steps.toLocaleString()}</strong> 
@@ -84,7 +85,7 @@ const Pages = {
                 </div>
 
                 <div class="top-ten-list">
-                    <h4 class="table-title">${lang === 'ru' ? 'ТОП 3 ДРУЗЕЙ' : 'TOP 3 FRIENDS'}</h4>
+                    <h4 class="table-title">${lang === 'ru' ? 'ТОП 3 ДРУЗЕЙ' : (lang === 'uk' ? 'ТОП 3 ДРУЗІВ' : 'TOP 3 FRIENDS')}</h4>
                     ${topFriends.map(f => `
                         <div class="table-row">
                             <span class="t-pos">${f.pos}</span>
@@ -95,7 +96,7 @@ const Pages = {
                     `).join('')}
                     
                     <div class="invite-link-wrapper" onclick="inviteFriends()" style="border-top: 1px solid rgba(255,255,255,0.05); padding: 15px;">
-                        <span class="invite-icon" style="background: none; color: var(--main-color); font-size: 20px;">+</span>
+                        <span class="invite-icon">➕</span>
                         <span class="invite-text">${t('invite', lang)}</span>
                     </div>
                 </div>
@@ -104,53 +105,63 @@ const Pages = {
     },
 
     tour: (user, state, lang) => {
-        // Турнир остается эталоном ширины карточек
+        const top10 = [
+            { pos: 1, name: "Dmitry", steps: 12500 },
+            { pos: 2, name: "Sarah", steps: 11800 },
+            { pos: 3, name: "Mike", steps: 10200 },
+            { pos: 4, name: "Anna", steps: 9500 },
+            { pos: 5, name: "Ivan", steps: 8900 }
+        ];
+
         return `
         <div class="page-content tour-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
-                        <span class="crown-badge">👑 Winner</span>
+                        <span class="crown-badge">👑 ${t('winner', lang)}</span>
                         <h2 class="leader-name-big">${currentTournament.lastWinner.name}</h2>
-                        <div class="leader-stat" style="opacity:0.8; font-size:12px;">Previous tournament winner</div>
+                        <div class="leader-stat" style="opacity:0.8; font-size:14px;">
+                            ${lang === 'uk' ? 'Переможець минулого турніру' : (lang === 'ru' ? 'Победитель прошлого турнира' : 'Previous tournament winner')}
+                        </div>
                     </div>
                 </div>
             </div>
 
             <div style="padding: 0 20px 100px;">
-                <div class="join-tournament-card" style="margin-top: -30px; position: relative; z-index: 10; background: rgba(30,30,30,0.9); backdrop-filter: blur(10px);">
+                <div class="join-tournament-card" style="margin-top: -30px; position: relative; z-index: 10; backdrop-filter: blur(15px); background: rgba(26, 28, 32, 0.8);">
                     <div class="join-controls">
-                        <button class="participate-btn" onclick="processTournamentJoin()">Join for 50 💰</button>
+                        <button class="participate-btn" onclick="processTournamentJoin(${currentTournament.fee})">
+                            ${t('joinBtn', lang)} ${currentTournament.fee} 💰
+                        </button>
                         <div class="prize-pool-badge">
-                            <span class="prize-amount">💰 10,000</span>
+                            <span class="coin-icon">💰</span>
+                            <span class="prize-amount">${currentTournament.prize.toLocaleString()}</span>
                         </div>
                     </div>
-                    <p class="tour-hint">Tournament prize pool</p>
+                    <p class="tour-hint">
+                        ${lang === 'uk' ? 'Призовий фонд турніру' : (lang === 'ru' ? 'Призовой фонд турнира' : 'Tournament prize pool')}
+                    </p>
                 </div>
 
-                <div class="user-rank-mini" style="background: rgba(255,105,180,0.1); border: 1px dashed rgba(255,105,180,0.3);">
-                    <span style="color: #ff69b4; font-weight: bold;">#452</span>
-                    <span>Ivan B. | (You)</span>
-                    <span style="font-weight: bold;">6,420</span>
+                <div class="user-rank-mini">
+                    <span class="u-pos">#452</span>
+                    <span class="u-name">${user.first_name} (You)</span>
+                    <span class="u-steps">${state.steps.toLocaleString()}</span>
                 </div>
 
                 <div class="top-ten-list">
                     <h4 class="table-title">TOP 10</h4>
-                    <div class="table-row">
-                        <span class="t-pos">1</span>
-                        <span class="t-name">Dmitry</span>
-                        <span class="t-steps">12,500</span>
-                    </div>
-                    <div class="table-row">
-                        <span class="t-pos">2</span>
-                        <span class="t-name">Sarah</span>
-                        <span class="t-steps">11,800</span>
-                    </div>
+                    ${top10.map(p => `
+                        <div class="table-row">
+                            <span class="t-pos">${p.pos}</span>
+                            <span class="t-name">${p.name}</span>
+                            <span class="t-steps">${p.steps.toLocaleString()}</span>
+                        </div>
+                    `).join('')}
                 </div>
             </div>
         </div>`;
-    }
-};
+    },
 
     prof: (user, state, lang) => `
         <div class="page-content">
