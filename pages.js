@@ -96,8 +96,7 @@ const Pages = {
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
-                <div class="leader-overlay" style="padding-bottom: 80px;">
-                    <div class="leader-info-box">
+                <div class="leader-overlay" style="padding-bottom: 80px;"> <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
                         <h2 class="leader-name-big">${currentTournament.lastWinner.name}</h2>
                         <div class="leader-stat" style="opacity:0.8; font-size:14px;">
@@ -183,6 +182,11 @@ const Pages = {
                     <div class="preview-circle" style="border: 4px solid #ff69b4"></div>
                     <span class="item-name">Pink Frame</span>
                     <span class="item-price">50 💰</span>
+                </div>
+                <div class="shop-card ${state.frame === 'gold' ? 'owned' : ''}" onclick="changeFrame('gold')">
+                    <div class="preview-circle" style="border: 5px solid #FFD700"></div>
+                    <span class="item-name">Gold Frame</span>
+                    <span class="item-price">150 💰</span>
                 </div>
             </div>
         </div>`
