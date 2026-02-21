@@ -27,8 +27,12 @@ const Rank = {
                     <span class="rank-name">${f.name}</span>
                     <span class="rank-steps">${f.steps.toLocaleString()}</span>
                 </div>`).join('')}
+                
                 <div class="invite-link-wrapper" onclick="inviteFriends()">
-                    <span class="invite-icon">➕</span><span class="invite-text">${t('invite', lang)}</span>
+                    <div class="invite-content">
+                        <span class="invite-icon">➕</span>
+                        <span class="invite-text">${t('invite', lang)}</span>
+                    </div>
                 </div>
             </div>
         </div>`;
