@@ -5,7 +5,6 @@ const Achievements = {
                 <button onclick="navigate('profile')" style="background:none; border:none; color:white; font-size:24px; margin-right:15px; cursor:pointer;">←</button>
                 <h3 style="margin:0;">${t('achievements', lang)}</h3>
             </div>
-            
             <div class="shop-grid" style="grid-template-columns: 1fr 1fr;">
                 <div class="shop-block" style="margin:5px; text-align:center; border:1px solid var(--main-color);">
                     <div style="font-size:32px;">👟</div>
