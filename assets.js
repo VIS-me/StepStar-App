@@ -11,7 +11,8 @@ const Assets = {
             shareMsg: "Я прошел уже {n} шагов в StepStar! 👟",
             rank: "Рейтинг", tour: "Турнир", prof: "Профиль", home: "Главная",
             champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин ✨",
-            balance: "Баланс", winner: "Победитель"
+            balance: "Баланс", winner: "Победитель",
+            invite: "Пригласить друзей"
         },
         en: {
             steps: "steps", kcal: "kcal", km: "km", min: "min",
@@ -19,12 +20,23 @@ const Assets = {
             shareMsg: "I've walked {n} steps in StepStar! 👟",
             rank: "Rank", tour: "Tour", prof: "Profile", home: "Home",
             champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop ✨",
-            balance: "Balance", winner: "Winner"
+            balance: "Balance", winner: "Winner",
+            invite: "Invite Friends"
+        },
+        uk: {
+            steps: "кроків", kcal: "ккал", km: "км", min: "хв",
+            shareBtn: "Поділитися результатом", 
+            shareMsg: "Я пройшов вже {n} кроків у StepStar! 👟",
+            rank: "Рейтинг", tour: "Турнір", prof: "Профіль", home: "Головна",
+            champion: "Чемпіон тижня", noTour: "Турнірів поки немає", shop: "Магазин ✨",
+            balance: "Баланс", winner: "Переможець",
+            invite: "Запросити друзів"
         }
     }
 };
 
 function t(key, lang) {
+    // Проверяем, есть ли язык в словаре, иначе используем английский
     const l = Assets.i18n[lang] ? lang : 'en';
     return Assets.i18n[l][key] || key;
 }
