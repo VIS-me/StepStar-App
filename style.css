@@ -6,132 +6,117 @@
     --gold: #FFD700;
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-body {
-    margin: 0; font-family: -apple-system, system-ui, sans-serif;
-    background: var(--bg-color); color: var(--text-color);
-    overflow: hidden;
+/* Базовые настройки */
+* { 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent; 
+    user-select: none;
 }
 
-.app-viewport { height: 100vh; overflow-y: auto; padding-bottom: 90px; }
+body {
+    margin: 0; padding: 0;
+    font-family: -apple-system, system-ui, sans-serif;
+    background: var(--bg-color); color: var(--text-color);
+    height: 100vh; width: 100vw;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
 
-/* ОБЩИЕ АНИМАЦИИ */
+/* Контейнер для прокрутки контента */
+.app-viewport { 
+    flex: 1; 
+    overflow-y: auto; 
+    width: 100%; 
+    padding-bottom: 100px; /* Отступ под меню */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Общая анимация появления страниц */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.page-content { animation: fadeIn 0.3s ease-out; width: 100%; }
 
-.page-content { animation: fadeIn 0.3s ease; }
+/* --- ГЛАВНАЯ СТРАНИЦА (HOME) --- */
+.home-page { display: flex; flex-direction: column; align-items: center; padding: 20px; }
 
-/* СТИЛИ ПРОФИЛЯ (По твоему чертежу) */
-.prof-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-}
+.user-info-mini { display: flex; align-items: center; gap: 12px; align-self: flex-start; margin-bottom: 20px; }
+.avatar-mini-wrapper { position: relative; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; }
+.user-avatar-mini { width: 80%; height: 80%; border-radius: 50%; object-fit: cover; }
 
-.avatar-wrapper {
-    position: relative;
-    width: 110px; height: 110px;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 10px;
-}
-.profile-frame {
-    position: absolute; width: 100%; height: 100%;
-    border-radius: 50%; z-index: 2;
-}
-.user-avatar {
-    width: 85%; height: 85%;
-    border-radius: 50%; object-fit: cover;
-}
+.progress-container { position: relative; width: 240px; height: 240px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
+.progress-ring { transform: rotate(-90deg); }
+.progress-ring__circle { transition: stroke-dashoffset 0.5s ease; stroke-linecap: round; }
 
-.prof-name { font-size: 24px; margin: 10px 0 20px; font-weight: 800; }
+.steps-data { position: absolute; text-align: center; }
+.steps-count { font-size: 48px; margin: 0; font-weight: 800; }
+.steps-label { margin: 0; opacity: 0.5; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
 
-.status-container {
-    background: var(--secondary-bg);
-    padding: 8px 16px; border-radius: 12px;
-    margin-bottom: 30px; font-size: 14px;
-}
+.stats-grid-home { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; width: 100%; margin-top: 30px; }
+.stat-box { background: var(--secondary-bg); padding: 15px 5px; border-radius: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
+.stat-v { display: block; font-size: 18px; font-weight: bold; }
+.stat-l { font-size: 11px; opacity: 0.4; }
+
+/* --- ПРОФИЛЬ (ПО ТВОЕМУ ЧЕРТЕЖУ) --- */
+.prof-page { display: flex; flex-direction: column; align-items: center; padding: 30px 20px; }
+
+.avatar-wrapper { position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; }
+.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; }
+.user-avatar { width: 85%; height: 85%; border-radius: 50%; object-fit: cover; }
+
+.prof-name { font-size: 24px; margin: 10px 0; font-weight: 800; }
+
+.status-container { background: var(--secondary-bg); padding: 8px 16px; border-radius: 12px; margin-bottom: 25px; font-size: 14px; }
 .status-value { color: #4CAF50; font-weight: bold; margin-left: 5px; }
 
-.stats-history { width: 100%; max-width: 340px; margin-bottom: 30px; }
-.history-item {
-    display: flex; justify-content: space-between;
-    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+.stats-history { width: 100%; max-width: 340px; margin-bottom: 25px; }
+.history-item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .history-item span:first-child { opacity: 0.6; }
 .history-item .val { font-weight: bold; color: var(--main-color); }
 
-.balance-card-horizontal {
-    width: 100%; max-width: 340px;
-    background: #25282d; border-radius: 22px;
-    padding: 20px; display: flex;
-    justify-content: space-between; align-items: center;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+.balance-card-horizontal { 
+    width: 100%; max-width: 340px; background: #25282d; border-radius: 22px; 
+    padding: 20px; display: flex; justify-content: space-between; align-items: center;
+    border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
-
 .bal-title { font-size: 12px; opacity: 0.5; text-transform: uppercase; margin-bottom: 4px; }
 .bal-amount-row { display: flex; align-items: center; gap: 8px; }
 .bal-number { font-size: 28px; font-weight: 800; }
-.bal-coin-icon { font-size: 22px; }
 
-.shop-action-btn {
-    background: var(--main-color);
-    color: white; border: none;
-    padding: 12px 24px; border-radius: 14px;
-    font-weight: bold; font-size: 14px;
-    transition: transform 0.1s;
-}
-.shop-action-btn:active { transform: scale(0.95); }
-
-/* СТИЛИ ТУРНИРА */
-.tour-page { padding: 10px 20px 100px; }
+/* --- ТУРНИР И РЕЙТИНГ --- */
+.tour-page, .rank-page { padding: 10px 20px; }
 
 .last-winner-section { text-align: center; margin-bottom: 25px; }
 .winner-avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 10px; }
-.winner-img-big { 
-    width: 100%; height: 100%; border-radius: 50%; 
-    border: 4px solid var(--gold); object-fit: cover; 
-}
-.crown-icon { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 5; }
+.winner-img-big { width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; }
 
-.join-tournament-card {
-    background: #25282d; border-radius: 24px; padding: 20px; margin-bottom: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
+.join-tournament-card { background: #25282d; border-radius: 24px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.05); }
 .join-controls { display: flex; align-items: center; gap: 12px; }
-.participate-btn {
-    flex: 2; background: var(--main-color); color: white; border: none;
-    padding: 16px; border-radius: 16px; font-weight: bold; font-size: 16px;
-}
-.prize-pool-badge {
-    flex: 1; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2);
-    padding: 14px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;
-}
+
+.participate-btn, .share-btn-main { background: var(--main-color); color: white; border: none; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
+.participate-btn { flex: 2; padding: 16px; border-radius: 16px; font-size: 16px; }
+.share-btn-main { width: 100%; padding: 18px; border-radius: 20px; margin-top: 25px; font-size: 16px; box-shadow: 0 8px 20px rgba(36, 139, 207, 0.2); }
+.participate-btn:active, .share-btn-main:active, .shop-action-btn:active { transform: scale(0.96); }
+
+.prize-pool-badge { flex: 1; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 14px; border-radius: 16px; text-align: center; }
 .prize-amount { color: var(--gold); font-weight: 800; font-size: 16px; }
 
-.tournament-list-container { background: #25282d; border-radius: 24px; overflow: hidden; }
-.table-row {
-    display: flex; padding: 16px 20px; align-items: center;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-}
+.tournament-list-container { background: #25282d; border-radius: 24px; overflow: hidden; margin-top: 15px; }
+.table-row { display: flex; padding: 16px 20px; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.user-tour-rank { background: rgba(255,105,180,0.1); border: 1px dashed rgba(255,105,180,0.3); margin-bottom: 15px; padding: 14px 20px; border-radius: 18px; display: flex; justify-content: space-between; }
 
-/* ТАБ-БАР (Нижнее меню) */
+/* --- НИЖНЕЕ МЕНЮ (TAB BAR) --- */
 .tab-bar {
-    position: fixed; bottom: 0; width: 100%;
-    height: 75px; background: #1a1c20;
-    display: flex; border-top: 1px solid rgba(255,255,255,0.05);
-    z-index: 100;
+    position: fixed; bottom: 0; width: 100%; height: 75px; 
+    background: #1a1c20; display: flex; border-top: 1px solid rgba(255,255,255,0.05);
+    padding-bottom: env(safe-area-inset-bottom); z-index: 1000;
 }
-.tab-item {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: #555; font-size: 10px; text-decoration: none;
-}
+.tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #555; font-size: 10px; text-decoration: none; }
 .tab-item.active { color: var(--main-color); }
 .tab-item i { font-size: 24px; margin-bottom: 4px; font-style: normal; }
 
-.region-info { margin-top: 20px; opacity: 0.4; font-size: 12px; text-align: center;}
+/* Вспомогательные стили */
+.shop-action-btn { background: var(--main-color); color: white; border: none; padding: 12px 20px; border-radius: 14px; font-weight: bold; }
+.region-info { margin-top: 20px; opacity: 0.3; font-size: 11px; text-align: center; }
