@@ -63,7 +63,7 @@ const Pages = {
                 
                 <div class="invite-link-wrapper" onclick="inviteFriends()">
                     <span class="invite-icon">➕</span>
-                    <span class="invite-text">Пригласить друзей</span>
+                    <span class="invite-text">${t('invite', lang)}</span>
                 </div>
             </div>
         </div>`;
@@ -95,8 +95,8 @@ const Pages = {
             </div>
 
             <div class="info-list">
-                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
-                <div class="info-item">🌍 Регион: <span>Global</span></div>
+                <div class="info-item">🛡️ ${lang === 'uk' ? 'Статус' : 'Статус'}: <span>Explorer</span></div>
+                <div class="info-item">🌍 ${lang === 'uk' ? 'Регіон' : 'Регион'}: <span>Global</span></div>
             </div>
         </div>`,
 
