@@ -96,7 +96,8 @@ const Pages = {
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
-                <div class="leader-overlay" style="padding-bottom: 40px;"> <div class="leader-info-box">
+                <div class="leader-overlay" style="padding-bottom: 40px;"> 
+                    <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
                         <h2 class="leader-name-big">${currentTournament.lastWinner.name}</h2>
                         <div class="leader-stat" style="opacity:0.8; font-size:14px;">
@@ -142,28 +143,59 @@ const Pages = {
         </div>`;
     },
 
-    prof: (user, state, lang) => `
-        <div class="page-content">
-            <h2 class="title-center">${t('prof', lang)}</h2>
-            <div class="avatar-wrapper" style="width:110px; height:110px; margin: 0 auto;">
-                <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
-                <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
-            </div>
-            <h3 class="centered-name">${user.first_name || 'User'}</h3>
+    prof: (user, state, lang) => {
+        const weeklySteps = state.steps * 7; 
+        const monthlySteps = state.steps * 30;
 
-            <div class="wallet-mini-card">
-                <div class="wallet-info">
-                    <span class="wallet-label">${t('balance', lang)}</span>
-                    <span class="wallet-amount">💰 ${state.coins}</span>
+        return `
+        <div class="page-content profile-screen">
+            <div class="profile-header">
+                <div class="avatar-container">
+                    <div class="avatar-ring">
+                        <img src="${user.photo_url || ''}" class="main-profile-img">
+                    </div>
                 </div>
-                <button class="go-shop-btn" onclick="navigate('shop')">${t('shop', lang)} →</button>
+                <h2 class="profile-name">${user.first_name || 'User'} |</h2>
+                
+                <div class="status-badge">
+                    <span class="shield-icon">🛡️</span>
+                    Status: <span class="status-active">Active</span>
+                </div>
             </div>
 
-            <div class="info-list">
-                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
-                <div class="info-item">🌍 Регион: <span>Global</span></div>
+            <div class="profile-stats-list">
+                <div class="p-stat-item">
+                    <span class="p-label">${lang === 'ru' ? 'Прошел сегодня:' : 'Steps today:'}</span>
+                    <span class="p-value">${state.steps.toLocaleString()}</span>
+                </div>
+                <div class="p-stat-item">
+                    <span class="p-label">${lang === 'ru' ? 'Прошел за неделю:' : 'Weekly steps:'}</span>
+                    <span class="p-value">${weeklySteps.toLocaleString()}</span>
+                </div>
+                <div class="p-stat-item">
+                    <span class="p-label">${lang === 'ru' ? 'Прошел за месяц:' : 'Monthly steps:'}</span>
+                    <span class="p-value">${monthlySteps.toLocaleString()}</span>
+                </div>
             </div>
-        </div>`,
+
+            <div class="balance-card-wide">
+                <div class="balance-left">
+                    <div class="balance-title">BALANCE</div>
+                    <div class="balance-row">
+                        <span class="balance-num">${state.coins}</span>
+                        <span class="coin-bag">💰</span>
+                    </div>
+                </div>
+                <button class="shop-btn-blue" onclick="navigate('shop')">
+                    ${t('shop', lang)}
+                </button>
+            </div>
+
+            <div class="region-footer">
+                <span class="geo-icon">🌍</span> Region: Global
+            </div>
+        </div>`;
+    },
 
     shop: (user, state, lang) => `
         <div class="page-content">
