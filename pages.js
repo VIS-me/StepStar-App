@@ -108,14 +108,16 @@ const Pages = {
             <div class="join-tournament-card">
                 <div class="join-controls">
                     <button class="participate-btn" onclick="processTournamentJoin(${currentTournament.fee})">
-                        ${lang === 'uk' ? 'Брати участь' : (lang === 'ru' ? 'Участвовать' : 'Join')}
+                        ${t('joinBtn', lang)} ${currentTournament.fee} 💰
                     </button>
                     <div class="prize-pool-badge">
                         <span class="coin-icon">💰</span>
                         <span class="prize-amount">${currentTournament.prize.toLocaleString()}</span>
                     </div>
                 </div>
-                <p class="tour-hint">${lang === 'uk' ? 'Вхід за' : 'Вход за'} ${currentTournament.fee} 💰</p>
+                <p class="tour-hint">
+                    ${lang === 'uk' ? 'Призовий фонд турніру' : (lang === 'ru' ? 'Призовой фонд турнира' : 'Tournament prize pool')}
+                </p>
             </div>
 
             <div class="user-rank-mini">
