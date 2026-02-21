@@ -32,8 +32,12 @@
         const Pages = { home: Home.render, rank: Rank.render, tour: Tour.render, prof: Prof.render, shop: Shop.render };
 
         function navigate(pageId, el) {
-            const user = tg.initDataUnsafe?.user || { first_name: "User" };
-            document.getElementById('app').innerHTML = Pages[pageId](user, userState, appLang);
+            const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            const container = document.getElementById('app');
+            
+            // Отрисовка
+            container.innerHTML = Pages[pageId](user, userState, appLang);
+
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
@@ -76,6 +80,7 @@
 
         window.onload = () => {
             tg.expand();
+            tg.ready();
             ['home', 'rank', 'tour', 'prof'].forEach(id => {
                 const el = document.getElementById('txt-' + id);
                 if (el) el.innerText = t(id, appLang);
