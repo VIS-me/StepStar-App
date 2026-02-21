@@ -1,24 +1,57 @@
 const Shop = {
-    items: [
-        { id: 'blue', name: 'Blue Sky', price: 0, color: '#248bcf' },
-        { id: 'pink', name: 'Pink Neon', price: 50, color: '#ff69b4' },
-        { id: 'gold', name: 'Royal Gold', price: 500, color: '#FFD700' }
-    ],
     render: (user, state, lang) => `
         <div class="page-content">
-            <div class="shop-header">
-                <button class="back-btn" onclick="navigate('prof', document.getElementById('btn-prof'))">←</button>
-                <h2 class="title-shop">${t('shop', lang)}</h2>
-                <div class="balance-badge">💰 ${state.coins}</div>
+            <div class="shop-block" style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <div style="opacity:0.6">${t('balance', lang)}</div>
+                    <div style="font-size:22px; font-weight:bold;">${state.coins} 💰</div>
+                </div>
+                <button class="blue-btn" onclick="openGetCoinsModal()">${t('get', lang)}</button>
             </div>
-            <div class="shop-grid-large">
-                ${Shop.items.map(item => `
-                    <div class="shop-card ${state.frame === item.id ? 'owned' : ''}" onclick="changeFrame('${item.id}')">
-                        <div class="preview-circle" style="border: 4px solid ${item.color}"></div>
-                        <span class="item-name">${item.name}</span>
-                        <span class="item-price">${item.price === 0 ? 'FREE' : item.price + ' 💰'}</span>
+
+            <div class="shop-block">
+                <h4 style="margin-top:0">Рамки аватара</h4>
+                <div class="shop-grid">
+                    <div class="item-card active" onclick="selectItem('frame', 'blue')">
+                        <div style="width:40px; height:40px; border:2px solid #248bcf; border-radius:50%; margin:auto;"></div>
+                        <span class="check-mark">✓</span>
                     </div>
-                `).join('')}
+                    <div class="item-card" onclick="buyItem('frame', 'pink', 50)">
+                        <div style="width:40px; height:40px; border:2px solid #ff00ff; border-radius:50%; margin:auto;"></div>
+                        <div style="font-size:10px; margin-top:5px;">50 💰</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-block">
+                <h4 style="margin-top:0">Фоны</h4>
+                <div class="shop-grid">
+                    <div class="item-card active">Dark Night <span class="check-mark">✓</span></div>
+                    <div class="item-card">Ocean 🌊</div>
+                </div>
+            </div>
+
+            <div class="shop-block">
+                <h4 style="margin-top:0">Аксессуары</h4>
+                <div class="shop-grid">
+                    <div class="item-card">👑 Корона</div>
+                    <div class="item-card">🎓 Шапка</div>
+                </div>
             </div>
         </div>`
 };
+
+function openGetCoinsModal() {
+    Telegram.WebApp.showPopup({
+        title: 'Пополнение',
+        message: 'Выберите действие',
+        buttons: [
+            {id: 'daily', type: 'default', text: 'Награда (+10 💰)'},
+            {id: 'stars', type: 'default', text: 'Купить 200 (100 ⭐)'},
+            {type: 'cancel'}
+        ]
+    }, (id) => {
+        if(id === 'daily') alert('Монеты начислены!');
+        if(id === 'stars') alert('Переход к оплате звездами...');
+    });
+}
