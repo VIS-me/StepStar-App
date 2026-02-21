@@ -18,7 +18,7 @@ body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg-c
 /* --- ПРОФИЛЬ (По эскизу) --- */
 .prof-page { display: flex; flex-direction: column; align-items: center; padding: 20px; }
 .stats-history { width: 100%; margin: 20px 0; }
-.history-item { display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.history-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .balance-card-horizontal { 
     width: 100%; background: var(--secondary-bg); border-radius: 20px; padding: 15px 20px;
     display: flex; justify-content: space-between; align-items: center; margin-top: 15px;
@@ -33,7 +33,7 @@ body { margin: 0; font-family: -apple-system, sans-serif; background: var(--bg-c
 }
 .hero-img { width: 150px; height: 150px; border-radius: 50%; border: 5px solid var(--gold); object-fit: cover; }
 
-/* --- SHOP & ACHIEVEMENTS: Блоки --- */
+/* --- SHOP: Блоки --- */
 .shop-block { background: var(--secondary-bg); border-radius: 20px; padding: 20px; margin: 15px; border: 1px solid rgba(255,255,255,0.05); }
 .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
 .item-card { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 15px; text-align: center; position: relative; border: 1px solid transparent; }
