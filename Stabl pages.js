@@ -31,7 +31,6 @@ const Pages = {
 
     rank: (user, state, lang) => {
         const leader = { name: "Дмитрий", steps: 85400, photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000&auto=format&fit=crop" };
-        // ВОЗВРАЩАЕМ ТОП-3
         const topFriends = [
             { pos: 1, name: "Алексей", steps: 12400 },
             { pos: 2, name: "Мария", steps: 10200 },
@@ -61,6 +60,11 @@ const Pages = {
                         <span class="rank-steps">${f.steps.toLocaleString()}</span>
                     </div>
                 `).join('')}
+                
+                <div class="invite-link-wrapper" onclick="inviteFriends()">
+                    <span class="invite-icon">➕</span>
+                    <span class="invite-text">${t('invite', lang)}</span>
+                </div>
             </div>
         </div>`;
     },
@@ -91,8 +95,8 @@ const Pages = {
             </div>
 
             <div class="info-list">
-                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
-                <div class="info-item">🌍 Регион: <span>Global</span></div>
+                <div class="info-item">🛡️ ${lang === 'uk' ? 'Статус' : 'Статус'}: <span>Explorer</span></div>
+                <div class="info-item">🌍 ${lang === 'uk' ? 'Регіон' : 'Регион'}: <span>Global</span></div>
             </div>
         </div>`,
 
