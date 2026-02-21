@@ -10,7 +10,7 @@ const Assets = {
             shareBtn: "Поделиться результатом", 
             shareMsg: "Я прошел уже {n} шагов в StepStar! 👟",
             rank: "Рейтинг", tour: "Турнир", prof: "Профиль", home: "Главная",
-            champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин",
+            champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин ✨",
             balance: "Баланс", winner: "Победитель"
         },
         en: {
@@ -18,7 +18,7 @@ const Assets = {
             shareBtn: "Share Result", 
             shareMsg: "I've walked {n} steps in StepStar! 👟",
             rank: "Rank", tour: "Tour", prof: "Profile", home: "Home",
-            champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop",
+            champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop ✨",
             balance: "Balance", winner: "Winner"
         }
     }
