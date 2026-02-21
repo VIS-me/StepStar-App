@@ -61,6 +61,18 @@ body {
 .rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; background: #333; margin: 0 12px; }
 .rank-name { flex: 1; }
 
+/* Кнопка приглашения в рейтинге */
+.invite-link-wrapper {
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px; margin-top: 10px; cursor: pointer; transition: opacity 0.2s;
+}
+.invite-link-wrapper:active { opacity: 0.6; }
+.invite-icon {
+    font-size: 14px; background: var(--main-color); width: 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center; border-radius: 50%; margin-right: 10px;
+}
+.invite-text { color: var(--main-color); font-weight: 600; font-size: 15px; }
+
 /* Магазин */
 .shop-header { display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; }
 .back-btn { background: none; border: none; color: white; font-size: 24px; cursor: pointer; }
