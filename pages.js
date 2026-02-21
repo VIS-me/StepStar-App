@@ -60,7 +60,7 @@ const Pages = {
 
         return `
         <div class="page-content rank-page">
-            <div class="leader-banner" style="background-image: url('${leader.photo}'); border-radius: 0;">
+            <div class="leader-banner" style="background-image: url('${leader.photo}')">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('champion', lang)}</span>
@@ -113,9 +113,10 @@ const Pages = {
             { pos: 5, name: "Ivan", steps: 8900 }
         ];
 
+        // Используем ту же структуру, что и в Rank
         return `
-        <div class="page-content tour-page">
-            <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}'); border-radius: 0;">
+        <div class="page-content rank-page">
+            <div class="leader-banner" style="background-image: url('${currentTournament.lastWinner.photo}')">
                 <div class="leader-overlay" style="padding-bottom: 40px;"> 
                     <div class="leader-info-box">
                         <span class="crown-badge">👑 ${t('winner', lang)}</span>
@@ -138,15 +139,15 @@ const Pages = {
                             <span class="prize-amount">${currentTournament.prize.toLocaleString()}</span>
                         </div>
                     </div>
-                    <p class="tour-hint">
+                    <p class="tour-hint" style="text-align: center; margin-top: 10px; font-size: 12px; opacity: 0.6;">
                         ${lang === 'uk' ? 'Призовий фонд турніру' : (lang === 'ru' ? 'Призовой фонд турнира' : 'Tournament prize pool')}
                     </p>
                 </div>
 
-                <div class="user-rank-mini">
-                    <span class="u-pos">#452</span>
-                    <span class="u-name">${user.first_name} (You)</span>
-                    <span class="u-steps">${state.steps.toLocaleString()}</span>
+                <div class="user-rank-mini" style="background: rgba(255,255,255,0.03); margin: 15px 0; border-radius: 12px; padding: 12px;">
+                    <span class="u-pos" style="color: var(--main-color); font-weight: bold;">#452</span>
+                    <span class="u-name" style="margin-left: 10px;">${user.first_name} (You)</span>
+                    <span class="u-steps" style="float: right; font-weight: bold;">${state.steps.toLocaleString()}</span>
                 </div>
 
                 <div class="top-ten-list">
@@ -154,6 +155,7 @@ const Pages = {
                     ${top10.map(p => `
                         <div class="table-row">
                             <span class="t-pos">${p.pos}</span>
+                            <div class="rank-photo-mini" style="width:30px; height:30px; background:#333; border-radius:50%; margin-right:12px;"></div>
                             <span class="t-name">${p.name}</span>
                             <span class="t-steps">${p.steps.toLocaleString()}</span>
                         </div>
@@ -166,7 +168,6 @@ const Pages = {
     prof: (user, state, lang) => `
         <div class="page-content">
             <h2 class="title-center">${t('prof', lang)}</h2>
-            
             <div class="avatar-wrapper" style="width:110px; height:110px; margin: 0 auto;">
                 <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
                 <img src="${user.photo_url || ''}" class="user-avatar" style="width:94px; height:94px; ${user.photo_url ? '' : 'display:none'}">
