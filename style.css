@@ -3,6 +3,7 @@
     --bg-color: #1a1c20;
     --text-color: #ffffff;
     --secondary-bg: rgba(255,255,255,0.06);
+    --gold: #FFD700;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -15,21 +16,22 @@ body {
 
 .app-viewport { height: 100vh; overflow-y: auto; padding-bottom: 90px; }
 
-/* СТИЛИ ПРОФИЛЯ */
-.prof-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 20px;
-    animation: fadeIn 0.3s ease;
-}
-
+/* ОБЩИЕ АНИМАЦИИ */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Аватар и рамка */
+.page-content { animation: fadeIn 0.3s ease; }
+
+/* СТИЛИ ПРОФИЛЯ (По твоему чертежу) */
+.prof-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
 .avatar-wrapper {
     position: relative;
     width: 110px; height: 110px;
@@ -47,7 +49,6 @@ body {
 
 .prof-name { font-size: 24px; margin: 10px 0 20px; font-weight: 800; }
 
-/* Статус */
 .status-container {
     background: var(--secondary-bg);
     padding: 8px 16px; border-radius: 12px;
@@ -55,7 +56,6 @@ body {
 }
 .status-value { color: #4CAF50; font-weight: bold; margin-left: 5px; }
 
-/* Статистика списком */
 .stats-history { width: 100%; max-width: 340px; margin-bottom: 30px; }
 .history-item {
     display: flex; justify-content: space-between;
@@ -64,15 +64,11 @@ body {
 .history-item span:first-child { opacity: 0.6; }
 .history-item .val { font-weight: bold; color: var(--main-color); }
 
-/* ГОРИЗОНТАЛЬНАЯ КАРТОЧКА БАЛАНСА */
 .balance-card-horizontal {
     width: 100%; max-width: 340px;
-    background: #25282d;
-    border-radius: 22px;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    background: #25282d; border-radius: 22px;
+    padding: 20px; display: flex;
+    justify-content: space-between; align-items: center;
     border: 1px solid rgba(255,255,255,0.08);
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
 }
@@ -82,7 +78,6 @@ body {
 .bal-number { font-size: 28px; font-weight: 800; }
 .bal-coin-icon { font-size: 22px; }
 
-/* Кнопка Магазин */
 .shop-action-btn {
     background: var(--main-color);
     color: white; border: none;
@@ -92,13 +87,44 @@ body {
 }
 .shop-action-btn:active { transform: scale(0.95); }
 
-.region-info { margin-top: 20px; opacity: 0.4; font-size: 12px; }
+/* СТИЛИ ТУРНИРА */
+.tour-page { padding: 10px 20px 100px; }
 
-/* ТАБ-БАР (Меню) */
+.last-winner-section { text-align: center; margin-bottom: 25px; }
+.winner-avatar-container { position: relative; width: 100px; height: 100px; margin: 0 auto 10px; }
+.winner-img-big { 
+    width: 100%; height: 100%; border-radius: 50%; 
+    border: 4px solid var(--gold); object-fit: cover; 
+}
+.crown-icon { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 24px; z-index: 5; }
+
+.join-tournament-card {
+    background: #25282d; border-radius: 24px; padding: 20px; margin-bottom: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+.join-controls { display: flex; align-items: center; gap: 12px; }
+.participate-btn {
+    flex: 2; background: var(--main-color); color: white; border: none;
+    padding: 16px; border-radius: 16px; font-weight: bold; font-size: 16px;
+}
+.prize-pool-badge {
+    flex: 1; background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2);
+    padding: 14px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.prize-amount { color: var(--gold); font-weight: 800; font-size: 16px; }
+
+.tournament-list-container { background: #25282d; border-radius: 24px; overflow: hidden; }
+.table-row {
+    display: flex; padding: 16px 20px; align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+}
+
+/* ТАБ-БАР (Нижнее меню) */
 .tab-bar {
     position: fixed; bottom: 0; width: 100%;
     height: 75px; background: #1a1c20;
     display: flex; border-top: 1px solid rgba(255,255,255,0.05);
+    z-index: 100;
 }
 .tab-item {
     flex: 1; display: flex; flex-direction: column;
@@ -107,3 +133,5 @@ body {
 }
 .tab-item.active { color: var(--main-color); }
 .tab-item i { font-size: 24px; margin-bottom: 4px; font-style: normal; }
+
+.region-info { margin-top: 20px; opacity: 0.4; font-size: 12px; text-align: center;}
