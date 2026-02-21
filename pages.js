@@ -1,9 +1,23 @@
+// ПАНЕЛЬ УПРАВЛЕНИЯ ТУРНИРОМ (Меняет админ)
+const currentTournament = {
+    isActive: true, 
+    fee: 50,        
+    prize: 10000,   
+    lastWinner: {
+        name: "Alexander",
+        photo: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1000&auto=format&fit=crop"
+    }
+};
+
 const Pages = {
     home: (user, state, lang) => {
         const kcal = Math.round(state.steps * 0.04);
         const km = (state.steps * 0.0007).toFixed(1);
         const min = Math.round(state.steps / 100);
-        const offset = 628 - (628 * Math.min(state.steps / 10000, 1));
+        // Расчет прогресса (база 10 000 шагов)
+        const goal = 10000;
+        const offset = 628 - (628 * Math.min(state.steps / goal, 1));
+        
         return `
         <div class="page-content home-center">
             <div class="user-main-info">
@@ -18,7 +32,10 @@ const Pages = {
                     <circle stroke="rgba(255,255,255,0.1)" stroke-width="14" fill="transparent" r="100" cx="115" cy="115"/>
                     <circle class="progress-ring__circle" stroke="#248bcf" stroke-width="14" fill="transparent" r="100" cx="115" cy="115" style="stroke-dashoffset: ${offset}"/>
                 </svg>
-                <div class="steps-content"><h1>${state.steps.toLocaleString()}</h1><p>${t('steps', lang)}</p></div>
+                <div class="steps-content">
+                    <h1>${state.steps.toLocaleString()}</h1>
+                    <p>${t('steps', lang)}</p>
+                </div>
             </div>
             <div class="stats-grid">
                 <div class="stat-item"><span>${kcal}</span><label>${t('kcal', lang)}</label></div>
@@ -60,7 +77,6 @@ const Pages = {
                         <span class="rank-steps">${f.steps.toLocaleString()}</span>
                     </div>
                 `).join('')}
-                
                 <div class="invite-link-wrapper" onclick="inviteFriends()">
                     <span class="invite-icon">➕</span>
                     <span class="invite-text">${t('invite', lang)}</span>
@@ -69,13 +85,57 @@ const Pages = {
         </div>`;
     },
 
-    tour: (user, state, lang) => `
-        <div class="page-content center-flex-tour">
-            <div class="no-data-box">
-                <span class="big-icon">🏁</span>
-                <p class="no-data-text">${t('noTour', lang)}</p>
+    tour: (user, state, lang) => {
+        const top10 = [
+            { pos: 1, name: "Dmitry", steps: 12500 },
+            { pos: 2, name: "Sarah", steps: 11800 },
+            { pos: 3, name: "Mike", steps: 10200 },
+            { pos: 4, name: "Anna", steps: 9500 },
+            { pos: 5, name: "Ivan", steps: 8900 }
+        ];
+
+        return `
+        <div class="page-content tour-page">
+            <div class="last-winner-section">
+                <div class="winner-avatar-container">
+                    <div class="crown-icon">👑</div>
+                    <img src="${currentTournament.lastWinner.photo}" class="winner-img-big">
+                </div>
+                <div class="winner-label">${t('winner', lang)}</div>
+                <div class="winner-name">${currentTournament.lastWinner.name}</div>
             </div>
-        </div>`,
+
+            <div class="join-tournament-card">
+                <div class="join-controls">
+                    <button class="participate-btn" onclick="processTournamentJoin(${currentTournament.fee})">
+                        ${lang === 'uk' ? 'Брати участь' : (lang === 'ru' ? 'Участвовать' : 'Join')}
+                    </button>
+                    <div class="prize-pool-badge">
+                        <span class="coin-icon">💰</span>
+                        <span class="prize-amount">${currentTournament.prize.toLocaleString()}</span>
+                    </div>
+                </div>
+                <p class="tour-hint">${lang === 'uk' ? 'Вхід за' : 'Вход за'} ${currentTournament.fee} 💰</p>
+            </div>
+
+            <div class="user-rank-mini">
+                <span class="u-pos">#452</span>
+                <span class="u-name">${user.first_name} (You)</span>
+                <span class="u-steps">${state.steps.toLocaleString()}</span>
+            </div>
+
+            <div class="top-ten-list">
+                <h4 class="table-title">TOP 10</h4>
+                ${top10.map(p => `
+                    <div class="table-row">
+                        <span class="t-pos">${p.pos}</span>
+                        <span class="t-name">${p.name}</span>
+                        <span class="t-steps">${p.steps.toLocaleString()}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>`;
+    },
 
     prof: (user, state, lang) => `
         <div class="page-content">
@@ -95,8 +155,8 @@ const Pages = {
             </div>
 
             <div class="info-list">
-                <div class="info-item">🛡️ ${lang === 'uk' ? 'Статус' : 'Статус'}: <span>Explorer</span></div>
-                <div class="info-item">🌍 ${lang === 'uk' ? 'Регіон' : 'Регион'}: <span>Global</span></div>
+                <div class="info-item">🛡️ Статус: <span>Explorer</span></div>
+                <div class="info-item">🌍 Регион: <span>Global</span></div>
             </div>
         </div>`,
 
