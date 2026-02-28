@@ -80,16 +80,21 @@
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; }
 
-        /* Новые стили для Профиля */
+        /* Стили для Профиля */
         .profile-stats-list { background: var(--secondary-bg); margin: 15px 20px; border-radius: 20px; padding: 5px 0; }
         .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .p-stat-row:last-child { border-bottom: none; }
         .p-label { opacity: 0.6; font-size: 13px; }
         .p-value { font-weight: bold; font-size: 14px; }
         
-        .balance-card { background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%); margin: 15px 20px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); text-align: center; }
-        .balance-title { font-size: 11px; opacity: 0.6; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
-        .balance-amount { font-size: 24px; font-weight: bold; color: var(--accent-gold); }
+        .balance-inline-card { 
+            background: linear-gradient(135deg, rgba(255,215,0,0.12) 0%, rgba(255,215,0,0.05) 100%); 
+            margin: 15px 20px; padding: 16px 20px; border-radius: 20px; 
+            border: 1px solid rgba(255,215,0,0.25); 
+            display: flex; justify-content: space-between; align-items: center; 
+        }
+        .balance-text { font-size: 15px; font-weight: 500; opacity: 0.9; }
+        .balance-val { font-size: 18px; font-weight: bold; color: var(--accent-gold); }
     </style>
 </head>
 <body>
@@ -169,10 +174,7 @@
                 const leader = window.userState.lastWeekFriendWinner;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
                 appDiv.innerHTML = `
-                    <div class="leader-hero-container">
-                        <img src="${leader.photo_url}" class="leader-img-full">
-                        <div class="leader-info-overlay"><h2>${leader.name}</h2></div>
-                    </div>
+                    <div class="leader-hero-container"><img src="${leader.photo_url}" class="leader-img-full"><div class="leader-info-overlay"><h2>${leader.name}</h2></div></div>
                     <div class="my-rank-card">
                         <div><div style="font-size:9px; opacity:0.5;">РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div></div>
                         <div style="text-align:right;"><div style="font-size:9px; opacity:0.5;">ШАГИ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
@@ -213,9 +215,9 @@
                             <div class="p-stat-row"><span class="p-label">Всего</span><span class="p-value">${(window.userState.steps_total || 0).toLocaleString()}</span></div>
                         </div>
 
-                        <div class="balance-card">
-                            <div class="balance-title">Ваш баланс</div>
-                            <div class="balance-amount">${window.userState.coins} 💰</div>
+                        <div class="balance-inline-card">
+                            <span class="balance-text">Баланс</span>
+                            <span class="balance-val">${window.userState.coins} монет</span>
                         </div>
 
                         <button class="main-button" style="margin-top:10px; background: #333;" onclick="window.navigate('shop')">Магазин</button>
@@ -297,54 +299,37 @@
                 if (!tgUser) { window.navigate('home'); return; }
                 const myId = String(tgUser.id);
                 window.userState.id = myId;
-
                 await checkTournamentEnd();
-
                 const userDocRef = db.collection("users").doc(myId);
                 const userDoc = await userDocRef.get();
-
                 if (!userDoc.exists) {
                     await userDocRef.set({
                         name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
                         stats: { steps_today: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0 },
-                        economy: { balance: 0 },
-                        inventory: { frames: ['white'] },
-                        selected: { frame: 'white' },
-                        tournament: { is_registered: false },
-                        friends: []
+                        economy: { balance: 0 }, inventory: { frames: ['white'] }, selected: { frame: 'white' },
+                        tournament: { is_registered: false }, friends: []
                     });
                 } else {
                     await userDocRef.update({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime() });
                 }
-
                 const sp = window.tg.initDataUnsafe?.start_param;
                 if (sp && sp !== myId) {
                     await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
                     await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
                 }
-
                 const finalDoc = await userDocRef.get();
                 const d = finalDoc.data();
                 window.userState = { 
-                    ...window.userState, 
-                    steps: d.stats?.steps_today || 0, 
-                    steps_total: d.stats?.steps_total || 0,
-                    steps_last_week: d.stats?.steps_last_week || 0,
-                    steps_last_month: d.stats?.steps_last_month || 0,
-                    coins: d.economy?.balance || 0, 
-                    frame: d.selected?.frame || 'white', 
-                    inventoryFrames: d.inventory?.frames || ['white'], 
-                    isRegistered: d.tournament?.is_registered || false, 
-                    friends: d.friends || [] 
+                    ...window.userState, steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0,
+                    steps_last_week: d.stats?.steps_last_week || 0, steps_last_month: d.stats?.steps_last_month || 0,
+                    coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', 
+                    inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false, friends: d.friends || [] 
                 };
-                
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-                
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-
                 const currentActiveTab = document.querySelector('.tab-item.active span')?.innerText;
                 const tabMap = { 'Дом': 'home', 'Рейтинг': 'rank', 'Турнир': 'tour', 'Профиль': 'prof' };
                 window.navigate(tabMap[currentActiveTab] || 'home');
