@@ -131,7 +131,7 @@ const Pages = {
             <div class="page-content shop-page">
                 <h2 style="text-align:center; margin-top:20px;">${t('shop', lang)}</h2>
                 <div style="text-align:center; color:var(--accent-gold); font-size:20px; font-weight:800; margin-bottom:20px;">💰 ${state.coins}</div>
-                <div class="shop-grid-large" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px;">${gridHtml}</div>
+                <div class="shop-grid-large">${gridHtml}</div>
                 <button class="main-button" style="margin-top:20px; background:rgba(255,255,255,0.05);" onclick="navigate('prof')">Back</button>
             </div>`;
     }
