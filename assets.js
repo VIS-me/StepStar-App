@@ -4,9 +4,11 @@ const Assets = {
         green: "4px solid #4CAF50",
         lightblue: "4px solid #00BCD4",
         blue: "4px solid #248bcf",
+        blue_default: "4px solid #248bcf", // Добавлено для совместимости с БД
         pink: "4px solid #ff69b4",
         purple: "4px solid #9C27B0",
-        gold: "5px solid #FFD700"
+        gold: "5px solid #FFD700",
+        gold_vip_frame: "5px solid #FFD700" // Для VIP статуса
     },
     i18n: {
         ru: {
@@ -48,6 +50,5 @@ function t(key, lang) {
 }
 
 function getFrameStyle(name) {
-    // Если рамки нет в списке, возвращаем белую (стоковую)
     return Assets.frames[name] || Assets.frames.white;
 }
