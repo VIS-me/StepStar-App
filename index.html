@@ -172,8 +172,8 @@
                     </div>
                     <div class="section-title">Список друзей</div>
                     ${top10.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
-                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Добавьте друзей по ссылке ниже</div>' : ''}
-                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
+                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Добавьте друзей по кнопке ниже</div>' : ''}
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Добавить друзей из контактов</button>`;
             }
 
             if (pageId === 'tour') {
@@ -253,13 +253,17 @@
 
         window.shareResult = () => {
             const steps = window.userState.steps.toLocaleString();
-            const text = `Я прошел сегодня ${steps} шагов! 👟`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(text)}`);
+            const text = `👟 Я прошел сегодня ${steps} шагов в StepStar! Давай со мной!`;
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(text)}`);
         };
 
+        // ПРОДВИНУТАЯ СИСТЕМА ПРИГЛАШЕНИЙ
         window.inviteFriends = () => {
-            const link = `https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Давай ходить вместе в StepStar! 👟`);
+            const botUsername = "StepStarAppBot"; // Убедись, что это юзернейм твоего бота без @
+            const inviteText = `Давай ходить вместе в StepStar! 👟\nТвой ID для связи: ${window.userState.id}`;
+            
+            // Открывает нативный список контактов для пересылки
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/${botUsername}/app?startapp=${window.userState.id}&text=${encodeURIComponent(inviteText)}`);
         };
 
         window.joinTournament = async () => {
@@ -299,7 +303,8 @@
                         economy: { balance: 0 },
                         inventory: { frames: ['white'] },
                         selected: { frame: 'white' },
-                        tournament: { is_registered: false }
+                        tournament: { is_registered: false },
+                        friends: []
                     });
                 } else {
                     await userDocRef.update({
