@@ -13,7 +13,7 @@
             --main-color: #248bcf;
             --bg-color: #1a1c20;
             --text-color: #ffffff;
-            --secondary-bg: rgba(255,255,255,0.05); /* Уменьшил базовую непрозрачность */
+            --secondary-bg: rgba(255,255,255,0.03);
             --accent-gold: #FFD700;
         }
 
@@ -29,19 +29,20 @@
 
         /* Динамические фоны */
         body.bg-cats { 
-            background: linear-gradient(rgba(26,28,32,0.6), rgba(26,28,32,0.6)), 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
             url('https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
         }
         
         body.bg-maltese { 
-            background: linear-gradient(rgba(26,28,32,0.6), rgba(26,28,32,0.6)), 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
             url('https://images.pexels.com/photos/3361739/pexels-photo-3361739.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
         }
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; position: relative; z-index: 1; }
 
+        /* Стили для дома */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
-        .stat-card { background: rgba(255,255,255,0.06); padding: 12px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
+        .stat-card { background: rgba(255,255,255,0.05); padding: 12px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
@@ -50,11 +51,10 @@
         .leader-info-overlay { position: absolute; bottom: 50px; left: 25px; text-align: left; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
         
         .my-rank-card {
-            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
             margin: -30px 20px 20px; padding: 12px 25px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            position: relative; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: relative; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .prize-block {
@@ -65,56 +65,66 @@
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
 
-        .section-title { padding: 15px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.4; letter-spacing: 1.2px; text-transform: uppercase; }
+        .section-title { padding: 15px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.6; letter-spacing: 1.2px; text-transform: uppercase; }
         
         .table-row { display: flex; align-items: center; padding: 12px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .rank-num { width: 25px; font-size: 14px; opacity: 0.5; font-weight: bold; }
         .rank-photo-mini { width: 38px; height: 38px; border-radius: 50%; margin: 0 15px; object-fit: cover; background: #333; }
         
         .tab-bar { 
-            height: 70px; display: flex; background: rgba(21, 23, 26, 0.95); 
+            height: 70px; display: flex; background: rgba(21, 23, 26, 0.85); 
             position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000;
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
         }
         .tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; cursor: pointer; }
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
+        /* Магазин */
         .shop-promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 15px; margin-bottom: 15px; }
-        .promo-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .promo-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); }
         .promo-card i { display: block; font-style: normal; font-size: 20px; margin-bottom: 5px; }
         .promo-card b { display: block; font-size: 11px; color: var(--accent-gold); }
         .promo-card span { font-size: 8px; opacity: 0.6; display: flex; align-items: center; justify-content: center; gap: 2px; }
 
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0 15px; margin-bottom: 20px; }
-        .shop-item-mini { background: rgba(255,255,255,0.05); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .shop-item-mini { background: rgba(255,255,255,0.05); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; backdrop-filter: blur(10px); }
         .frame-preview { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
         .bg-preview { width: 40px; height: 40px; border-radius: 8px; margin: 0 auto 8px; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
 
-        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; }
         
         .avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; }
 
-        /* ОБНОВЛЕНО: Повышенная прозрачность для профиля */
-        .profile-stats-list { background: rgba(255,255,255,0.03); margin: 15px 20px; border-radius: 20px; padding: 5px 0; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-        .p-stat-row:last-child { border-bottom: none; }
-        .p-label { opacity: 0.6; font-size: 13px; }
-        .p-value { font-weight: bold; font-size: 14px; }
-        
-        /* ОБНОВЛЕНО: Прозрачность карточки баланса */
-        .balance-inline-card { 
-            background: linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,215,0,0.03) 100%); 
-            margin: 15px 20px; padding: 16px 20px; border-radius: 20px; 
-            border: 1px solid rgba(255,215,0,0.15); 
-            display: flex; justify-content: space-between; align-items: center; 
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+        /* ИСПРАВЛЕНО: Максимальная прозрачность для блоков ПРОФИЛЯ */
+        .profile-stats-list { 
+            background: rgba(255,255,255,0.01); /* Почти 0% непрозрачности */
+            margin: 15px 20px; border-radius: 20px; padding: 5px 0; 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); 
+            border: 1px solid rgba(255,255,255,0.15); /* Тонкая рамка для видимости */
         }
-        .balance-text { font-size: 15px; font-weight: 500; opacity: 0.9; }
-        .balance-val { font-size: 18px; font-weight: bold; color: var(--accent-gold); }
-        .join-btn { background: var(--main-color); color: white; border: none; padding: 10px 18px; border-radius: 14px; font-weight: bold; font-size: 13px; cursor: pointer; }
+        .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .p-stat-row:last-child { border-bottom: none; }
+        .p-label { opacity: 0.8; font-size: 13px; font-weight: 500; }
+        .p-value { font-weight: bold; font-size: 14px; text-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+        
+        .balance-inline-card { 
+            background: rgba(255,255,255,0.01); 
+            margin: 15px 20px; padding: 16px 20px; border-radius: 20px; 
+            border: 1px solid rgba(255,215,0,0.25); 
+            display: flex; justify-content: space-between; align-items: center; 
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+        }
+        .balance-text { font-size: 15px; font-weight: 500; }
+        .balance-val { font-size: 18px; font-weight: bold; color: var(--accent-gold); text-shadow: 0 1px 5px rgba(0,0,0,0.3); }
+        
+        .shop-btn-prof {
+            width: 90%; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1); 
+            padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 10px auto; 
+            display: block; cursor: pointer; backdrop-filter: blur(5px);
+        }
     </style>
 </head>
 <body>
@@ -187,10 +197,10 @@
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:15px;">${user.first_name}</h3>
+                        <h3 style="margin-top:15px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${user.first_name}</h3>
                         <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
                             <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;"><circle stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/><circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.5s; stroke-linecap:round;"/></svg>
-                            <div><h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.5;">шагов сегодня</div></div>
+                            <div><h1 style="margin:0; font-size:42px; text-shadow: 0 2px 10px rgba(0,0,0,0.3);">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.6; font-weight:bold;">шагов сегодня</div></div>
                         </div>
                         <div class="stats-grid">
                             <div class="stat-card"><b>${s.kcal}</b><span>ккал</span></div>
@@ -211,7 +221,7 @@
                         <div style="text-align:right;"><div style="font-size:9px; opacity:0.5;">ШАГИ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
                     <div class="section-title">Друзья</div>
-                    ${window.friendUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                    ${window.friendUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="flex:1; font-weight:500;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
                     <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
@@ -220,11 +230,11 @@
                 appDiv.innerHTML = `
                     <div class="leader-hero-container"><img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑'"><div class="leader-info-overlay"><h2>${winner.name}</h2></div></div>
                     <div class="prize-block">
-                        <div><div style="font-size:10px; opacity:0.5;">ФОНД</div><div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">Приз ${window.adminPrizePool} монет</div></div>
+                        <div><div style="font-size:10px; opacity:0.6;">ФОНД</div><div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">Приз ${window.adminPrizePool} монет</div></div>
                         <button class="join-btn" onclick="window.joinTournament()">${window.userState.isRegistered ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ за 50'}</button>
                     </div>
                     <div class="section-title">Топ участников</div>
-                    ${window.tourUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span>${u.name}</span><b style="margin-left:auto;">${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                    ${window.tourUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="font-weight:500;">${u.name}</span><b style="margin-left:auto;">${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
                 `;
             }
 
@@ -235,17 +245,23 @@
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:15px; margin-bottom:5px;">${user.first_name}</h3>
-                        <div style="font-size:11px; opacity:0.3; margin-bottom:20px;">ID: ${window.userState.id}</div>
-                        <div class="section-title" style="text-align:left;">Пройдено шагов</div>
+                        <h3 style="margin-top:15px; margin-bottom:5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">${user.first_name}</h3>
+                        <div style="font-size:11px; opacity:0.5; margin-bottom:20px;">ID: ${window.userState.id}</div>
+                        
+                        <div class="section-title" style="text-align:left;">История шагов</div>
                         <div class="profile-stats-list">
                             <div class="p-stat-row"><span class="p-label">Сегодня</span><span class="p-value">${window.userState.steps.toLocaleString()}</span></div>
                             <div class="p-stat-row"><span class="p-label">Прошлая неделя</span><span class="p-value">${(window.userState.steps_last_week || 0).toLocaleString()}</span></div>
                             <div class="p-stat-row"><span class="p-label">Прошлый месяц</span><span class="p-value">${(window.userState.steps_last_month || 0).toLocaleString()}</span></div>
                             <div class="p-stat-row"><span class="p-label">Всего</span><span class="p-value">${(window.userState.steps_total || 0).toLocaleString()}</span></div>
                         </div>
-                        <div class="balance-inline-card"><span class="balance-text">Баланс</span><span class="balance-val">${window.userState.coins} монет</span></div>
-                        <button class="main-button" style="margin-top:10px; background: rgba(51, 51, 51, 0.6); backdrop-filter: blur(10px);" onclick="window.navigate('shop')">Магазин</button>
+                        
+                        <div class="balance-inline-card">
+                            <span class="balance-text">Кошелек</span>
+                            <span class="balance-val">${window.userState.coins} 💰</span>
+                        </div>
+                        
+                        <button class="shop-btn-prof" onclick="window.navigate('shop')">ЗАГЛЯНУТЬ В МАГАЗИН</button>
                     </div>`;
             }
 
@@ -256,7 +272,7 @@
                 appDiv.innerHTML = `
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
                         <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
-                        <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
+                        <div style="font-weight:bold; color:var(--accent-gold); text-shadow: 0 0 10px rgba(255,215,0,0.3);">💰 ${window.userState.coins}</div>
                     </div>
 
                     <div class="shop-promo-grid">
