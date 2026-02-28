@@ -6,16 +6,12 @@
     <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="style.css">
-    
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <div id="app" class="app-viewport">
-        <div style="padding:50px; text-align:center; color:white; font-family:sans-serif;">
-            <div class="loader">🚀</div>
-            <p>Запуск StepStar...</p>
-        </div>
+        <div style="padding:50px; text-align:center; color:white;">🚀 Запуск StepStar...</div>
     </div>
 
     <div class="tab-bar">
@@ -29,7 +25,6 @@
     <script src="pages.js"></script>
 
     <script>
-        // 1. Настройка Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -38,156 +33,85 @@
             messagingSenderId: "515498492922",
             appId: "1:515498492922:web:76255dfa72995e03261a43"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 2. Глобальное состояние
         window.tg = window.Telegram.WebApp;
-        window.userState = { 
-            frame: 'white', steps: 0, coins: 0, isVip: false, inventoryFrames: ['white'] 
-        };
-        
-        const userLang = window.tg.initDataUnsafe?.user?.language_code;
-        window.appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
+        window.userState = { frame: 'white', steps: 0, coins: 0, isVip: false, inventoryFrames: ['white'] };
+        window.appLang = (window.tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
-        // 3. Навигация
         window.navigate = function(pageId, el) {
             const app = document.getElementById('app');
-            const user = window.tg.initDataUnsafe?.user || { first_name: "Walker", photo_url: "" };
-            
-            if (typeof Pages !== 'undefined' && Pages[pageId]) {
-                app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
-                if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
-            }
+            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            if (Pages[pageId]) app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
         };
 
-        // 4. Логика Firebase
-        async function syncUser(tgUser) {
-            const userRef = db.collection("users").doc(String(tgUser.id));
-            const doc = await userRef.get();
-
-            const freshData = {
-                name: tgUser.first_name || "Walker",
-                photo_url: tgUser.photo_url || "",
-                last_seen: firebase.firestore.FieldValue.serverTimestamp()
-            };
-
-            if (doc.exists) {
-                await userRef.update(freshData);
-                return doc.data();
-            } else {
-                const newUser = {
-                    ...freshData,
-                    economy: { balance: 0, total_earned: 0 },
-                    inventory: { frames: ["white"] },
-                    selected: { frame: "white" },
-                    stats: { steps_today: 0, calories_today: 0, steps_total: 0 },
-                    settings: { is_vip: false, privacy_mode: "public" }
-                };
-                await userRef.set(newUser);
-                return newUser;
-            }
-        }
-
-        // 5. Функции кнопок (Магазин, VIP, Шаринг)
-        window.handleFrameAction = async function(color, price) {
-            const userId = window.tg.initDataUnsafe?.user?.id;
-            if (!userId) return;
-
-            const userRef = db.collection("users").doc(String(userId));
-            const isOwned = window.userState.inventoryFrames.includes(color);
-
-            if (isOwned) {
-                window.userState.frame = color;
-                await userRef.update({ "selected.frame": color });
-                window.navigate('shop');
-            } else {
-                if (window.userState.coins >= price) {
-                    window.tg.showConfirm(`Купить за ${price} 💰?`, async (confirm) => {
-                        if (confirm) {
-                            await userRef.update({
-                                "economy.balance": firebase.firestore.FieldValue.increment(-price),
-                                "inventory.frames": firebase.firestore.FieldValue.arrayUnion(color),
-                                "selected.frame": color
-                            });
-                            window.userState.coins -= price;
-                            window.userState.frame = color;
-                            window.userState.inventoryFrames.push(color);
-                            window.navigate('shop');
-                            window.tg.HapticFeedback.notificationOccurred('success');
-                        }
-                    });
-                } else {
-                    window.tg.showAlert("Недостаточно монет!");
-                }
-            }
+        // Функции действий
+        window.shareResult = (steps) => {
+            const text = t('shareMsg', window.appLang).replace('{n}', steps);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(text)}`);
         };
 
-        window.handleVipPurchase = async function() {
-            const userId = window.tg.initDataUnsafe?.user?.id;
-            if (window.userState.coins >= 2500) {
-                window.tg.showConfirm("Купить VIP за 2500 💰?", async (confirm) => {
-                    if(confirm) {
-                        const userRef = db.collection("users").doc(String(userId));
-                        await userRef.update({
-                            "settings.is_vip": true,
-                            "economy.balance": firebase.firestore.FieldValue.increment(-2500),
-                            "inventory.frames": firebase.firestore.FieldValue.arrayUnion('gold_vip_frame'),
-                            "selected.frame": 'gold_vip_frame'
-                        });
-                        window.userState.isVip = true;
-                        window.userState.coins -= 2500;
-                        window.userState.frame = 'gold_vip_frame';
-                        window.navigate('prof');
-                        window.tg.showAlert("👑 VIP АКТИВИРОВАН!");
-                    }
+        window.handleFrameAction = async (id, price) => {
+            const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
+            if (window.userState.inventoryFrames.includes(id)) {
+                window.userState.frame = id;
+                await userRef.update({ "selected.frame": id });
+            } else if (window.userState.coins >= price) {
+                window.userState.coins -= price;
+                window.userState.inventoryFrames.push(id);
+                window.userState.frame = id;
+                await userRef.update({ 
+                    "economy.balance": firebase.firestore.FieldValue.increment(-price),
+                    "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id),
+                    "selected.frame": id
                 });
-            } else {
-                window.tg.showAlert("Нужно 2500 монет!");
             }
+            window.navigate('shop');
         };
 
-        window.shareResult = function(steps) {
-            const msg = t('shareMsg', window.appLang).replace('{n}', steps);
-            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(msg)}`;
-            window.tg.openTelegramLink(url);
+        window.handleVipPurchase = async () => {
+            if (window.userState.coins < 2500) return window.tg.showAlert("Недостаточно 💰");
+            const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
+            await userRef.update({
+                "economy.balance": firebase.firestore.FieldValue.increment(-2500),
+                "settings.is_vip": true,
+                "selected.frame": "gold_vip_frame",
+                "inventory.frames": firebase.firestore.FieldValue.arrayUnion("gold_vip_frame")
+            });
+            window.userState.isVip = true; window.userState.coins -= 2500; window.userState.frame = "gold_vip_frame";
+            window.navigate('prof');
         };
 
-        // 6. Старт
         async function start() {
-            window.tg.ready();
-            window.tg.expand();
-
-            try {
-                const tgUser = window.tg.initDataUnsafe?.user;
-                if (tgUser) {
-                    const data = await syncUser(tgUser);
-                    window.userState.coins = data.economy?.balance || 0;
-                    window.userState.steps = data.stats?.steps_today || 0;
-                    window.userState.frame = data.selected?.frame || 'white';
-                    window.userState.inventoryFrames = data.inventory?.frames || ['white'];
-                    window.userState.isVip = data.settings?.is_vip || false;
+            window.tg.ready(); window.tg.expand();
+            const tgUser = window.tg.initDataUnsafe?.user;
+            if (tgUser) {
+                const userRef = db.collection("users").doc(String(tgUser.id));
+                const doc = await userRef.get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    window.userState = {
+                        steps: data.stats?.steps_today || 0,
+                        coins: data.economy?.balance || 0,
+                        frame: data.selected?.frame || 'white',
+                        isVip: data.settings?.is_vip || false,
+                        inventoryFrames: data.inventory?.frames || ['white']
+                    };
+                } else {
+                    await userRef.set({ name: tgUser.first_name, economy: { balance: 0 }, stats: { steps_today: 0 }, inventory: { frames: ['white'] }, selected: { frame: 'white' } });
                 }
-            } catch (e) {
-                console.error("Firebase Sync Error:", e);
             }
-
-            // Локализация меню
-            if (typeof t === 'function') {
-                document.getElementById('txt-home').innerText = t('home', window.appLang);
-                document.getElementById('txt-rank').innerText = t('rank', window.appLang);
-                document.getElementById('txt-tour').innerText = t('tour', window.appLang);
-                document.getElementById('txt-prof').innerText = t('prof', window.appLang);
-            }
-
+            document.getElementById('txt-home').innerText = t('home', window.appLang);
+            document.getElementById('txt-rank').innerText = t('rank', window.appLang);
+            document.getElementById('txt-tour').innerText = t('tour', window.appLang);
+            document.getElementById('txt-prof').innerText = t('prof', window.appLang);
             window.navigate('home', document.getElementById('btn-home'));
         }
-
         start();
     </script>
 </body>
