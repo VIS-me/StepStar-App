@@ -21,50 +21,48 @@
     <script src="pages.js"></script>
 
     <script type="module">
-        // Импортируем нужные инструменты для работы с базой напрямую
-        import { syncUser, buyVip, db, doc, updateDoc, increment, arrayUnion } from './firebase-logic.js';
+        import { syncUser, db, doc, updateDoc, increment, arrayUnion } from './firebase-logic.js';
 
         window.tg = window.Telegram.WebApp;
         
-        // 1. Расширенное глобальное состояние
+        // Глобальное состояние
         window.userState = { 
             frame: 'white', 
             steps: 0, 
             coins: 0, 
             isVip: false,
             calories: 0,
-            inventoryFrames: ['white'] // Список купленных рамок (белая по умолчанию)
+            inventoryFrames: ['white']
         };
 
         const userLang = window.tg.initDataUnsafe?.user?.language_code;
         window.appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
 
-        // 2. ФУНКЦИЯ НАВИГАЦИИ
+        // 1. НАВИГАЦИЯ (Привязываем к window, чтобы onclick в HTML работал)
         window.navigate = function(pageId, el) {
-            try {
-                const app = document.getElementById('app');
-                const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
-                
-                if (pageId === 'shop') {
-                    app.innerHTML = Pages.shop(user, window.userState, window.appLang);
-                    return;
-                }
-
-                if (typeof Pages !== 'undefined' && Pages[pageId]) {
-                    app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
-                }
-
-                if (el) {
-                    document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
-                    el.classList.add('active');
-                }
-                if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
-            } catch (e) {
-                console.error("Navigation error:", e);
+            const app = document.getElementById('app');
+            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            
+            // Проверка наличия Pages
+            if (typeof Pages === 'undefined') {
+                console.error("Pages.js not loaded!");
+                return;
             }
+
+            if (pageId === 'shop') {
+                app.innerHTML = Pages.shop(user, window.userState, window.appLang);
+            } else if (Pages[pageId]) {
+                app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
+            }
+
+            if (el) {
+                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+            if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
         };
 
-        // 3. ЛОГИКА МАГАЗИНА (ПОКУПКА И ВЫБОР)
+        // 2. ОБРАБОТКА МАГАЗИНА
         window.handleFrameAction = async function(color, price) {
             const userId = window.tg.initDataUnsafe?.user?.id;
             if (!userId) return;
@@ -73,15 +71,12 @@
             const isOwned = window.userState.inventoryFrames.includes(color);
 
             if (isOwned) {
-                // Если рамка уже куплена — просто надеваем
                 window.userState.frame = color;
                 await updateDoc(userRef, { "selected.frame": color });
                 window.navigate('shop');
-                if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
             } else {
-                // Если не куплена — проверяем баланс и покупаем
                 if (window.userState.coins >= price) {
-                    const confirmMsg = window.appLang === 'ru' ? `Купить рамку за ${price} 💰?` : `Buy for ${price} 💰?`;
+                    const confirmMsg = window.appLang === 'ru' ? `Купить за ${price} 💰?` : `Buy for ${price} 💰?`;
                     window.tg.showConfirm(confirmMsg, async (confirm) => {
                         if (confirm) {
                             try {
@@ -90,15 +85,12 @@
                                     "inventory.frames": arrayUnion(color),
                                     "selected.frame": color
                                 });
-
-                                // Обновляем локально
                                 window.userState.coins -= price;
                                 window.userState.frame = color;
                                 window.userState.inventoryFrames.push(color);
-                                
                                 window.navigate('shop');
                                 if (window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
-                            } catch (e) { console.error("Purchase error:", e); }
+                            } catch (e) { console.error(e); }
                         }
                     });
                 } else {
@@ -107,32 +99,24 @@
             }
         };
 
-        // Вспомогательные функции соцсетей
+        // Социальные функции
         window.inviteFriends = function() {
             const botUsername = 'StepStarAppBot'; 
-            const inviteText = encodeURIComponent("Привет! Давай считать шаги вместе в StepStar 👟");
-            const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${inviteText}`;
-            window.tg.openTelegramLink(inviteUrl);
+            const text = encodeURIComponent("Давай шагать вместе! 👟");
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/${botUsername}&text=${text}`);
         };
 
         window.shareResult = function(steps) {
-            const botUsername = 'StepStarAppBot'; 
-            const message = encodeURIComponent(`Я прошел ${steps} шагов в StepStar! 👟`);
-            const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
-            window.tg.openTelegramLink(shareUrl);
+            const text = encodeURIComponent(`Мой результат: ${steps} шагов! 👟`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${text}`);
         };
 
         window.processTournamentJoin = function(fee) {
             if (window.userState.coins >= fee) {
-                const msg = window.appLang === 'ru' ? `Списать ${fee} 💰?` : `Spend ${fee} 💰?`;
-                window.tg.showConfirm(msg, async (confirm) => {
-                    if (confirm) {
-                        const userId = window.tg.initDataUnsafe?.user?.id;
-                        const userRef = doc(db, "users", String(userId));
-                        await updateDoc(userRef, { 
-                            "economy.balance": increment(-fee),
-                            "tournament.is_registered": true 
-                        });
+                window.tg.showConfirm("Участвовать?", async (c) => {
+                    if (c) {
+                        const userRef = doc(db, "users", String(window.tg.initDataUnsafe.user.id));
+                        await updateDoc(userRef, { "economy.balance": increment(-fee), "tournament.registered": true });
                         window.userState.coins -= fee;
                         window.navigate('tour');
                     }
@@ -140,8 +124,8 @@
             }
         };
 
-        // 4. ЗАПУСК ПРИ ЗАГРУЗКЕ
-        window.onload = async () => {
+        // 3. СТАРТ ПРИЛОЖЕНИЯ
+        const initApp = async () => {
             window.tg.expand();
             window.tg.ready();
 
@@ -150,17 +134,15 @@
                 try {
                     const dbData = await syncUser(tgUser);
                     if (dbData) {
-                        window.userState.coins = dbData.economy.balance;
-                        window.userState.steps = dbData.stats.steps_total;
-                        window.userState.isVip = dbData.settings.is_vip;
-                        window.userState.frame = dbData.selected.frame || 'white';
+                        window.userState.coins = dbData.economy?.balance || 0;
+                        window.userState.steps = dbData.stats?.steps_total || 0;
+                        window.userState.frame = dbData.selected?.frame || 'white';
                         window.userState.inventoryFrames = dbData.inventory?.frames || ['white'];
-                        window.userState.calories = dbData.stats.calories_today || 0;
                     }
-                } catch (e) { console.error("Firebase sync error:", e); }
+                } catch (e) { console.error("Firebase error:", e); }
             }
 
-            // Перевод текста
+            // Перевод меню
             if (typeof t === 'function') {
                 document.getElementById('txt-home').innerText = t('home', window.appLang);
                 document.getElementById('txt-rank').innerText = t('rank', window.appLang);
@@ -168,8 +150,11 @@
                 document.getElementById('txt-prof').innerText = t('prof', window.appLang);
             }
 
+            // Загрузка первой страницы
             window.navigate('home', document.getElementById('btn-home'));
         };
+
+        initApp();
     </script>
 </body>
 </html>
