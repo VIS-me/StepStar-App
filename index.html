@@ -29,7 +29,8 @@
 
         /* Динамические фоны */
         body.bg-cats { background: linear-gradient(rgba(26,28,32,0.8), rgba(26,28,32,0.8)), url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500') center/cover !important; }
-        body.bg-dogs { background: linear-gradient(rgba(26,28,32,0.8), rgba(26,28,32,0.8)), url('https://images.unsplash.com/photo-1517849845537-4d257902454a?w=500') center/cover !important; }
+        /* ОБНОВЛЕНО: Фон с Мальтезе */
+        body.bg-maltese { background: linear-gradient(rgba(26,28,32,0.8), rgba(26,28,32,0.8)), url('https://images.unsplash.com/photo-1591382434681-36b63857c5a9?w=500') center/cover !important; }
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
@@ -151,7 +152,8 @@
         const bgStyles = {
             'default': 'transparent',
             'cats': 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200',
-            'dogs': 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200'
+            /* ОБНОВЛЕНО: Миниатюра для Мальтезе */
+            'maltese': 'https://images.unsplash.com/photo-1591382434681-36b63857c5a9?w=200'
         };
 
         window.navigate = function(pageId, el) {
@@ -240,7 +242,8 @@
 
             if (pageId === 'shop') {
                 const frames = [{id:'white', p:0}, {id:'green', p:50}, {id:'lightblue', p:50}, {id:'blue', p:50}, {id:'pink', p:50}, {id:'purple', p:50}, {id:'gold', p:500}];
-                const bgs = [{id:'default', p:0, name:'Стоковый'}, {id:'cats', p:100, name:'Котята'}, {id:'dogs', p:100, name:'Собачки'}];
+                /* ОБНОВЛЕНО: Название и ID фона в списке */
+                const bgs = [{id:'default', p:0, name:'Стоковый'}, {id:'cats', p:100, name:'Котята'}, {id:'maltese', p:100, name:'Мальтезе'}];
                 
                 appDiv.innerHTML = `
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
@@ -290,8 +293,7 @@
         };
 
         window.buyStars = (coins, stars) => {
-            window.tg.showAlert(`Интерфейс оплаты: Покупка ${coins} монет за ${stars} звезд Телеграм.`);
-            // В реальном боте здесь будет window.tg.openInvoice()
+            window.tg.showAlert(`Интерфейс оплаты Телеграм: Покупка ${coins} монет за ${stars} ⭐.`);
         };
 
         window.handleFrameAction = async (id, price) => {
