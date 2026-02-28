@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StepStar Ultra Edition</title>
-    
+    <title>StepStar Ultra</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -17,7 +16,6 @@
             --secondary-bg: rgba(255,255,255,0.03);
             --accent-gold: #FFD700;
             --success-green: #4CAF50;
-            --error-red: #ff4d4d;
         }
 
         * { 
@@ -35,144 +33,109 @@
             height: 100vh; 
             width: 100vw; 
             overflow: hidden;
-            transition: background 0.4s ease;
         }
 
-        /* --- HD ФОНЫ И ЭФФЕКТЫ --- */
         body.bg-cats { 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-            url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop') center/cover no-repeat !important; 
+            background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop') center/cover no-repeat !important; 
         }
         
         body.bg-maltese { 
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
-            url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988&auto=format&fit=crop') center/cover no-repeat !important; 
+            background: url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988&auto=format&fit=crop') center/cover no-repeat !important; 
         }
 
         .app-viewport { 
             height: calc(100vh - 70px); 
             overflow-y: auto; 
-            padding-bottom: 30px; 
+            padding-bottom: 20px; 
             position: relative; 
             z-index: 1; 
-            -webkit-overflow-scrolling: touch;
         }
 
-        /* Улучшенная читаемость текста на любых фонах */
         .readable-text {
-            text-shadow: 0 2px 12px rgba(0,0,0,1), 0 1px 3px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.5);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
-        /* --- ЭЛЕМЕНТЫ ЛИДЕРБОРДА --- */
         .leader-hero-container { 
             position: relative; 
             width: 100%; 
-            height: 40vh; 
+            height: 38vh; 
             overflow: hidden; 
-            background: #111; 
+            background: #222; 
         }
 
         .leader-img-full { 
             width: 100%; 
             height: 100%; 
             object-fit: cover; 
-            mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
         }
 
         .leader-badge {
             position: absolute;
-            top: 25px;
+            top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid var(--accent-gold);
             color: var(--accent-gold);
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
             z-index: 6;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .leader-info-overlay { 
             position: absolute; 
-            bottom: 60px; 
+            bottom: 50px; 
             left: 25px; 
             z-index: 5; 
         }
 
-        .leader-info-overlay h2 {
-            margin: 0;
-            font-size: 28px;
-            font-weight: 800;
-        }
-
-        /* Карточка с нахлестом (Glassmorphism) */
         .overlap-card {
-            background: rgba(30, 32, 36, 0.75); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px);
-            margin: -40px 20px 20px; 
-            padding: 20px 25px; 
-            border-radius: 24px;
+            background: #1e2024; 
+            margin: -30px 20px 20px; 
+            padding: 15px 25px; 
+            border-radius: 20px;
             display: flex; 
             justify-content: space-between; 
             align-items: center;
             position: relative; 
             z-index: 10; 
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .section-title { 
-            padding: 15px 25px 8px; 
+            padding: 10px 25px 5px; 
             font-size: 11px; 
-            font-weight: 800; 
-            opacity: 0.5; 
-            letter-spacing: 1.5px; 
+            font-weight: bold; 
+            opacity: 0.6; 
             text-transform: uppercase; 
         }
 
         .table-row { 
             display: flex; 
             align-items: center; 
-            padding: 14px 25px; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-            background: rgba(255,255,255,0.02);
-            transition: background 0.2s;
+            padding: 12px 25px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            cursor: pointer;
         }
 
-        .table-row:active {
-            background: rgba(255,255,255,0.08);
-        }
-
-        /* --- ТАББАР --- */
         .tab-bar { 
-            height: 75px; 
+            height: 70px; 
             display: flex; 
-            background: rgba(10, 12, 15, 0.92); 
+            background: #0f1114; 
             position: fixed; 
             bottom: 0; 
             width: 100%; 
             border-top: 1px solid rgba(255,255,255,0.05); 
             z-index: 1000;
-            backdrop-filter: blur(25px); 
-            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .tab-item { 
             flex: 1; 
             text-align: center; 
-            padding-top: 15px; 
-            color: #555; 
+            padding-top: 12px; 
+            color: #777; 
             font-size: 10px; 
-            font-weight: 600;
-            transition: color 0.3s;
         }
 
         .tab-item.active { 
@@ -181,138 +144,108 @@
 
         .tab-item i { 
             display: block; 
-            font-size: 24px; 
+            font-size: 22px; 
             margin-bottom: 4px; 
             font-style: normal; 
         }
 
-        /* --- СТАТИСТИКА И ПРОФИЛЬ --- */
         .stat-box-blur {
-            background: rgba(0,0,0,0.3); 
-            backdrop-filter: blur(15px);
-            padding: 15px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
+            background: rgba(255,255,255,0.05); 
+            padding: 12px; 
+            border-radius: 18px; 
         }
 
         .profile-stats-list { 
             background: rgba(255,255,255,0.02); 
             margin: 15px 20px; 
-            border-radius: 24px; 
-            padding: 8px 0; 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 20px; 
+            padding: 5px 0; 
         }
 
         .p-stat-row { 
             display: flex; 
             justify-content: space-between; 
-            padding: 14px 22px; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
+            padding: 12px 20px; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
 
-        .p-stat-row:last-child { border-bottom: none; }
-
-        /* --- МОДАЛЬНОЕ ОКНО --- */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.85);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 2000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            animation: fadeIn 0.3s ease;
         }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         .modal-content {
-            width: 88%;
-            max-height: 80vh;
+            width: 90%;
+            max-height: 85vh;
             background: #1a1c20;
-            border-radius: 35px;
+            border-radius: 30px;
             overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.12);
             position: relative;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
         }
 
         .modal-inner-bg {
-            padding: 40px 25px;
-            background-size: cover !important;
-            background-position: center !important;
-            min-height: 450px;
+            padding: 30px 20px;
+            min-height: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
         .modal-close {
             position: absolute;
-            top: 20px; right: 25px;
-            font-size: 32px;
+            top: 15px; right: 20px;
+            font-size: 28px;
             color: white;
-            z-index: 100;
-            font-weight: 200;
+            z-index: 10;
         }
 
-        /* --- КНОПКИ --- */
         .main-button { 
             width: 90%; 
             background: var(--main-color); 
             color: white; 
             border: none; 
-            padding: 18px; 
-            border-radius: 22px; 
-            font-size: 16px; 
-            font-weight: 800; 
-            margin: 20px auto; 
+            padding: 16px; 
+            border-radius: 20px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            margin: 15px auto; 
             display: block; 
-            box-shadow: 0 8px 20px rgba(36, 139, 207, 0.3);
-            transition: transform 0.1s;
         }
-
-        .main-button:active { transform: scale(0.97); }
 
         .shop-btn-prof { 
             width: 90%; 
-            background: rgba(255,255,255,0.06); 
+            background: rgba(255,255,255,0.05); 
             color: white; 
             border: 1px solid rgba(255,255,255,0.1); 
-            padding: 18px; 
-            border-radius: 22px; 
-            margin: 12px auto; 
+            padding: 16px; 
+            border-radius: 20px; 
+            margin: 10px auto; 
             display: block; 
-            font-weight: 700;
-            font-size: 14px;
+            font-weight: bold;
         }
         
         .join-btn { 
             background: var(--main-color); 
             color: white; 
             border: none; 
-            padding: 12px 22px; 
-            border-radius: 16px; 
-            font-weight: 800; 
-            font-size: 13px; 
-            box-shadow: 0 4px 12px rgba(36, 139, 207, 0.2);
+            padding: 10px 18px; 
+            border-radius: 14px; 
+            font-weight: bold; 
         }
 
         .join-btn.active-status { 
             background: var(--success-green); 
-            box-shadow: 0 0 20px rgba(76, 175, 80, 0.4); 
         }
 
-        /* --- АВАТАРЫ С РАМКАМИ --- */
         .avatar-wrapper { 
             position: relative; 
-            width: 110px; 
-            height: 110px; 
+            width: 105px; 
+            height: 105px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
@@ -325,7 +258,6 @@
             height: 100%; 
             border-radius: 50%; 
             z-index: 2; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
         }
 
         .user-avatar { 
@@ -333,33 +265,30 @@
             height: 100%; 
             border-radius: 50%; 
             object-fit: cover; 
-            background: #222; 
+            background: #333; 
         }
 
-        /* --- МАГАЗИН ГРИД --- */
         .shop-grid-4 { 
             display: grid; 
             grid-template-columns: repeat(4, 1fr); 
             gap: 12px; 
-            padding: 0 20px; 
-            margin-bottom: 25px; 
+            padding: 0 15px; 
+            margin-bottom: 20px; 
         }
 
         .shop-item-mini { 
-            background: rgba(0,0,0,0.4); 
-            padding: 15px 5px; 
-            border-radius: 18px; 
+            background: rgba(0,0,0,0.3); 
+            padding: 12px 5px; 
+            border-radius: 15px; 
             text-align: center; 
             border: 2px solid transparent; 
-            transition: border-color 0.3s;
         }
 
         .bg-preview { 
-            width: 45px; 
-            height: 45px; 
-            border-radius: 10px; 
-            margin: 0 auto 10px; 
-            border: 1px solid rgba(255,255,255,0.1);
+            width: 40px; 
+            height: 40px; 
+            border-radius: 8px; 
+            margin: 0 auto 8px; 
         }
     </style>
 </head>
@@ -382,9 +311,7 @@
     </div>
 
     <script>
-        /**
-         * КОНФИГУРАЦИЯ FIREBASE
-         */
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -396,9 +323,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        /**
-         * ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-         */
         window.tg = window.Telegram.WebApp;
         const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
@@ -438,29 +362,25 @@
 
         const bgStylesFull = {
             'default': 'var(--bg-color)',
-            'cats': "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043')",
-            'maltese': "linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988')"
+            'cats': "url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043')",
+            'maltese': "url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988')"
         };
 
-        /**
-         * НАВИГАЦИЯ И ОТРИСОВКА СТРАНИЦ
-         */
+        // NAVIGATION
         window.navigate = function(pageId, el) {
             const appDiv = document.getElementById('app');
             
-            // Сброс фона и установка нового
             document.body.className = '';
             if (window.userState.bg && window.userState.bg !== 'default') {
                 document.body.classList.add('bg-' + window.userState.bg);
             }
 
-            // Переключение активного таба
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
 
-            // --- ГЛАВНАЯ (ДОМ) ---
+            // HOME PAGE
             if (pageId === 'home') {
                 const s = { 
                     dist: (window.userState.steps * 0.00075).toFixed(2), 
@@ -470,35 +390,35 @@
                 const offset = 628 - (628 * Math.min(window.userState.steps / 10000, 1));
                 
                 appDiv.innerHTML = `
-                    <div style="text-align:center; padding-top:30px;" class="readable-text">
+                    <div style="text-align:center; padding-top:20px;" class="readable-text">
                         <div class="avatar-wrapper">
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:18px; font-size: 20px;">${window.userState.name}</h3>
+                        <h3 style="margin-top:15px;">${window.userState.name}</h3>
                         
-                        <div style="position:relative; width:240px; height:240px; margin:25px auto; display:flex; align-items:center; justify-content:center;">
-                            <svg width="240" height="240" style="transform: rotate(-90deg); position:absolute;">
-                                <circle stroke="rgba(255,255,255,0.08)" stroke-width="14" fill="transparent" r="105" cx="120" cy="120"/>
-                                <circle stroke="var(--main-color)" stroke-width="14" fill="transparent" r="105" cx="120" cy="120" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.8s ease-out; stroke-linecap:round;"/>
+                        <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
+                            <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;">
+                                <circle stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/>
+                                <circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.5s; stroke-linecap:round;"/>
                             </svg>
                             <div>
-                                <h1 style="margin:0; font-size:48px; letter-spacing:-1px;">${window.userState.steps.toLocaleString()}</h1>
-                                <div style="font-size:13px; opacity:0.8; font-weight:700; text-transform:uppercase;">шагов сегодня</div>
+                                <h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1>
+                                <div style="font-size:12px; opacity:0.9; font-weight:bold;">шагов сегодня</div>
                             </div>
                         </div>
                         
-                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:0 25px;">
-                            <div class="stat-box-blur"><b>${s.kcal}</b><br><small style="opacity:0.6; font-size:10px;">ккал</small></div>
-                            <div class="stat-box-blur"><b>${s.dist}</b><br><small style="opacity:0.6; font-size:10px;">км</small></div>
-                            <div class="stat-box-blur"><b>${s.time}</b><br><small style="opacity:0.6; font-size:10px;">мин</small></div>
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:0 20px;">
+                            <div class="stat-box-blur"><b>${s.kcal}</b><br><small style="opacity:0.7;">ккал</small></div>
+                            <div class="stat-box-blur"><b>${s.dist}</b><br><small style="opacity:0.7;">км</small></div>
+                            <div class="stat-box-blur"><b>${s.time}</b><br><small style="opacity:0.7;">мин</small></div>
                         </div>
                         
-                        <button class="main-button" style="margin-top:35px;" onclick="window.shareResult()">Поделиться результатом</button>
+                        <button class="main-button" style="margin-top:30px;" onclick="window.shareResult()">Поделиться результатом</button>
                     </div>`;
             }
 
-            // --- РЕЙТИНГ (ДРУЗЬЯ) ---
+            // RANK PAGE
             if (pageId === 'rank') {
                 const leaderName = window.userState.lastWeekFriendWinner.name || window.userState.name;
                 const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+leaderName;
@@ -507,134 +427,123 @@
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
                         <div class="leader-badge">Лидер прошлой недели</div>
-                        <img src="${leaderPhoto}" class="leader-img-full" onerror="this.src='${placeholderImg}'">
+                        <img src="${leaderPhoto}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆'">
                         <div class="leader-info-overlay readable-text"><h2>${leaderName}</h2></div>
                     </div>
                     
                     <div class="overlap-card readable-text">
                         <div>
-                            <div style="font-size:10px; opacity:0.6; font-weight:800;">ВАШ РАНГ</div>
-                            <div style="font-size:24px; font-weight:900; color:var(--main-color);">#${myIndex || '-'}</div>
+                            <div style="font-size:9px; opacity:0.7;">РАНГ</div>
+                            <div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="font-size:10px; opacity:0.6; font-weight:800;">СЕГОДНЯ</div>
-                            <div style="font-size:20px; font-weight:900;">${window.userState.steps.toLocaleString()}</div>
+                            <div style="font-size:9px; opacity:0.7;">ШАГИ</div>
+                            <div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div>
                         </div>
                     </div>
                     
-                    <div class="section-title">Топ-3 Друзей (жми на профиль)</div>
+                    <div class="section-title">Топ-3 Друзей</div>
                     ${window.friendUsers.slice(0, 3).map((u, i) => `
                         <div class="table-row readable-text" onclick="window.showFriendCard('${u.id}')">
-                            <span style="width:25px; opacity:0.4; font-weight:900;">${i + 1}</span>
-                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:42px; height:42px; border-radius:50%; margin:0 15px; object-fit:cover; border: 1px solid rgba(255,255,255,0.1);">
-                            <span style="flex:1; font-weight:600; font-size:15px;">${u.name}</span>
-                            <b style="font-size:16px;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
+                            <span style="width:25px; opacity:0.5;">${i + 1}</span>
+                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:38px; height:38px; border-radius:50%; margin:0 15px; object-fit:cover;">
+                            <span style="flex:1; font-weight:500;">${u.name}</span>
+                            <b>${(u.stats?.steps_today || 0).toLocaleString()}</b>
                         </div>`).join('')}
                     
-                    <button class="main-button" style="margin-top:25px; background: rgba(255,255,255,0.05); color: white; border: 1px solid rgba(255,255,255,0.1);" onclick="window.inviteFriends()">Пригласить друзей</button>`;
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
-            // --- ТУРНИР ---
+            // TOURNAMENT PAGE
             if (pageId === 'tour') {
                 const winner = window.userState.lastWinner;
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <div class="leader-badge">Победитель Турнира 🏆</div>
-                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='${placeholderImg}'">
+                        <div class="leader-badge">Победитель прошлого турнира</div>
+                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑'">
                         <div class="leader-info-overlay readable-text"><h2>${winner.name}</h2></div>
                     </div>
                     
                     <div class="overlap-card readable-text">
                         <div>
-                            <div style="font-size:10px; opacity:0.6; font-weight:800;">ПРИЗОВОЙ ФОНД</div>
-                            <div style="font-size:20px; font-weight:900; color:var(--accent-gold);">${window.adminPrizePool} 💰</div>
+                            <div style="font-size:9px; opacity:0.7;">ПРИЗОВОЙ ФОНД</div>
+                            <div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">${window.adminPrizePool} монет</div>
                         </div>
                         <button class="join-btn ${window.userState.isRegistered ? 'active-status' : ''}" onclick="window.joinTournament()">
-                            ${window.userState.isRegistered ? 'ВЫ УЧАСТНИК' : 'УЧАСТВОВАТЬ'}
+                            ${window.userState.isRegistered ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ'}
                         </button>
                     </div>
                     
-                    <div class="section-title">Список участников</div>
-                    <div style="padding-bottom: 20px;">
-                        ${window.tourUsers.length > 0 ? window.tourUsers.map((u, i) => `
-                            <div class="table-row readable-text">
-                                <span style="width:25px; opacity:0.4; font-weight:900;">${i + 1}</span>
-                                <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:42px; height:42px; border-radius:50%; margin:0 15px; object-fit:cover;">
-                                <span style="font-weight:600;">${u.name}</span>
-                                <b style="margin-left:auto; font-size:16px;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
-                            </div>`).join('') : '<div style="padding:20px; text-align:center; opacity:0.5;">Будь первым участником!</div>'}
-                    </div>`;
+                    <div class="section-title">Топ участников</div>
+                    ${window.tourUsers.map((u, i) => `
+                        <div class="table-row readable-text">
+                            <span style="width:25px; opacity:0.5;">${i + 1}</span>
+                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:38px; height:38px; border-radius:50%; margin:0 15px; object-fit:cover;">
+                            <span>${u.name}</span>
+                            <b style="margin-left:auto;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
+                        </div>`).join('')}`;
             }
 
-            // --- ПРОФИЛЬ ---
+            // PROFILE PAGE
             if (pageId === 'prof') {
                 appDiv.innerHTML = `
-                    <div style="padding-top:40px; text-align:center;" class="readable-text">
+                    <div style="padding-top:30px; text-align:center;" class="readable-text">
                         <div class="avatar-wrapper">
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:20px; font-size: 22px;">${window.userState.name}</h3>
-                        <div style="font-size:11px; opacity:0.4; margin-bottom:25px; letter-spacing:1px;">ID: ${window.userState.id}</div>
+                        <h3 style="margin-top:15px;">${window.userState.name}</h3>
+                        <div style="font-size:11px; opacity:0.5; margin-bottom:20px;">ID: ${window.userState.id}</div>
                         
-                        <div class="section-title" style="text-align:left;">Ваша активность</div>
+                        <div class="section-title" style="text-align:left;">История шагов</div>
                         <div class="profile-stats-list">
                             <div class="p-stat-row"><span>Сегодня</span><b>${window.userState.steps.toLocaleString()}</b></div>
-                            <div class="p-stat-row"><span>За неделю</span><b>${(window.userState.steps_last_week || 0).toLocaleString()}</b></div>
-                            <div class="p-stat-row"><span>За месяц</span><b>${(window.userState.steps_last_month || 0).toLocaleString()}</b></div>
-                            <div class="p-stat-row" style="color:var(--main-color);"><span>Всего шагов</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
+                            <div class="p-stat-row"><span>Неделя</span><b>${(window.userState.steps_last_week || 0).toLocaleString()}</b></div>
+                            <div class="p-stat-row"><span>Месяц</span><b>${(window.userState.steps_last_month || 0).toLocaleString()}</b></div>
+                            <div class="p-stat-row"><span>Всего</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
                         </div>
 
-                        <div class="overlap-card" style="margin: 20px;">
-                            <span style="font-weight:700;">Ваш баланс:</span>
-                            <b style="color:var(--accent-gold); font-size:20px;">${window.userState.coins} 💰</b>
+                        <div class="overlap-card" style="margin: 15px 20px;">
+                            <span>Кошелек</span><b style="color:var(--accent-gold);">${window.userState.coins} 💰</b>
                         </div>
                         
-                        <button class="main-button" onclick="window.navigate('shop')">ЗАЙТИ В МАГАЗИН</button>
-                        <button class="shop-btn-prof" onclick="window.claimDailyGift()">ПОЛУЧИТЬ ПОДАРОК (10К ШАГОВ)</button>
+                        <button class="shop-btn-prof" onclick="window.navigate('shop')">МАГАЗИН</button>
+                        <button class="shop-btn-prof" onclick="window.claimDailyGift()">ПОДАРОК ЗА 10К ШАГОВ</button>
                     </div>`;
             }
 
-            // --- МАГАЗИН ---
+            // SHOP PAGE
             if (pageId === 'shop') {
                 const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
-                const bgs = [{id:'default', n:'Темный'}, {id:'cats', n:'Котята'}, {id:'maltese', n:'Собаки'}];
+                const bgs = [{id:'default', n:'Стандарт'}, {id:'cats', n:'Котята'}, {id:'maltese', n:'Мальтезе'}];
                 
                 appDiv.innerHTML = `
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
-                        <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:28px; padding:10px;">←</button>
-                        <div style="font-weight:900; color:var(--accent-gold); font-size:18px; background:rgba(0,0,0,0.3); padding:8px 15px; border-radius:15px;">💰 ${window.userState.coins}</div>
+                        <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
+                        <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
                     </div>
                     
-                    <div class="section-title">Купить монеты (Stars)</div>
-                    <div class="shop-grid-4">
-                        <div class="shop-item-mini" style="grid-column: span 2;" onclick="window.buyStars(250, 150)"><b>250 💰</b><br><small style="opacity:0.6;">150 ⭐</small></div>
-                        <div class="shop-item-mini" style="grid-column: span 2;" onclick="window.buyStars(600, 300)"><b>600 💰</b><br><small style="opacity:0.6;">300 ⭐</small></div>
-                    </div>
-                    
-                    <div class="section-title">Рамки профиля (50 💰)</div>
+                    <div class="section-title">Рамки профиля</div>
                     <div class="shop-grid-4">
                         ${frames.map(f => `
                             <div class="shop-item-mini" onclick="window.handleFrameAction('${f}', 50)" style="border-color:${window.userState.frame === f ? 'var(--main-color)' : 'transparent'}">
-                                <div style="width:38px; height:38px; border:${frameStyles[f]}; border-radius:50%; margin:0 auto 10px;"></div>
-                                <small style="font-weight:700;">${window.userState.inventoryFrames.includes(f) ? 'ВЗЯТЬ' : '50'}</small>
+                                <div style="width:35px; height:35px; border:${frameStyles[f]}; border-radius:50%; margin:0 auto 8px;"></div>
+                                <small>${window.userState.inventoryFrames.includes(f) ? 'Взять' : '50'}</small>
                             </div>`).join('')}
                     </div>
                     
-                    <div class="section-title">Фоны интерфейса (100 💰)</div>
+                    <div class="section-title">Фоны приложения</div>
                     <div class="shop-grid-4">
                         ${bgs.map(b => `
                             <div class="shop-item-mini" onclick="window.handleBgAction('${b.id}', 100)" style="border-color:${window.userState.bg === b.id ? 'var(--main-color)' : 'transparent'}">
                                 <div class="bg-preview" style="background:${bgStylesFull[b.id]} center/cover"></div>
-                                <small style="font-weight:700; font-size:9px;">${b.n.toUpperCase()}</small>
+                                <small>${b.n}</small>
                             </div>`).join('')}
                     </div>`;
             }
         };
 
-        /**
-         * КАРТОЧКА ДРУГА (МОДАЛКА)
-         */
+        // FRIEND MODAL
         window.showFriendCard = (friendId) => {
             const f = window.friendUsers.find(u => u.id === friendId);
             if (!f) return;
@@ -648,108 +557,88 @@
                         <div class="profile-frame" style="border: ${frameStyles[frame]}"></div>
                         <img src="${f.photo_url || 'https://ui-avatars.com/api/?name='+f.name}" class="user-avatar">
                     </div>
-                    <h2 style="margin: 25px 0 10px; font-size: 26px; font-weight: 800;">${f.name}</h2>
-                    <h1 style="font-size:52px; margin:0; color:var(--main-color); font-weight:900;">${steps.toLocaleString()}</h1>
-                    <p style="margin:5px 0 0; opacity:0.7; font-weight:800; text-transform:uppercase; font-size:12px;">шагов сегодня</p>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; margin-top:35px;">
-                        <div class="stat-box-blur"><small style="font-size:9px; opacity:0.6;">ДИСТАНЦИЯ</small><br><b style="font-size:18px;">${(steps * 0.00075).toFixed(2)} км</b></div>
-                        <div class="stat-box-blur"><small style="font-size:9px; opacity:0.6;">ЭНЕРГИЯ</small><br><b style="font-size:18px;">${(steps * 0.04).toFixed(0)} ккал</b></div>
+                    <h2 style="margin: 20px 0 10px;">${f.name}</h2>
+                    <h1 style="font-size:42px; margin:0; color:var(--main-color);">${steps.toLocaleString()}</h1>
+                    <p style="margin:0; opacity:0.8; font-weight:bold;">шагов сегодня</p>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; width:100%; margin-top:25px;">
+                        <div class="stat-box-blur"><small>ДИСТАНЦИЯ</small><br><b>${(steps * 0.00075).toFixed(2)} км</b></div>
+                        <div class="stat-box-blur"><small>ЭНЕРГИЯ</small><br><b>${(steps * 0.04).toFixed(0)} ккал</b></div>
                     </div>
-                    
-                    <button class="main-button" style="margin-top:40px; box-shadow: 0 15px 30px rgba(0,0,0,0.4);" onclick="window.closeModal(); window.navigate('shop')">ХОЧУ ТАК ЖЕ ✨</button>
+                    <button class="main-button" style="margin-top:30px;" onclick="window.closeModal()">ЗАКРЫТЬ</button>
                 </div>`;
             document.getElementById('friendModal').style.display = 'flex';
         };
 
         window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
 
-        /**
-         * ЛОГИКА МАГАЗИНА И ПОКУПОК
-         */
-        window.buyStars = (coins, stars) => { 
-            window.tg.showAlert(`Вы покупаете ${coins} монет за ${stars} Telegram Stars. (Тестовый режим)`); 
-        };
-
+        // CORE ACTIONS
         window.handleFrameAction = async (id, price) => {
-            const userDoc = db.collection("users").doc(window.userState.id);
+            const uRef = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryFrames.includes(id)) { 
-                await userDoc.update({ "selected.frame": id }); 
+                await uRef.update({ "selected.frame": id }); 
             } else if (window.userState.coins >= price) { 
-                await userDoc.update({ 
+                await uRef.update({ 
                     "economy.balance": window.userState.coins - price, 
                     "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id), 
                     "selected.frame": id 
                 }); 
             } else {
-                window.tg.showAlert("Недостаточно монет! 💰");
+                window.tg.showAlert("Недостаточно монет");
             }
             loadData();
         };
 
         window.handleBgAction = async (id, price) => {
-            const userDoc = db.collection("users").doc(window.userState.id);
+            const uRef = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryBgs.includes(id)) { 
-                await userDoc.update({ "selected.bg": id }); 
+                await uRef.update({ "selected.bg": id }); 
             } else if (window.userState.coins >= price) { 
-                await userDoc.update({ 
+                await uRef.update({ 
                     "economy.balance": window.userState.coins - price, 
                     "inventory.bgs": firebase.firestore.FieldValue.arrayUnion(id), 
                     "selected.bg": id 
                 }); 
             } else {
-                window.tg.showAlert("Недостаточно монет! 💰");
+                window.tg.showAlert("Недостаточно монет");
             }
             loadData();
         };
 
-        /**
-         * ЕЖЕДНЕВНЫЙ ПОДАРОК И ТУРНИР
-         */
         window.claimDailyGift = async () => {
-            if (window.userState.steps < 10000) {
-                return window.tg.showAlert("Нужно пройти минимум 10 000 шагов за сегодня! 👟");
-            }
+            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10 000 шагов!");
             const today = new Date().toLocaleDateString();
-            if (window.userState.lastGiftDate === today) {
-                return window.tg.showAlert("Вы уже забрали сегодняшний подарок! Приходите завтра. 🎁");
-            }
+            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Уже получили!");
+            
             await db.collection("users").doc(window.userState.id).update({ 
-                "economy.balance": window.userState.coins + 25, 
+                "economy.balance": window.userState.coins + 15, 
                 "economy.last_gift_date": today 
             });
-            window.tg.showAlert("Поздравляем! Вы получили 25 💰 за активность!");
+            window.tg.showAlert("Вы получили 15 💰");
             loadData();
         };
 
         window.joinTournament = async () => {
             if (window.userState.isRegistered) return;
-            if (window.userState.coins < 50) {
-                return window.tg.showAlert("Вход в турнир стоит 50 💰. Поднакопите еще немного!");
-            }
+            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
+            
             await db.collection("users").doc(window.userState.id).update({ 
                 "economy.balance": window.userState.coins - 50, 
                 "tournament.is_registered": true 
             });
-            window.tg.showAlert("Вы успешно зарегистрированы в ежемесячном турнире! Удачи! 🏁");
+            window.tg.showAlert("Вы в турнире!");
             loadData();
         };
 
-        /**
-         * СОЦИАЛЬНЫЕ ФУНКЦИИ
-         */
         window.shareResult = () => {
-            const text = `👟 Сегодня я прошел ${window.userState.steps} шагов в StepStar! Кто сможет больше?`;
+            const text = `👟 Я прошел ${window.userState.steps} шагов!`;
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(text)}`);
         };
 
         window.inviteFriends = () => {
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}&text=Давай ходить вместе и соревноваться в StepStar!`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`);
         };
 
-        /**
-         * ПРОВЕРКА ЗАВЕРШЕНИЯ ТУРНИРА (8-е ЧИСЛО)
-         */
+        // TOURNAMENT RESET LOGIC
         async function checkTournamentEnd() {
             const now = new Date(); 
             const day = now.getDate(); 
@@ -760,33 +649,25 @@
 
             if (day >= 8 && gData.last_processed_month !== monthYear) {
                 const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true).get();
-                
                 if (!tourSnap.empty) {
                     let best = null; 
-                    let maxSteps = -1; 
+                    let max = -1; 
                     let participants = [];
-
                     tourSnap.forEach(doc => {
                         const d = doc.data(); 
                         participants.push(doc.id);
-                        if (d.stats.steps_today > maxSteps) { 
-                            maxSteps = d.stats.steps_today; 
+                        if (d.stats.steps_today > max) { 
+                            max = d.stats.steps_today; 
                             best = { id: doc.id, name: d.name, photo: d.photo_url, bal: d.economy.balance }; 
                         }
                     });
-
                     if (best) {
-                        // Начисление приза победителю
-                        await db.collection("users").doc(best.id).update({ 
-                            "economy.balance": (best.bal || 0) + 500 
-                        });
-                        // Запись результатов в глобальные настройки
+                        await db.collection("users").doc(best.id).update({ "economy.balance": (best.bal || 0) + 500 });
                         await db.collection("settings").doc("tournament").set({ 
                             last_winner: { name: best.name, photo_url: best.photo }, 
                             last_processed_month: monthYear, 
                             admin_prize: 500 
                         }, { merge: true });
-                        // Сброс регистрации у всех
                         const batch = db.batch(); 
                         participants.forEach(p => batch.update(db.collection("users").doc(p), { "tournament.is_registered": false }));
                         await batch.commit();
@@ -795,14 +676,11 @@
             }
         }
 
-        /**
-         * ЗАГРУЗКА ДАННЫХ ИЗ FIREBASE
-         */
+        // LOAD DATA
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
                 if (!tgUser) return window.navigate('home');
-                
                 const myId = String(tgUser.id); 
                 window.userState.id = myId;
                 
@@ -811,29 +689,27 @@
                 const userDocRef = db.collection("users").doc(myId);
                 let d = (await userDocRef.get()).data();
                 
-                // Создание нового пользователя если его нет
                 if (!d) {
                     await userDocRef.set({ 
                         name: tgUser.first_name, 
                         photo_url: tgUser.photo_url || "", 
-                        stats: { steps_today: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0 }, 
+                        stats: { steps_today: 0, steps_total: 0 }, 
                         economy: { balance: 0 }, 
                         inventory: { frames: ['white'], bgs: ['default'] }, 
                         selected: { frame: 'white', bg: 'default' }, 
-                        friends: [],
-                        tournament: { is_registered: false }
+                        friends: [] 
                     });
                     d = (await userDocRef.get()).data();
                 }
 
-                // Обработка реферальной ссылки
+                // Start param (Referral)
                 const sp = window.tg.initDataUnsafe?.start_param;
                 if (sp && sp !== myId) {
                     await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
                     await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
                 }
 
-                // Загрузка глобальных данных турнира
+                // Global Settings
                 const gRef = await db.collection("settings").doc("tournament").get();
                 if (gRef.exists) { 
                     const gData = gRef.data();
@@ -841,7 +717,7 @@
                     window.userState.lastWeekFriendWinner = gData.last_week_friend_winner || { name: '', photo_url: '' };
                 }
 
-                // Обновление локального стейта
+                // Update Local State
                 window.userState = { 
                     ...window.userState, 
                     name: d.name, 
@@ -860,31 +736,23 @@
                     friends: d.friends || [] 
                 };
                 
-                // Загрузка данных друзей для рейтинга
+                // Load Friends List
                 const fIds = [...window.userState.friends, myId];
-                if (fIds.length > 0) {
-                    const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                    window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
+                window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                               .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-                }
                 
-                // Загрузка участников турнира
+                // Load Tournament List
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                            .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
 
-                // Определяем текущую вкладку и обновляем экран
-                const activeTabEl = document.querySelector('.tab-item.active span');
-                const currentTabName = activeTabEl ? activeTabEl.innerText : 'Дом';
-                const tabMap = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
-                
-                window.navigate(tabMap[currentTabName] || 'home');
-            } catch (error) { 
-                console.error("Ошибка при загрузке данных:", error); 
-            }
+                const activeTab = document.querySelector('.tab-item.active span')?.innerText || 'Дом';
+                const map = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
+                window.navigate(map[activeTab] || 'home');
+            } catch (e) { console.error(e); }
         }
 
-        // Инициализация приложения
         window.tg.ready(); 
         window.tg.expand(); 
         loadData();
