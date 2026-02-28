@@ -28,13 +28,11 @@
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
-        /* HOME PAGE STYLES */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
         .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
-        /* RATING & TOURNAMENT */
         .leader-hero-container { position: relative; width: 100%; height: 40vh; overflow: hidden; background: #222; }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
         .leader-info-overlay {
@@ -63,7 +61,6 @@
         .rank-num { width: 25px; font-size: 14px; opacity: 0.5; font-weight: bold; }
         .rank-photo-mini { width: 38px; height: 38px; border-radius: 50%; margin: 0 15px; object-fit: cover; background: #333; }
         
-        /* TABS */
         .tab-bar { 
             height: 70px; display: flex; background: #15171a; 
             position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
@@ -72,7 +69,6 @@
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        /* SHOP */
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
         .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; }
         .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
@@ -293,7 +289,7 @@
                 const myId = String(tgUser.id);
                 window.userState.id = myId;
 
-                // 1. Форсированная инициализация
+                // 1. Форсированная инициализация (Баланс 0 для новых)
                 await db.collection("users").doc(myId).set({
                     name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
                     stats: { steps_today: 0, steps_total: 0 },
