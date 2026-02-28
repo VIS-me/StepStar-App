@@ -12,10 +12,10 @@
 <body>
     <div id="app" class="app-viewport"></div>
     <div class="tab-bar">
-        <div class="tab-item active" onclick="navigate('home', this)"><i>🏠</i><span>Дом</span></div>
-        <div class="tab-item" onclick="navigate('rank', this)"><i>🏆</i><span>Ранг</span></div>
-        <div class="tab-item" onclick="navigate('tour', this)"><i>🏁</i><span>Турнир</span></div>
-        <div class="tab-item" onclick="navigate('prof', this)"><i>👤</i><span>Профиль</span></div>
+        <div class="tab-item active" onclick="window.navigate('home', this)"><i>🏠</i><span>Дом</span></div>
+        <div class="tab-item" onclick="window.navigate('rank', this)"><i>🏆</i><span>Ранг</span></div>
+        <div class="tab-item" onclick="window.navigate('tour', this)"><i>🏁</i><span>Турнир</span></div>
+        <div class="tab-item" onclick="window.navigate('prof', this)"><i>👤</i><span>Профиль</span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -38,9 +38,12 @@
         window.topUsers = []; window.tourUsers = []; window.friendUsers = [];
 
         window.navigate = function(pageId, el) {
-            const user = window.tg.initDataUnsafe?.user || { first_name: "User" };
-            const lang = window.tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'en';
-            document.getElementById('app').innerHTML = Pages[pageId](user, window.userState, lang);
+            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            const lang = user.language_code === 'ru' ? 'ru' : 'en';
+            const appDiv = document.getElementById('app');
+            if (appDiv && window.Pages[pageId]) {
+                appDiv.innerHTML = window.Pages[pageId](user, window.userState, lang);
+            }
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
@@ -48,68 +51,77 @@
         };
 
         async function loadData() {
-            const tgUser = window.tg.initDataUnsafe?.user;
-            if (!tgUser) { window.navigate('home'); return; }
+            try {
+                const tgUser = window.tg.initDataUnsafe?.user;
+                if (!tgUser) { window.navigate('home'); return; }
 
-            const startParam = window.tg.initDataUnsafe?.start_param;
-            const userRef = db.collection("users").doc(String(tgUser.id));
-            let doc = await userRef.get();
+                const startParam = window.tg.initDataUnsafe?.start_param;
+                const userRef = db.collection("users").doc(String(tgUser.id));
+                let doc = await userRef.get();
 
-            if (!doc.exists) {
-                await userRef.set({
-                    name: tgUser.first_name, photo_url: tgUser.photo_url || "",
-                    friends: startParam ? [String(startParam)] : [],
-                    economy: { balance: 10, last_bonus: null },
-                    stats: { steps_today: 0, steps_total: 0 },
-                    inventory: { frames: ['white'] },
-                    selected: { frame: 'white' },
-                    tournament: { is_registered: false }
-                });
-                if (startParam) {
-                    await db.collection("users").doc(String(startParam)).update({
-                        friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
+                if (!doc.exists) {
+                    await userRef.set({
+                        name: tgUser.first_name, photo_url: tgUser.photo_url || "",
+                        friends: startParam ? [String(startParam)] : [],
+                        economy: { balance: 10 },
+                        stats: { steps_today: 0, steps_total: 0 },
+                        inventory: { frames: ['white'] },
+                        selected: { frame: 'white' },
+                        tournament: { is_registered: false }
                     });
+                    if (startParam) {
+                        await db.collection("users").doc(String(startParam)).update({
+                            friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
+                        });
+                    }
+                    doc = await userRef.get();
                 }
-                doc = await userRef.get();
+
+                const d = doc.data();
+                window.userState = {
+                    id: String(tgUser.id),
+                    steps: d.stats?.steps_today || 0,
+                    steps_total: d.stats?.steps_total || 0,
+                    coins: d.economy?.balance || 0,
+                    frame: d.selected?.frame || 'white',
+                    inventoryFrames: d.inventory?.frames || ['white'],
+                    isRegistered: d.tournament?.is_registered || false,
+                    friends: d.friends || []
+                };
+
+                const snapRank = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
+                window.topUsers = snapRank.docs.map(doc => doc.data());
+                
+                if (window.userState.friends.length > 0) {
+                    const fIds = [...window.userState.friends, window.userState.id];
+                    const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
+                    window.friendUsers = fSnap.docs.map(doc => ({
+                        ...doc.data(),
+                        steps_today: doc.data().stats?.steps_today || 0
+                    })).sort((a,b) => b.steps_today - a.steps_today);
+                }
+
+                const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
+                window.tourUsers = snapTour.docs.map(doc => ({
+                    ...doc.data(),
+                    steps_today: doc.data().stats?.steps_today || 0
+                })).sort((a,b) => b.steps_today - a.steps_today);
+
+                window.navigate('home');
+            } catch (e) {
+                console.error(e);
+                window.navigate('home');
             }
-
-            const d = doc.data();
-            window.userState = {
-                id: String(tgUser.id),
-                steps: d.stats?.steps_today || 0,
-                steps_total: d.stats?.steps_total || 0,
-                coins: d.economy?.balance || 0,
-                frame: d.selected?.frame || 'white',
-                inventoryFrames: d.inventory?.frames || ['white'],
-                isRegistered: d.tournament?.is_registered || false,
-                friends: d.friends || []
-            };
-
-            const snapRank = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
-            window.topUsers = snapRank.docs.map(doc => ({ ...doc.data(), steps_total: doc.data().stats.steps_total }));
-            
-            if (window.userState.friends.length > 0) {
-                const fIds = [...window.userState.friends, window.userState.id];
-                const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                window.friendUsers = fSnap.docs.map(doc => ({ ...doc.data(), steps_today: doc.data().stats.steps_today })).sort((a,b) => b.steps_today - a.steps_today);
-            }
-
-            const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).orderBy("stats.steps_today", "desc").limit(10).get();
-            window.tourUsers = snapTour.docs.map(doc => ({ ...doc.data(), steps_today: doc.data().stats.steps_today }));
-
-            window.navigate('home');
         }
 
         window.joinTournament = async () => {
             if (window.userState.coins < 50) { window.tg.showAlert("Нужно 50 💰!"); return; }
-            window.userState.coins -= 50;
-            window.userState.isRegistered = true;
             await db.collection("users").doc(window.userState.id).update({
-                "economy.balance": window.userState.coins,
+                "economy.balance": window.userState.coins - 50,
                 "tournament.is_registered": true
             });
-            window.tg.showAlert("Вы в турнире!");
-            await loadData();
+            window.tg.showAlert("Вы вступили в турнир!");
+            loadData();
         };
 
         window.handleFrameAction = async (id, price) => {
@@ -121,24 +133,28 @@
                 window.userState.coins -= price;
                 window.userState.inventoryFrames.push(id);
                 window.userState.frame = id;
-                await userRef.update({ "economy.balance": window.userState.coins, "inventory.frames": window.userState.inventoryFrames, "selected.frame": id });
+                await userRef.update({ 
+                    "economy.balance": window.userState.coins, 
+                    "inventory.frames": window.userState.inventoryFrames, 
+                    "selected.frame": id 
+                });
             }
             window.navigate('shop');
         };
 
         window.claimDailyBonus = async () => {
-            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10,000 шагов!");
-            window.userState.coins += 10;
-            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins });
+            if (window.userState.steps < 10000) { window.tg.showAlert("Нужно 10к шагов!"); return; }
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 10 });
             window.tg.showAlert("Бонус получен!");
-            window.navigate('shop');
+            loadData();
         };
 
         window.inviteFriends = () => {
             const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Пойдем гулять! 👟`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Кто пройдет больше? 👟`);
         };
 
+        window.tg.ready();
         loadData();
     </script>
 </body>
