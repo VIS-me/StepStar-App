@@ -79,6 +79,17 @@
         .avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; }
+
+        /* Новые стили для Профиля */
+        .profile-stats-list { background: var(--secondary-bg); margin: 15px 20px; border-radius: 20px; padding: 5px 0; }
+        .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .p-stat-row:last-child { border-bottom: none; }
+        .p-label { opacity: 0.6; font-size: 13px; }
+        .p-value { font-weight: bold; font-size: 14px; }
+        
+        .balance-card { background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.05) 100%); margin: 15px 20px; padding: 20px; border-radius: 20px; border: 1px solid rgba(255,215,0,0.2); text-align: center; }
+        .balance-title { font-size: 11px; opacity: 0.6; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+        .balance-amount { font-size: 24px; font-weight: bold; color: var(--accent-gold); }
     </style>
 </head>
 <body>
@@ -110,8 +121,8 @@
         const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
         window.userState = { 
-            id: '', frame: 'white', steps: 0, steps_total: 0, coins: 0, 
-            inventoryFrames: ['white'], isRegistered: false, friends: [],
+            id: '', frame: 'white', steps: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0, 
+            coins: 0, inventoryFrames: ['white'], isRegistered: false, friends: [],
             lastWinner: { name: 'Ждем чемпиона', photo_url: placeholderImg },
             lastWeekFriendWinner: { name: 'Стань лидером!', photo_url: placeholderImg }
         };
@@ -124,7 +135,7 @@
         };
 
         window.navigate = function(pageId, el) {
-            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            const user = window.tg.initDataUnsafe?.user || { first_name: "Игрок", photo_url: "" };
             const appDiv = document.getElementById('app');
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
@@ -140,7 +151,7 @@
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
                         </div>
-                        <h3>${user.first_name}</h3>
+                        <h3 style="margin-top:15px;">${user.first_name}</h3>
                         <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
                             <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;"><circle stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/><circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.5s; stroke-linecap:round;"/></svg>
                             <div><h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.5;">шагов сегодня</div></div>
@@ -157,79 +168,57 @@
             if (pageId === 'rank') {
                 const leader = window.userState.lastWeekFriendWinner;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
-                const top10 = window.friendUsers.slice(0, 10);
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆&size=512'">
-                        <div class="leader-info-overlay">
-                            <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ЛИДЕР ПРОШЛОЙ НЕДЕЛИ (ДРУЗЬЯ)</div>
-                            <h2 style="margin:0; font-size:22px;">${leader.name}</h2>
-                        </div>
+                        <img src="${leader.photo_url}" class="leader-img-full">
+                        <div class="leader-info-overlay"><h2>${leader.name}</h2></div>
                     </div>
                     <div class="my-rank-card">
-                        <div><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ВАШ РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div></div>
-                        <div style="text-align:right;"><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ШАГИ СЕГОДНЯ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
+                        <div><div style="font-size:9px; opacity:0.5;">РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div></div>
+                        <div style="text-align:right;"><div style="font-size:9px; opacity:0.5;">ШАГИ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
-                    <div class="section-title">Список друзей</div>
-                    ${top10.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
-                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Добавьте друзей по кнопке ниже</div>' : ''}
-                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Добавить друзей из контактов</button>`;
+                    <div class="section-title">Друзья</div>
+                    ${window.friendUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
             if (pageId === 'tour') {
-                const now = new Date();
-                const day = now.getDate();
-                const isTournamentRunning = day <= 7; 
-                const isDepositPeriod = day >= 8;
                 const winner = window.userState.lastWinner;
-                const myTourRank = window.tourUsers.findIndex(u => u.id === window.userState.id) + 1;
-
                 appDiv.innerHTML = `
-                    <div class="leader-hero-container">
-                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑&size=512'">
-                        <div class="leader-info-overlay">
-                            <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ПОБЕДИТЕЛЬ ПРОШЛОГО ТУРНИРА</div>
-                            <h2 style="margin:0; font-size:22px;">${winner.name}</h2>
-                        </div>
-                    </div>
-                    <div class="my-rank-card">
-                        <div><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ВАШ РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myTourRank || '-'}</div></div>
-                        <div style="text-align:right;"><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ШАГИ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
-                    </div>
+                    <div class="leader-hero-container"><img src="${winner.photo_url}" class="leader-img-full"><div class="leader-info-overlay"><h2>${winner.name}</h2></div></div>
                     <div class="prize-block">
-                        <div><div style="font-size:10px; opacity:0.5;">ПРИЗОВОЙ ФОНД</div><div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">Приз ${window.adminPrizePool} монет</div></div>
-                        ${isDepositPeriod && !window.userState.isRegistered ? 
-                            `<button class="join-btn" onclick="window.joinTournament()">Присоединиться за 50</button>` : 
-                            (window.userState.isRegistered ? `<span style="color:#4CAF50; font-weight:bold; font-size:12px;">УЧАСТВУЮ</span>` : 
-                            (isTournamentRunning ? `<span style="opacity:0.5; font-size:12px;">ТУРНИР ИДЕТ</span>` : `<span style="opacity:0.5; font-size:12px;">ЖДЕМ 8-ГО ЧИСЛА</span>`))
-                        }
+                        <div><div style="font-size:10px; opacity:0.5;">ФОНД</div><div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">Приз ${window.adminPrizePool} монет</div></div>
+                        <button class="join-btn" onclick="window.joinTournament()">${window.userState.isRegistered ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ'}</button>
                     </div>
-                    <div class="section-title">ТОП-10 УЧАСТНИКОВ</div>
-                    ${window.tourUsers.slice(0, 10).map((u, i) => `
-                        <div class="table-row">
-                            <span class="rank-num">${i + 1}</span>
-                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini">
-                            <span style="flex:1;">${u.name}</span>
-                            <b>${(u.stats?.steps_today || 0).toLocaleString()}</b>
-                        </div>`).join('')}
+                    <div class="section-title">Топ участников</div>
+                    ${window.tourUsers.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini"><span>${u.name}</span><b style="margin-left:auto;">${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
                 `;
             }
 
             if (pageId === 'prof') {
                 appDiv.innerHTML = `
-                    <div style="padding-top:20px; text-align:center;">
+                    <div style="padding-top:30px; text-align:center;">
                         <div class="avatar-wrapper">
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
                         </div>
-                        <h3>${user.first_name}</h3>
-                        <div style="font-size:10px; opacity:0.3; margin-top:-10px; margin-bottom:10px;">ID: ${window.userState.id}</div>
-                        <div style="background:var(--secondary-bg); margin:20px; border-radius:20px; padding:20px; text-align:left;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">Сегодня <span>${window.userState.steps.toLocaleString()}</span></div>
-                            <div style="display:flex; justify-content:space-between; margin-bottom:15px;">Всего <span>${(window.userState.steps_total || 0).toLocaleString()}</span></div>
-                            <div style="display:flex; justify-content:space-between; color:var(--accent-gold);">Баланс <span>${window.userState.coins} 💰</span></div>
+                        <h3 style="margin-top:15px; margin-bottom:5px;">${user.first_name}</h3>
+                        <div style="font-size:11px; opacity:0.3; margin-bottom:20px;">ID: ${window.userState.id}</div>
+                        
+                        <div class="section-title" style="text-align:left;">Пройдено шагов</div>
+                        <div class="profile-stats-list">
+                            <div class="p-stat-row"><span class="p-label">Сегодня</span><span class="p-value">${window.userState.steps.toLocaleString()}</span></div>
+                            <div class="p-stat-row"><span class="p-label">Прошлая неделя</span><span class="p-value">${(window.userState.steps_last_week || 0).toLocaleString()}</span></div>
+                            <div class="p-stat-row"><span class="p-label">Прошлый месяц</span><span class="p-value">${(window.userState.steps_last_month || 0).toLocaleString()}</span></div>
+                            <div class="p-stat-row"><span class="p-label">Всего</span><span class="p-value">${(window.userState.steps_total || 0).toLocaleString()}</span></div>
                         </div>
-                        <button class="main-button" onclick="window.navigate('shop')">Магазин рамок</button>
+
+                        <div class="balance-card">
+                            <div class="balance-title">Ваш баланс</div>
+                            <div class="balance-amount">${window.userState.coins} 💰</div>
+                        </div>
+
+                        <button class="main-button" style="margin-top:10px; background: #333;" onclick="window.navigate('shop')">Магазин</button>
                     </div>`;
             }
 
@@ -253,66 +242,34 @@
 
         window.shareResult = () => {
             const steps = window.userState.steps.toLocaleString();
-            const text = `👟 Я прошел сегодня ${steps} шагов в StepStar! Давай со мной!`;
+            const text = `👟 Я прошел сегодня ${steps} шагов!`;
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(text)}`);
         };
 
         window.inviteFriends = () => {
-            const botUsername = "StepStarAppBot"; 
-            const inviteText = `Давай ходить вместе в StepStar! 👟\nТвой ID для связи: ${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/${botUsername}/app?startapp=${window.userState.id}&text=${encodeURIComponent(inviteText)}`);
+            const inviteText = `Давай ходить вместе в StepStar! 👟\nТвой ID: ${window.userState.id}`;
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}&text=${encodeURIComponent(inviteText)}`);
         };
 
-        // ФУНКЦИЯ АВТОМАТИЧЕСКОГО ЗАВЕРШЕНИЯ ТУРНИРА
         async function checkTournamentEnd() {
             const now = new Date();
             const day = now.getDate();
             const monthYear = `${now.getMonth()}_${now.getFullYear()}`;
-            
             const gRef = await db.collection("settings").doc("tournament").get();
             const gData = gRef.data() || {};
-            
-            // Если сегодня 8-е число и в базе еще стоит старый месяц
             if (day >= 8 && gData.last_processed_month !== monthYear) {
-                console.log("Завершение турнира...");
-                
-                // Находим лидера среди зарегистрированных
                 const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true).get();
                 if (!tourSnap.empty) {
-                    let winner = null;
-                    let maxSteps = -1;
-                    let participants = [];
-
+                    let winner = null; let maxSteps = -1; let participants = [];
                     tourSnap.forEach(doc => {
-                        const d = doc.data();
-                        participants.push(doc.id);
-                        if (d.stats.steps_today > maxSteps) {
-                            maxSteps = d.stats.steps_today;
-                            winner = { id: doc.id, name: d.name, photo_url: d.photo_url, current_balance: d.economy.balance };
-                        }
+                        const d = doc.data(); participants.push(doc.id);
+                        if (d.stats.steps_today > maxSteps) { maxSteps = d.stats.steps_today; winner = { id: doc.id, name: d.name, photo_url: d.photo_url, current_balance: d.economy.balance }; }
                     });
-
                     if (winner) {
-                        // 1. Начисляем приз победителю
-                        await db.collection("users").doc(winner.id).update({
-                            "economy.balance": winner.current_balance + 500
-                        });
-
-                        // 2. Обновляем историю в настройках
-                        await db.collection("settings").doc("tournament").set({
-                            last_winner: { name: winner.name, photo_url: winner.photo_url },
-                            last_processed_month: monthYear,
-                            admin_prize: 500
-                        }, { merge: true });
-
-                        // 3. Сбрасываем регистрацию всем участникам
-                        const batch = db.batch();
-                        participants.forEach(pId => {
-                            batch.update(db.collection("users").doc(pId), { "tournament.is_registered": false });
-                        });
+                        await db.collection("users").doc(winner.id).update({ "economy.balance": winner.current_balance + 500 });
+                        await db.collection("settings").doc("tournament").set({ last_winner: { name: winner.name, photo_url: winner.photo_url }, last_processed_month: monthYear, admin_prize: 500 }, { merge: true });
+                        const batch = db.batch(); participants.forEach(pId => { batch.update(db.collection("users").doc(pId), { "tournament.is_registered": false }); });
                         await batch.commit();
-                        
-                        console.log("Победитель определен: " + winner.name);
                     }
                 }
             }
@@ -320,12 +277,8 @@
 
         window.joinTournament = async () => {
             if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
-            window.tg.showConfirm("Вступить в турнир за 50 монет?", async (ok) => {
-                if(ok) {
-                    await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - 50, "tournament.is_registered": true });
-                    loadData();
-                }
-            });
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - 50, "tournament.is_registered": true });
+            loadData();
         };
 
         window.handleFrameAction = async (id, price) => {
@@ -345,7 +298,6 @@
                 const myId = String(tgUser.id);
                 window.userState.id = myId;
 
-                // Сначала проверяем, не пора ли раздать призы
                 await checkTournamentEnd();
 
                 const userDocRef = db.collection("users").doc(myId);
@@ -354,7 +306,7 @@
                 if (!userDoc.exists) {
                     await userDocRef.set({
                         name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
-                        stats: { steps_today: 0, steps_total: 0 },
+                        stats: { steps_today: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0 },
                         economy: { balance: 0 },
                         inventory: { frames: ['white'] },
                         selected: { frame: 'white' },
@@ -362,11 +314,7 @@
                         friends: []
                     });
                 } else {
-                    await userDocRef.update({
-                        name: tgUser.first_name,
-                        photo_url: tgUser.photo_url || "",
-                        last_seen: new Date().getTime()
-                    });
+                    await userDocRef.update({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime() });
                 }
 
                 const sp = window.tg.initDataUnsafe?.start_param;
@@ -375,25 +323,20 @@
                     await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
                 }
 
-                const gRef = await db.collection("settings").doc("tournament").get();
-                if (gRef.exists && gRef.data().last_winner) { 
-                    window.userState.lastWinner = gRef.data().last_winner; 
-                    window.adminPrizePool = gRef.data().admin_prize || 500; 
-                }
-                
-                const wRef = await db.collection("settings").doc("weekly_rating").get();
-                if (wRef.exists && wRef.data().last_winner) { 
-                    window.userState.lastWeekFriendWinner = wRef.data().last_winner; 
-                } else { 
-                    window.userState.lastWeekFriendWinner = { 
-                        name: tgUser.first_name, 
-                        photo_url: tgUser.photo_url || 'https://ui-avatars.com/api/?name='+tgUser.first_name+'&size=512'
-                    }; 
-                }
-
                 const finalDoc = await userDocRef.get();
                 const d = finalDoc.data();
-                window.userState = { ...window.userState, steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0, coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false, friends: d.friends || [] };
+                window.userState = { 
+                    ...window.userState, 
+                    steps: d.stats?.steps_today || 0, 
+                    steps_total: d.stats?.steps_total || 0,
+                    steps_last_week: d.stats?.steps_last_week || 0,
+                    steps_last_month: d.stats?.steps_last_month || 0,
+                    coins: d.economy?.balance || 0, 
+                    frame: d.selected?.frame || 'white', 
+                    inventoryFrames: d.inventory?.frames || ['white'], 
+                    isRegistered: d.tournament?.is_registered || false, 
+                    friends: d.friends || [] 
+                };
                 
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
@@ -402,7 +345,9 @@
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
 
-                window.navigate('home');
+                const currentActiveTab = document.querySelector('.tab-item.active span')?.innerText;
+                const tabMap = { 'Дом': 'home', 'Рейтинг': 'rank', 'Турнир': 'tour', 'Профиль': 'prof' };
+                window.navigate(tabMap[currentActiveTab] || 'home');
             } catch (e) { console.error(e); window.navigate('home'); }
         }
 
