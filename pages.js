@@ -1,8 +1,9 @@
-const Pages = {
+window.Pages = {
     home: (user, state, lang) => {
         const goal = 10000;
-        const offset = 628 - (628 * Math.min(state.steps / goal, 1));
-        const s = window.calcStats(state.steps);
+        const steps = parseInt(state.steps) || 0;
+        const offset = 628 - (628 * Math.min(steps / goal, 1));
+        const s = window.calcStats(steps);
         return `
         <div class="page-content" style="text-align:center; padding-top:20px;">
             <div class="avatar-wrapper">
@@ -17,18 +18,16 @@ const Pages = {
                             style="stroke-dashoffset: ${offset}; stroke-dasharray: 628; transition: 0.5s; stroke-linecap: round;"/>
                 </svg>
                 <div>
-                    <h1 style="margin:0; font-size:42px;">${state.steps.toLocaleString()}</h1>
-                    <div style="font-size:12px; opacity:0.5;">шагов сегодня</div>
+                    <h1 style="margin:0; font-size:42px;">${steps.toLocaleString()}</h1>
+                    <div style="font-size:12px; opacity:0.5;">${window.t('home', lang)}</div>
                 </div>
             </div>
-            
             <div class="stats-grid">
-                <div class="stat-card"><b>${s.kcal}</b><span>${t('kcal', lang)}</span></div>
-                <div class="stat-card"><b>${s.dist}</b><span>${t('km', lang)}</span></div>
-                <div class="stat-card"><b>${s.time}</b><span>${t('min', lang)}</span></div>
+                <div class="stat-card"><b>${s.kcal}</b><span>${window.t('kcal', lang)}</span></div>
+                <div class="stat-card"><b>${s.dist}</b><span>${window.t('km', lang)}</span></div>
+                <div class="stat-card"><b>${s.time}</b><span>${window.t('min', lang)}</span></div>
             </div>
-
-            <button class="main-button" style="margin-top:30px;" onclick="window.inviteFriends()">${t('invite', lang)}</button>
+            <button class="main-button" style="margin-top:30px;" onclick="window.inviteFriends()">${window.t('invite', lang)}</button>
         </div>`;
     },
 
@@ -38,14 +37,18 @@ const Pages = {
         <div class="page-content">
             <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); margin: 15px; border-radius: 20px; padding: 15px; display: flex; align-items: center; color: black;">
                 <img src="${winner.photo_url}" style="width:55px; height:55px; border-radius:50%; border:3px solid white; margin-right:15px; object-fit:cover;" onerror="this.src='https://ui-avatars.com/api/?name=W'">
-                <div><h4 style="margin:0; font-size:12px; opacity:0.7;">${t('week_winner', lang)}</h4><h2 style="margin:0;">${winner.name}</h2></div>
+                <div><h4 style="margin:0; font-size:12px; opacity:0.7;">${window.t('week_winner', lang)}</h4><h2 style="margin:0;">${winner.name}</h2></div>
             </div>
             <div style="padding:0 15px 15px; display:flex; gap:10px;">
-                <button onclick="document.getElementById('friend-rank').style.display='none'; document.getElementById('global-rank').style.display='block';" style="flex:1; background:var(--main-color); color:white; border:none; padding:10px; border-radius:12px; font-size:12px;">${t('global', lang)}</button>
-                <button onclick="document.getElementById('global-rank').style.display='none'; document.getElementById('friend-rank').style.display='block';" style="flex:1; background:#333; color:white; border:none; padding:10px; border-radius:12px; font-size:12px;">${t('friends_tab', lang)}</button>
+                <button onclick="document.getElementById('friend-rank').style.display='none'; document.getElementById('global-rank').style.display='block';" style="flex:1; background:var(--main-color); color:white; border:none; padding:10px; border-radius:12px; font-size:12px;">${window.t('global', lang)}</button>
+                <button onclick="document.getElementById('global-rank').style.display='none'; document.getElementById('friend-rank').style.display='block';" style="flex:1; background:#333; color:white; border:none; padding:10px; border-radius:12px; font-size:12px;">${window.t('friends_tab', lang)}</button>
             </div>
-            <div id="global-rank">${window.topUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b>${f.steps_total.toLocaleString()}</b></div>`).join('')}</div>
-            <div id="friend-rank" style="display:none;">${window.friendUsers.length > 0 ? window.friendUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b style="color:var(--main-color);">${f.steps_today.toLocaleString()}</b></div>`).join('')} : <div style="text-align:center; padding:30px; opacity:0.5;">Пригласи друзей!</div>}</div>
+            <div id="global-rank">
+                ${window.topUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b>${(f.steps_total || 0).toLocaleString()}</b></div>`).join('')}
+            </div>
+            <div id="friend-rank" style="display:none;">
+                ${window.friendUsers.length > 0 ? window.friendUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b style="color:var(--main-color);">${(f.steps_today || 0).toLocaleString()}</b></div>`).join('') : `<div style="text-align:center; padding:30px; opacity:0.5;">Здесь будет рейтинг друзей</div>`}
+            </div>
         </div>`;
     },
 
@@ -61,7 +64,7 @@ const Pages = {
             </div>
             ${!state.isRegistered && isRegOpen ? `<button class="main-button" style="background:var(--accent-gold); color:black;" onclick="window.joinTournament()">Вступить за 50 💰</button>` : `<div style="text-align:center; padding:20px; color:#00FF00;">${state.isRegistered ? '✅ ВЫ УЧАСТНИК' : 'Регистрация 1-7 числа'}</div>`}
             <div style="padding:10px 20px; opacity:0.4; font-size:11px;">УЧАСТНИКИ</div>
-            ${window.tourUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b>${f.steps_today.toLocaleString()}</b></div>`).join('')}
+            ${window.tourUsers.map((f, i) => `<div class="table-row"><span style="width:25px; opacity:0.5;">${i+1}</span><img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'"><span style="flex:1;">${f.name}</span><b>${(f.steps_today || 0).toLocaleString()}</b></div>`).join('')}
         </div>`;
     },
 
@@ -73,8 +76,8 @@ const Pages = {
             </div>
             <h3 style="text-align:center;">${user.first_name}</h3>
             <div style="background:var(--secondary-bg); margin:20px; border-radius:20px; padding:10px;">
-                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Сегодня <span>${state.steps.toLocaleString()}</span></div>
-                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Всего <span>${state.steps_total.toLocaleString()}</span></div>
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Сегодня <span>${(state.steps || 0).toLocaleString()}</span></div>
+                <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Всего <span>${(state.steps_total || 0).toLocaleString()}</span></div>
                 <div style="display:flex; justify-content:space-between; padding:15px;">Баланс <span>💰 ${state.coins}</span></div>
             </div>
             <button class="main-button" onclick="window.navigate('shop')">Магазин</button>
