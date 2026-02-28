@@ -2,6 +2,7 @@ const Pages = {
     home: (user, state, lang) => {
         const goal = 10000;
         const offset = 628 - (628 * Math.min(state.steps / goal, 1));
+        const s = window.calcStats(state.steps);
         return `
         <div class="page-content" style="text-align:center; padding-top:20px;">
             <div class="avatar-wrapper">
@@ -20,7 +21,14 @@ const Pages = {
                     <div style="font-size:12px; opacity:0.5;">шагов сегодня</div>
                 </div>
             </div>
-            <button class="main-button" onclick="window.inviteFriends()">${t('invite', lang)}</button>
+            
+            <div class="stats-grid">
+                <div class="stat-card"><b>${s.kcal}</b><span>${t('kcal', lang)}</span></div>
+                <div class="stat-card"><b>${s.dist}</b><span>${t('km', lang)}</span></div>
+                <div class="stat-card"><b>${s.time}</b><span>${t('min', lang)}</span></div>
+            </div>
+
+            <button class="main-button" style="margin-top:30px;" onclick="window.inviteFriends()">${t('invite', lang)}</button>
         </div>`;
     },
 
