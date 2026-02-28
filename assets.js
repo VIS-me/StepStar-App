@@ -12,7 +12,7 @@ const translations = {
 };
 
 function t(key, lang) {
-    return translations[lang] ? translations[lang][key] : translations['en'][key];
+    return translations[lang] ? translations[lang][key] : (translations['en'][key] || key);
 }
 
 const frameStyles = {
