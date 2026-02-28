@@ -15,24 +15,23 @@ body {
     height: 100vh; width: 100vw; overflow: hidden;
 }
 
-.app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: env(safe-area-inset-bottom); }
+.app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
-/* МАГАЗИН: ГАРАНТИРОВАННЫЕ КРУГИ */
+/* КРУГЛЫЕ РАМКИ В МАГАЗИНЕ */
 .shop-grid-4 {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     padding: 15px;
 }
 
 .shop-item-mini {
     background: var(--secondary-bg);
-    padding: 15px 5px;
-    border-radius: 16px;
+    padding: 12px 5px;
+    border-radius: 15px;
     text-align: center;
     display: flex; flex-direction: column; align-items: center;
     border: 2px solid transparent;
-    transition: 0.2s;
 }
 
 .frame-preview { 
@@ -40,40 +39,29 @@ body {
     height: 45px !important; 
     border-radius: 50% !important; 
     margin-bottom: 8px;
-    background: rgba(255,255,255,0.03);
+    background: rgba(255,255,255,0.05);
     flex-shrink: 0;
-    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
 }
-
-/* РЕЙТИНГ И ПОБЕДИТЕЛЬ */
-.winner-card {
-    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-    margin: 15px; border-radius: 20px; padding: 15px;
-    display: flex; align-items: center; color: black;
-}
-.winner-photo { width: 55px; height: 55px; border-radius: 50%; border: 3px solid white; margin-right: 15px; object-fit: cover; }
-.winner-info h2 { margin: 0; font-size: 18px; }
-
-.table-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; margin: 0 12px; background: #333; }
-.t-pos { width: 25px; font-weight: bold; opacity: 0.5; }
-.t-name { flex: 1; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ТАБ БАР */
 .tab-bar { 
     height: 70px; display: flex; background: #15171a; 
     position: fixed; bottom: 0; width: 100%; 
     border-top: 1px solid rgba(255,255,255,0.1); 
-    padding-bottom: env(safe-area-inset-bottom);
 }
-.tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; }
+.tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; cursor: pointer; }
 .tab-item.active { color: var(--main-color); }
-.tab-item i { display: block; font-size: 20px; margin-bottom: 4px; font-style: normal; }
+.tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-/* ОБЩИЕ ЭЛЕМЕНТЫ */
-.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+/* ПРОГРЕСС И АВАТАРЫ */
 .avatar-wrapper { position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
 .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
 .user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
+
+.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+
+.table-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+.rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; margin: 0 12px; background: #333; }
+
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
 .modal-content { background: #222; padding: 25px; border-radius: 24px; width: 85%; text-align: center; }
