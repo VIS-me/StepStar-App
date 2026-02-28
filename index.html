@@ -121,10 +121,11 @@
         window.userState = { 
             id: '', frame: 'white', steps: 0, steps_total: 0, coins: 0, 
             inventoryFrames: ['white'], isRegistered: false, friends: [],
-            lastWinner: { name: 'Победитель', photo_url: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800' }
+            lastWinner: { name: 'Победитель', photo_url: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800' },
+            lastWeekFriendWinner: { name: 'Лидер Друзей', photo_url: 'https://images.unsplash.com/photo-1551632432-c735e7a03288?w=800' }
         };
         window.friendUsers = []; window.tourUsers = []; 
-        window.adminPrizePool = 2500; // Твой установленный призовой фонд
+        window.adminPrizePool = 2500; 
 
         const frameStyles = {
             'white': '3px solid #ffffff', 'green': '3px solid #4CAF50', 'lightblue': '3px solid #00BCD4',
@@ -163,20 +164,20 @@
             }
 
             if (pageId === 'rank') {
-                const leader = window.friendUsers[0] || { name: "Лидер", photo_url: "https://images.unsplash.com/photo-1551632432-c735e7a03288?w=800" };
+                const leader = window.userState.lastWeekFriendWinner;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
                 const top3 = window.friendUsers.slice(0, 3);
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
                         <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=L&size=512'">
                         <div class="leader-info-overlay">
-                            <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ЛИДЕР НЕДЕЛИ</div>
+                            <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ЛИДЕР ПРОШЛОЙ НЕДЕЛИ (ДРУЗЬЯ)</div>
                             <h2 style="margin:0; font-size:22px;">${leader.name}</h2>
                         </div>
                     </div>
                     <div class="my-rank-card">
                         <div><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ВАШ РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div></div>
-                        <div style="text-align:right;"><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ШАГИ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
+                        <div style="text-align:right;"><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ШАГИ СЕГОДНЯ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
                     <div class="section-title">ТОП-3 Друзей</div>
                     ${top3.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
@@ -271,7 +272,7 @@
 
         window.shareResult = () => {
             const steps = window.userState.steps.toLocaleString();
-            const text = `Я прошел сегодня ${steps} шагов в StepStar! 👟\nСможешь больше?`;
+            const text = `Я прошел сегодня ${steps} шагов in StepStar! 👟\nСможешь больше?`;
             const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
             window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
         };
@@ -317,11 +318,19 @@
                 const userRef = db.collection("users").doc(String(tgUser.id));
                 const doc = await userRef.get();
                 
+                // Подгружаем настройки турнира
                 const globalRef = await db.collection("settings").doc("tournament").get();
                 if (globalRef.exists) {
                     const gd = globalRef.data();
                     window.userState.lastWinner = gd.last_winner || window.userState.lastWinner;
                     window.adminPrizePool = gd.admin_prize || 2500;
+                }
+
+                // Подгружаем победителя прошлой недели для вкладки Рейтинг
+                const weeklyRef = await db.collection("settings").doc("weekly_rating").get();
+                if (weeklyRef.exists) {
+                    const wd = weeklyRef.data();
+                    window.userState.lastWeekFriendWinner = wd.last_winner || window.userState.lastWeekFriendWinner;
                 }
 
                 if (doc.exists) {
