@@ -235,6 +235,18 @@
             display: block; 
             font-weight: bold;
         }
+
+        .shop-bonus-btn {
+            width: 90%;
+            background: var(--secondary-bg);
+            color: var(--accent-gold);
+            border: 1px solid var(--accent-gold);
+            padding: 14px;
+            border-radius: 18px;
+            margin: 5px auto 15px;
+            display: block;
+            font-weight: bold;
+        }
         
         .join-btn { 
             background: var(--main-color); 
@@ -520,7 +532,6 @@
                         </div>
                         
                         <button class="shop-btn-prof" onclick="window.navigate('shop')">МАГАЗИН</button>
-                        <button class="shop-btn-prof" onclick="window.claimDailyGift()">ПОДАРОК ЗА 10К ШАГОВ</button>
                     </div>`;
             }
 
@@ -532,6 +543,23 @@
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
                         <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
                         <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
+                    </div>
+
+                    <div class="section-title">Бонусы</div>
+                    <button class="shop-bonus-btn" onclick="window.claimDailyGift()">
+                        🎁 ПОДАРОК ЗА 10 000 ШАГОВ (+20 💰)
+                    </button>
+
+                    <div class="section-title">Пополнение (Telegram Stars)</div>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 15px; margin-bottom:20px;">
+                        <button class="shop-item-mini" onclick="window.buyStars(50, 100)" style="border: 1px solid var(--accent-gold); color:white;">
+                            <div style="font-size:18px;">⭐ 50</div>
+                            <small>+100 💰</small>
+                        </button>
+                        <button class="shop-item-mini" onclick="window.buyStars(250, 600)" style="border: 1px solid var(--accent-gold); color:white;">
+                            <div style="font-size:18px;">⭐ 250</div>
+                            <small>+600 💰</small>
+                        </button>
                     </div>
                     
                     <div class="section-title">Рамки профиля</div>
@@ -577,7 +605,6 @@
                         <div class="stat-box-blur"><small>ДИСТАНЦИЯ</small><br><b>${(steps * 0.00075).toFixed(2)} км</b></div>
                         <div class="stat-box-blur"><small>ЭНЕРГИЯ</small><br><b>${(steps * 0.04).toFixed(0)} ккал</b></div>
                     </div>
-                    <button class="main-button" style="margin-top:30px;" onclick="window.closeModal()">ЗАКРЫТЬ</button>
                 </div>`;
             document.getElementById('friendModal').style.display = 'flex';
         };
@@ -636,6 +663,14 @@
             });
             window.tg.showAlert("Поздравляем! Вы получили 20 💰");
             loadData();
+        };
+
+        window.buyStars = (stars, coins) => {
+            window.tg.showConfirm(`Купить ${coins} монет за ${stars} Stars?`, (ok) => {
+                if (ok) {
+                    window.tg.showAlert("Функция оплаты находится в разработке.");
+                }
+            });
         };
 
         window.joinTournament = async () => {
