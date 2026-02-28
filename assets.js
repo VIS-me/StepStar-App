@@ -11,9 +11,9 @@ const translations = {
     }
 };
 
-function t(key, lang) {
+window.t = (key, lang) => {
     return translations[lang] ? translations[lang][key] : (translations['en'][key] || key);
-}
+};
 
 const frameStyles = {
     'white': '3px solid #ffffff',
@@ -28,11 +28,11 @@ const frameStyles = {
 
 window.getFrameStyle = (id) => frameStyles[id] || frameStyles['white'];
 
-// Расчеты на основе шагов
 window.calcStats = (steps) => {
+    const s = parseInt(steps) || 0;
     return {
-        dist: (steps * 0.00075).toFixed(2), // 1 шаг ~ 0.75м
-        kcal: (steps * 0.04).toFixed(0),   // 1 шаг ~ 0.04 ккал
-        time: (steps / 100).toFixed(0)     // 100 шагов в минуту
+        dist: (s * 0.00075).toFixed(2),
+        kcal: (s * 0.04).toFixed(0),
+        time: (s / 100).toFixed(0)
     };
 };
