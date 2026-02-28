@@ -34,17 +34,11 @@ const Assets = {
     }
 };
 
-/**
- * Функция перевода
- */
 function t(key, lang) {
-    const l = (Assets.i18n[lang]) ? lang : 'ru';
+    const l = Assets.i18n[lang] ? lang : 'ru';
     return Assets.i18n[l][key] || key;
 }
 
-/**
- * Получение стиля рамки
- */
 function getFrameStyle(name) {
     return Assets.frames[name] || Assets.frames.white;
 }
