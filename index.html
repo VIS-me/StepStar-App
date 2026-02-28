@@ -175,7 +175,7 @@
                     </div>
                     <div class="section-title">Список друзей</div>
                     ${top10.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
-                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Друзей пока нет</div>' : ''}
+                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Добавьте друзей по ссылке</div>' : ''}
                     <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
@@ -232,6 +232,7 @@
                             <img src="${user.photo_url}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${user.first_name}'">
                         </div>
                         <h3>${user.first_name}</h3>
+                        <div style="font-size:10px; opacity:0.3; margin-top:-10px; margin-bottom:10px;">ID: ${window.userState.id}</div>
                         <div style="background:var(--secondary-bg); margin:20px; border-radius:20px; padding:20px; text-align:left;">
                             <div style="display:flex; justify-content:space-between; margin-bottom:15px;">Сегодня <span>${window.userState.steps.toLocaleString()}</span></div>
                             <div style="display:flex; justify-content:space-between; margin-bottom:15px;">Всего <span>${(window.userState.steps_total || 0).toLocaleString()}</span></div>
@@ -298,28 +299,30 @@
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
                 if (!tgUser) { window.navigate('home'); return; }
-                
-                window.userState.lastWeekFriendWinner = {
-                    name: tgUser.first_name + ' (Претендент)',
-                    photo_url: tgUser.photo_url || placeholderImg
-                };
+                const myId = String(tgUser.id);
+                window.userState.id = myId;
 
-                const userRef = db.collection("users").doc(String(tgUser.id));
-                const doc = await userRef.get();
-                
-                // Логика добавления друга через рефералку
+                // 1. Инициализация/Создание пользователя (обязательно перед друзьями)
+                await db.collection("users").doc(myId).set({
+                    name: tgUser.first_name,
+                    photo_url: tgUser.photo_url || "",
+                    last_seen: new Date().getTime()
+                }, { merge: true });
+
+                // 2. Логика рефералки (Handshake)
                 const startParam = window.tg.initDataUnsafe?.start_param;
-                if (startParam && startParam !== String(tgUser.id)) {
-                    // Добавляем тебя к другу
+                if (startParam && startParam !== myId) {
+                    // Добавляем тебя к пригласителю
                     await db.collection("users").doc(startParam).set({
-                        friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
+                        friends: firebase.firestore.FieldValue.arrayUnion(myId)
                     }, { merge: true });
-                    // Добавляем друга к тебе
-                    await db.collection("users").doc(String(tgUser.id)).set({
+                    // Добавляем пригласителя к тебе
+                    await db.collection("users").doc(myId).set({
                         friends: firebase.firestore.FieldValue.arrayUnion(startParam)
                     }, { merge: true });
                 }
 
+                // 3. Загрузка данных лидеров
                 const globalRef = await db.collection("settings").doc("tournament").get();
                 if (globalRef.exists && globalRef.data().last_winner) {
                     window.userState.lastWinner = globalRef.data().last_winner;
@@ -329,24 +332,25 @@
                 const weeklyRef = await db.collection("settings").doc("weekly_rating").get();
                 if (weeklyRef.exists && weeklyRef.data().last_winner) {
                     window.userState.lastWeekFriendWinner = weeklyRef.data().last_winner;
+                } else {
+                    window.userState.lastWeekFriendWinner = { name: tgUser.first_name + ' (Претендент)', photo_url: tgUser.photo_url || placeholderImg };
                 }
 
+                // 4. Загрузка личных данных и списков
+                const doc = await db.collection("users").doc(myId).get();
                 if (doc.exists) {
                     const d = doc.data();
                     window.userState = { 
                         ...window.userState,
-                        id: String(tgUser.id), steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0,
+                        steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0,
                         coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white',
                         inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false,
                         friends: d.friends || [] 
                     };
                     
-                    const fIds = [...window.userState.friends, window.userState.id];
-                    // Firebase не любит пустые или слишком длинные IN-запросы
-                    if (fIds.length > 0) {
-                        const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                        window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-                    }
+                    const fIds = [...window.userState.friends, myId];
+                    const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
+                    window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                     
                     const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                     window.tourUsers = snapTour.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
