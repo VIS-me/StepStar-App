@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StepStar Ultra</title>
+    <title>StepStar Ultra Edition</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -35,6 +36,7 @@
             overflow: hidden;
         }
 
+        /* Фоновые изображения */
         body.bg-cats { 
             background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop') center/cover no-repeat !important; 
         }
@@ -55,6 +57,7 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
+        /* Лидерборд и герои */
         .leader-hero-container { 
             position: relative; 
             width: 100%; 
@@ -119,6 +122,7 @@
             cursor: pointer;
         }
 
+        /* Навигация */
         .tab-bar { 
             height: 70px; 
             display: flex; 
@@ -149,6 +153,7 @@
             font-style: normal; 
         }
 
+        /* Виджеты статистики */
         .stat-box-blur {
             background: rgba(255,255,255,0.05); 
             padding: 12px; 
@@ -169,6 +174,7 @@
             border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
 
+        /* Модальные окна */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -204,6 +210,7 @@
             z-index: 10;
         }
 
+        /* Кнопки */
         .main-button { 
             width: 90%; 
             background: var(--main-color); 
@@ -242,6 +249,7 @@
             background: var(--success-green); 
         }
 
+        /* Аватары и Магазин */
         .avatar-wrapper { 
             position: relative; 
             width: 105px; 
@@ -311,7 +319,9 @@
     </div>
 
     <script>
-        // FIREBASE CONFIG
+        /**
+         * ИНИЦИАЛИЗАЦИЯ И КОНФИГУРАЦИЯ
+         */
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -326,6 +336,7 @@
         window.tg = window.Telegram.WebApp;
         const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
+        // Глобальное состояние
         window.userState = { 
             id: '', 
             name: '', 
@@ -366,21 +377,25 @@
             'maltese': "url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988')"
         };
 
-        // NAVIGATION
+        /**
+         * ЛОГИКА НАВИГАЦИИ
+         */
         window.navigate = function(pageId, el) {
             const appDiv = document.getElementById('app');
             
+            // Смена фона
             document.body.className = '';
             if (window.userState.bg && window.userState.bg !== 'default') {
                 document.body.classList.add('bg-' + window.userState.bg);
             }
 
+            // Активная вкладка
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
 
-            // HOME PAGE
+            // Отрисовка страниц
             if (pageId === 'home') {
                 const s = { 
                     dist: (window.userState.steps * 0.00075).toFixed(2), 
@@ -418,7 +433,6 @@
                     </div>`;
             }
 
-            // RANK PAGE
             if (pageId === 'rank') {
                 const leaderName = window.userState.lastWeekFriendWinner.name || window.userState.name;
                 const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+leaderName;
@@ -454,7 +468,6 @@
                     <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
-            // TOURNAMENT PAGE
             if (pageId === 'tour') {
                 const winner = window.userState.lastWinner;
                 appDiv.innerHTML = `
@@ -484,7 +497,6 @@
                         </div>`).join('')}`;
             }
 
-            // PROFILE PAGE
             if (pageId === 'prof') {
                 appDiv.innerHTML = `
                     <div style="padding-top:30px; text-align:center;" class="readable-text">
@@ -512,7 +524,6 @@
                     </div>`;
             }
 
-            // SHOP PAGE
             if (pageId === 'shop') {
                 const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
                 const bgs = [{id:'default', n:'Стандарт'}, {id:'cats', n:'Котята'}, {id:'maltese', n:'Мальтезе'}];
@@ -543,7 +554,9 @@
             }
         };
 
-        // FRIEND MODAL
+        /**
+         * КАРТОЧКА ДРУГА
+         */
         window.showFriendCard = (friendId) => {
             const f = window.friendUsers.find(u => u.id === friendId);
             if (!f) return;
@@ -569,68 +582,78 @@
             document.getElementById('friendModal').style.display = 'flex';
         };
 
-        window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
+        window.closeModal = () => { 
+            document.getElementById('friendModal').style.display = 'none'; 
+        };
 
-        // CORE ACTIONS
+        /**
+         * ОСНОВНЫЕ ФУНКЦИИ МАГАЗИНА И ПОДАРКОВ
+         */
         window.handleFrameAction = async (id, price) => {
-            const uRef = db.collection("users").doc(window.userState.id);
+            const userDoc = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryFrames.includes(id)) { 
-                await uRef.update({ "selected.frame": id }); 
+                await userDoc.update({ "selected.frame": id }); 
             } else if (window.userState.coins >= price) { 
-                await uRef.update({ 
+                await userDoc.update({ 
                     "economy.balance": window.userState.coins - price, 
                     "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id), 
                     "selected.frame": id 
                 }); 
             } else {
-                window.tg.showAlert("Недостаточно монет");
+                window.tg.showAlert("Недостаточно монет! 💰");
             }
             loadData();
         };
 
         window.handleBgAction = async (id, price) => {
-            const uRef = db.collection("users").doc(window.userState.id);
+            const userDoc = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryBgs.includes(id)) { 
-                await uRef.update({ "selected.bg": id }); 
+                await userDoc.update({ "selected.bg": id }); 
             } else if (window.userState.coins >= price) { 
-                await uRef.update({ 
+                await userDoc.update({ 
                     "economy.balance": window.userState.coins - price, 
                     "inventory.bgs": firebase.firestore.FieldValue.arrayUnion(id), 
                     "selected.bg": id 
                 }); 
             } else {
-                window.tg.showAlert("Недостаточно монет");
+                window.tg.showAlert("Недостаточно монет! 💰");
             }
             loadData();
         };
 
         window.claimDailyGift = async () => {
-            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10 000 шагов!");
+            if (window.userState.steps < 10000) {
+                return window.tg.showAlert("Нужно минимум 10 000 шагов за сегодня! 👟");
+            }
             const today = new Date().toLocaleDateString();
-            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Уже получили!");
+            if (window.userState.lastGiftDate === today) {
+                return window.tg.showAlert("Подарок уже получен! Приходите завтра. 🎁");
+            }
             
             await db.collection("users").doc(window.userState.id).update({ 
-                "economy.balance": window.userState.coins + 15, 
+                "economy.balance": window.userState.coins + 20, 
                 "economy.last_gift_date": today 
             });
-            window.tg.showAlert("Вы получили 15 💰");
+            window.tg.showAlert("Поздравляем! Вы получили 20 💰");
             loadData();
         };
 
         window.joinTournament = async () => {
             if (window.userState.isRegistered) return;
-            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
+            if (window.userState.coins < 50) {
+                return window.tg.showAlert("Вход стоит 50 монет! 💰");
+            }
             
             await db.collection("users").doc(window.userState.id).update({ 
                 "economy.balance": window.userState.coins - 50, 
                 "tournament.is_registered": true 
             });
-            window.tg.showAlert("Вы в турнире!");
+            window.tg.showAlert("Вы зарегистрированы в турнире! 🏁");
             loadData();
         };
 
         window.shareResult = () => {
-            const text = `👟 Я прошел ${window.userState.steps} шагов!`;
+            const text = `👟 Сегодня я прошел ${window.userState.steps} шагов в StepStar!`;
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(text)}`);
         };
 
@@ -638,7 +661,9 @@
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`);
         };
 
-        // TOURNAMENT RESET LOGIC
+        /**
+         * ЛОГИКА ЗАВЕРШЕНИЯ ТУРНИРА (8-е ЧИСЛО)
+         */
         async function checkTournamentEnd() {
             const now = new Date(); 
             const day = now.getDate(); 
@@ -651,13 +676,13 @@
                 const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true).get();
                 if (!tourSnap.empty) {
                     let best = null; 
-                    let max = -1; 
+                    let maxSteps = -1; 
                     let participants = [];
                     tourSnap.forEach(doc => {
                         const d = doc.data(); 
                         participants.push(doc.id);
-                        if (d.stats.steps_today > max) { 
-                            max = d.stats.steps_today; 
+                        if (d.stats.steps_today > maxSteps) { 
+                            maxSteps = d.stats.steps_today; 
                             best = { id: doc.id, name: d.name, photo: d.photo_url, bal: d.economy.balance }; 
                         }
                     });
@@ -676,7 +701,9 @@
             }
         }
 
-        // LOAD DATA
+        /**
+         * ЗАГРУЗКА ДАННЫХ
+         */
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -702,14 +729,14 @@
                     d = (await userDocRef.get()).data();
                 }
 
-                // Start param (Referral)
+                // Реферальная система
                 const sp = window.tg.initDataUnsafe?.start_param;
                 if (sp && sp !== myId) {
                     await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
                     await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
                 }
 
-                // Global Settings
+                // Глобальные настройки турнира
                 const gRef = await db.collection("settings").doc("tournament").get();
                 if (gRef.exists) { 
                     const gData = gRef.data();
@@ -717,7 +744,7 @@
                     window.userState.lastWeekFriendWinner = gData.last_week_friend_winner || { name: '', photo_url: '' };
                 }
 
-                // Update Local State
+                // Обновление локального стейта
                 window.userState = { 
                     ...window.userState, 
                     name: d.name, 
@@ -736,13 +763,13 @@
                     friends: d.friends || [] 
                 };
                 
-                // Load Friends List
+                // Рейтинг друзей
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                               .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 
-                // Load Tournament List
+                // Участники турнира
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                            .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
@@ -750,9 +777,12 @@
                 const activeTab = document.querySelector('.tab-item.active span')?.innerText || 'Дом';
                 const map = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
                 window.navigate(map[activeTab] || 'home');
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error("Ошибка загрузки данных:", e); 
+            }
         }
 
+        // Запуск
         window.tg.ready(); 
         window.tg.expand(); 
         loadData();
