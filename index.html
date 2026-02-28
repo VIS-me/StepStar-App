@@ -148,7 +148,7 @@
                         <div class="stats-grid">
                             <div class="stat-card"><b>${s.kcal}</b><span>ккал</span></div>
                             <div class="stat-card"><b>${s.dist}</b><span>км</span></div>
-                            <div class="stat-card)<b>${s.time}</b><span>мин</span></div>
+                            <div class="stat-card"><b>${s.time}</b><span>мин</span></div>
                         </div>
                         <button class="main-button" style="margin-top:30px;" onclick="window.shareResult()">Поделиться результатом</button>
                     </div>`;
@@ -325,7 +325,6 @@
                 if (wRef.exists && wRef.data().last_winner) { 
                     window.userState.lastWeekFriendWinner = wRef.data().last_winner; 
                 } else { 
-                    // ИСПРАВЛЕНИЕ: Если победителя нет, показываем ТЕКУЩЕГО пользователя на баннере
                     window.userState.lastWeekFriendWinner = { 
                         name: tgUser.first_name, 
                         photo_url: tgUser.photo_url || 'https://ui-avatars.com/api/?name='+tgUser.first_name+'&size=512'
