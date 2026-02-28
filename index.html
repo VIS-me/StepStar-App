@@ -63,12 +63,10 @@
 
         .section-title { padding: 10px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.4; letter-spacing: 1.2px; text-transform: uppercase; }
         
-        /* LIST STYLES */
         .table-row { display: flex; align-items: center; padding: 12px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .rank-num { width: 25px; font-size: 14px; opacity: 0.5; font-weight: bold; }
         .rank-photo-mini { width: 38px; height: 38px; border-radius: 50%; margin: 0 15px; object-fit: cover; background: #333; }
         
-        /* TAB BAR */
         .tab-bar { 
             height: 70px; display: flex; background: #15171a; 
             position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
@@ -77,7 +75,6 @@
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        /* SHOP & MODALS */
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
         .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; }
         .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
@@ -187,7 +184,8 @@
             if (pageId === 'tour') {
                 const now = new Date();
                 const day = now.getDate();
-                const isActive = day <= 7; 
+                const isTournamentRunning = day <= 7; 
+                const isDepositPeriod = day >= 8;
                 const winner = window.userState.lastWinner;
                 const myTourRank = window.tourUsers.findIndex(u => u.id === window.userState.id) + 1;
 
@@ -210,9 +208,10 @@
                             <div style="font-size:10px; opacity:0.5;">ПРИЗОВОЙ ФОНД</div>
                             <div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">Приз ${window.adminPrizePool} монет</div>
                         </div>
-                        ${isActive && !window.userState.isRegistered ? 
+                        ${isDepositPeriod && !window.userState.isRegistered ? 
                             `<button class="join-btn" onclick="window.joinTournament()">Присоединиться за 50</button>` : 
-                            (isActive ? `<span style="color:#4CAF50; font-weight:bold; font-size:12px;">УЧАСТВУЮ</span>` : `<span style="opacity:0.5; font-size:12px;">СЛЕДУЮЩИЙ 1-ГО ЧИСЛА</span>`)
+                            (window.userState.isRegistered ? `<span style="color:#4CAF50; font-weight:bold; font-size:12px;">УЧАСТВУЮ</span>` : 
+                            (isTournamentRunning ? `<span style="opacity:0.5; font-size:12px;">ТУРНИР ИДЕТ</span>` : `<span style="opacity:0.5; font-size:12px;">ЖДЕМ 8-ГО ЧИСЛА</span>`))
                         }
                     </div>
 
@@ -260,13 +259,7 @@
                                 <div style="font-size:10px; opacity:0.8;">${window.userState.frame === f.id ? 'Уст.' : (window.userState.inventoryFrames.includes(f.id) ? 'Взять' : f.p)}</div>
                             </div>`).join('')}
                     </div>
-                    <div id="earn-modal" class="modal-overlay">
-                        <div class="modal-content">
-                            <h3>Заработать 💰</h3>
-                            <button class="main-button" onclick="window.claimDailyBonus()">🎁 10к шагов (10 💰)</button>
-                            <button onclick="document.getElementById('earn-modal').style.display='none'" style="background:none; border:none; color:gray; margin-top:15px;">Закрыть</button>
-                        </div>
-                    </div>`;
+                `;
             }
         };
 
@@ -305,12 +298,6 @@
             loadData();
         };
 
-        window.claimDailyBonus = async () => {
-            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10к шагов!");
-            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 10 });
-            loadData();
-        };
-
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -318,7 +305,6 @@
                 const userRef = db.collection("users").doc(String(tgUser.id));
                 const doc = await userRef.get();
                 
-                // Подгружаем настройки турнира
                 const globalRef = await db.collection("settings").doc("tournament").get();
                 if (globalRef.exists) {
                     const gd = globalRef.data();
@@ -326,7 +312,6 @@
                     window.adminPrizePool = gd.admin_prize || 2500;
                 }
 
-                // Подгружаем победителя прошлой недели для вкладки Рейтинг
                 const weeklyRef = await db.collection("settings").doc("weekly_rating").get();
                 if (weeklyRef.exists) {
                     const wd = weeklyRef.data();
