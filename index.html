@@ -21,7 +21,19 @@
     <script src="pages.js"></script>
 
     <script type="module">
+        // Ловушка для отлова ошибок (выведет alert если что-то не так)
+        window.onerror = function(msg, url, line) {
+            alert("Ошибка: " + msg + "\nФайл: " + url + "\nЛиния: " + line);
+        };
+
         import { syncUser, buyVipInDb, db, doc, updateDoc, increment, arrayUnion } from './firebase-logic.js';
+
+        // Пробрасываем импорты в глобальное окно, чтобы onclick в HTML их видел
+        window.db = db;
+        window.doc = doc;
+        window.updateDoc = updateDoc;
+        window.increment = increment;
+        window.arrayUnion = arrayUnion;
 
         window.tg = window.Telegram.WebApp;
         
@@ -32,12 +44,15 @@
         const userLang = window.tg.initDataUnsafe?.user?.language_code;
         window.appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
 
+        // Навигация
         window.navigate = function(pageId, el) {
             const app = document.getElementById('app');
-            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+            const user = window.tg.initDataUnsafe?.user || { first_name: "Walker", photo_url: "" };
             
             if (typeof Pages !== 'undefined' && Pages[pageId]) {
                 app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
+            } else {
+                console.error("Pages not found or pageId invalid:", pageId);
             }
 
             if (el) {
@@ -47,25 +62,26 @@
             if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
         };
 
+        // Покупка рамок
         window.handleFrameAction = async function(color, price) {
             const userId = window.tg.initDataUnsafe?.user?.id;
             if (!userId) return;
 
-            const userRef = doc(db, "users", String(userId));
+            const userRef = window.doc(window.db, "users", String(userId));
             const isOwned = window.userState.inventoryFrames.includes(color);
 
             if (isOwned) {
                 window.userState.frame = color;
-                await updateDoc(userRef, { "selected.frame": color });
+                await window.updateDoc(userRef, { "selected.frame": color });
                 window.navigate('shop');
             } else {
                 if (window.userState.coins >= price) {
                     window.tg.showConfirm(`Купить за ${price} 💰?`, async (confirm) => {
                         if (confirm) {
                             try {
-                                await updateDoc(userRef, {
-                                    "economy.balance": increment(-price),
-                                    "inventory.frames": arrayUnion(color),
+                                await window.updateDoc(userRef, {
+                                    "economy.balance": window.increment(-price),
+                                    "inventory.frames": window.arrayUnion(color),
                                     "selected.frame": color
                                 });
                                 window.userState.coins -= price;
@@ -73,7 +89,7 @@
                                 window.userState.inventoryFrames.push(color);
                                 window.navigate('shop');
                                 window.tg.HapticFeedback.notificationOccurred('success');
-                            } catch (e) { console.error(e); }
+                            } catch (e) { alert("Ошибка при покупке: " + e.message); }
                         }
                     });
                 } else {
@@ -82,18 +98,21 @@
             }
         };
 
+        // Покупка VIP
         window.handleVipPurchase = async function() {
             const userId = window.tg.initDataUnsafe?.user?.id;
             if (window.userState.coins >= 2500) {
                 window.tg.showConfirm("Купить VIP за 2500 💰?", async (confirm) => {
                     if(confirm) {
-                        await buyVipInDb(userId);
-                        window.userState.isVip = true;
-                        window.userState.coins -= 2500;
-                        window.userState.frame = 'gold_vip_frame';
-                        window.userState.inventoryFrames.push('gold_vip_frame');
-                        window.navigate('prof');
-                        window.tg.showAlert("👑 VIP АКТИВИРОВАН!");
+                        try {
+                            await buyVipInDb(userId);
+                            window.userState.isVip = true;
+                            window.userState.coins -= 2500;
+                            window.userState.frame = 'gold_vip_frame';
+                            window.userState.inventoryFrames.push('gold_vip_frame');
+                            window.navigate('prof');
+                            window.tg.showAlert("👑 VIP АКТИВИРОВАН!");
+                        } catch(e) { alert("Ошибка VIP: " + e.message); }
                     }
                 });
             } else {
@@ -101,19 +120,15 @@
             }
         };
 
-        window.shareResult = function(steps) {
-            const botUrl = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', window.appLang).replace('{n}', steps))}`;
-            window.tg.openTelegramLink(botUrl);
-        };
-
         async function initApp() {
-            window.tg.expand();
-            window.tg.ready();
-            document.getElementById('app').innerHTML = '<div style="padding:50px; text-align:center;">🚀 Loading StepStar...</div>';
+            try {
+                window.tg.expand();
+                window.tg.ready();
+                
+                document.getElementById('app').innerHTML = '<div style="padding:50px; text-align:center; color:white;">🚀 Loading StepStar...</div>';
 
-            const tgUser = window.tg.initDataUnsafe?.user;
-            if (tgUser) {
-                try {
+                const tgUser = window.tg.initDataUnsafe?.user;
+                if (tgUser) {
                     const dbData = await syncUser(tgUser);
                     if (dbData) {
                         window.userState.coins = dbData.economy?.balance || 0;
@@ -122,15 +137,19 @@
                         window.userState.inventoryFrames = dbData.inventory?.frames || ['white'];
                         window.userState.isVip = dbData.settings?.is_vip || false;
                     }
-                } catch (e) { console.error("Firebase error:", e); }
+                }
+
+                // Локализация меню
+                document.getElementById('txt-home').innerText = t('home', window.appLang);
+                document.getElementById('txt-rank').innerText = t('rank', window.appLang);
+                document.getElementById('txt-tour').innerText = t('tour', window.appLang);
+                document.getElementById('txt-prof').innerText = t('prof', window.appLang);
+
+                // Запуск первой страницы
+                window.navigate('home', document.getElementById('btn-home'));
+            } catch (e) {
+                alert("Ошибка загрузки приложения: " + e.message);
             }
-
-            document.getElementById('txt-home').innerText = t('home', window.appLang);
-            document.getElementById('txt-rank').innerText = t('rank', window.appLang);
-            document.getElementById('txt-tour').innerText = t('tour', window.appLang);
-            document.getElementById('txt-prof').innerText = t('prof', window.appLang);
-
-            window.navigate('home', document.getElementById('btn-home'));
         }
 
         initApp();
