@@ -289,17 +289,29 @@
                 const myId = String(tgUser.id);
                 window.userState.id = myId;
 
-                // 1. Форсированная инициализация (Баланс 0 для новых)
-                await db.collection("users").doc(myId).set({
-                    name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
-                    stats: { steps_today: 0, steps_total: 0 },
-                    economy: { balance: 0 },
-                    inventory: { frames: ['white'] },
-                    selected: { frame: 'white' },
-                    tournament: { is_registered: false }
-                }, { merge: true });
+                const userDocRef = db.collection("users").doc(myId);
+                const userDoc = await userDocRef.get();
 
-                // 2. Handshake (Друзья)
+                // 1. Инициализация (Сработает ТОЛЬКО если пользователя НЕТ в базе)
+                if (!userDoc.exists) {
+                    await userDocRef.set({
+                        name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
+                        stats: { steps_today: 0, steps_total: 0 },
+                        economy: { balance: 0 },
+                        inventory: { frames: ['white'] },
+                        selected: { frame: 'white' },
+                        tournament: { is_registered: false }
+                    });
+                } else {
+                    // Если пользователь уже есть, просто обновляем имя/фото, не трогая баланс
+                    await userDocRef.update({
+                        name: tgUser.first_name,
+                        photo_url: tgUser.photo_url || "",
+                        last_seen: new Date().getTime()
+                    });
+                }
+
+                // 2. Handshake (Друзья) - срабатывает через merge, не затирая данные
                 const sp = window.tg.initDataUnsafe?.start_param;
                 if (sp && sp !== myId) {
                     await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
@@ -312,21 +324,28 @@
                 
                 const wRef = await db.collection("settings").doc("weekly_rating").get();
                 if (wRef.exists && wRef.data().last_winner) { window.userState.lastWeekFriendWinner = wRef.data().last_winner; } 
-                else { window.userState.lastWeekFriendWinner = { name: tgUser.first_name + ' (Претендент)', photo_url: tgUser.photo_url || placeholderImg }; }
 
-                // 4. Загрузка личного state и списков
-                const doc = await db.collection("users").doc(myId).get();
-                if (doc.exists) {
-                    const d = doc.data();
-                    window.userState = { ...window.userState, steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0, coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false, friends: d.friends || [] };
-                    
-                    const fIds = [...window.userState.friends, myId];
-                    const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                    window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-                    
-                    const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
-                    window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
-                }
+                // 4. Загрузка актуального состояния из базы
+                const finalDoc = await userDocRef.get();
+                const d = finalDoc.data();
+                window.userState = { 
+                    ...window.userState, 
+                    steps: d.stats?.steps_today || 0, 
+                    steps_total: d.stats?.steps_total || 0, 
+                    coins: d.economy?.balance || 0, 
+                    frame: d.selected?.frame || 'white', 
+                    inventoryFrames: d.inventory?.frames || ['white'], 
+                    isRegistered: d.tournament?.is_registered || false, 
+                    friends: d.friends || [] 
+                };
+                
+                const fIds = [...window.userState.friends, myId];
+                const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
+                window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+                
+                const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
+                window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+
                 window.navigate('home');
             } catch (e) { console.error(e); window.navigate('home'); }
         }
