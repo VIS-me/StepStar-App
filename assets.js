@@ -4,11 +4,11 @@ const Assets = {
         green: "4px solid #4CAF50",
         lightblue: "4px solid #00BCD4",
         blue: "4px solid #248bcf",
-        blue_default: "4px solid #248bcf", // Добавлено для совместимости с БД
+        blue_default: "4px solid #248bcf",
         pink: "4px solid #ff69b4",
         purple: "4px solid #9C27B0",
         gold: "5px solid #FFD700",
-        gold_vip_frame: "5px solid #FFD700" // Для VIP статуса
+        gold_vip_frame: "5px solid #FFD700"
     },
     i18n: {
         ru: {
@@ -18,8 +18,8 @@ const Assets = {
             rank: "Рейтинг", tour: "Турнир", prof: "Профиль", home: "Главная",
             champion: "Чемпион недели", noTour: "Турниров пока нет", shop: "Магазин ✨",
             balance: "Баланс", winner: "Победитель",
-            invite: "Пригласить друзей",
-            joinBtn: "Участвовать"
+            invite: "Пригласить друзей", joinBtn: "Участвовать",
+            vip_status: "VIP СТАТУС", vip_desc: "Скрыть баланс и калории + Золотая рамка"
         },
         en: {
             steps: "steps", kcal: "kcal", km: "km", min: "min",
@@ -28,24 +28,14 @@ const Assets = {
             rank: "Rank", tour: "Tour", prof: "Profile", home: "Home",
             champion: "Weekly Champion", noTour: "No active tournaments", shop: "Shop ✨",
             balance: "Balance", winner: "Winner",
-            invite: "Invite Friends",
-            joinBtn: "Join for"
-        },
-        uk: {
-            steps: "кроків", kcal: "ккал", km: "км", min: "хв",
-            shareBtn: "Поділитися результатом", 
-            shareMsg: "Я пройшов вже {n} кроків у StepStar! 👟",
-            rank: "Рейтинг", tour: "Турнір", prof: "Профіль", home: "Головна",
-            champion: "Чемпіон тижня", noTour: "Турнірів поки немає", shop: "Магазин ✨",
-            balance: "Баланс", winner: "Переможець",
-            invite: "Запросити друзів",
-            joinBtn: "Брати участь"
+            invite: "Invite Friends", joinBtn: "Join for",
+            vip_status: "VIP STATUS", vip_desc: "Hide balance/kcal + Gold Frame"
         }
     }
 };
 
 function t(key, lang) {
-    const l = Assets.i18n[lang] ? lang : 'en';
+    const l = Assets.i18n[lang] ? lang : 'ru';
     return Assets.i18n[l][key] || key;
 }
 
