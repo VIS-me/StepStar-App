@@ -70,7 +70,6 @@
             object-fit: cover; 
         }
 
-        /* Общий стиль плашки лидера */
         .leader-badge {
             position: absolute;
             top: 20px;
@@ -133,6 +132,11 @@
             align-items: center; 
             padding: 12px 25px; 
             border-bottom: 1px solid rgba(255,255,255,0.03); 
+            cursor: pointer;
+        }
+
+        .table-row:active {
+            background: rgba(255,255,255,0.05);
         }
 
         .rank-num { 
@@ -185,7 +189,7 @@
             font-style: normal; 
         }
 
-        /* ПРОФИЛЬ - УЛЬТРА ПРОЗРАЧНОСТЬ 0.01 */
+        /* ПРОФИЛЬ */
         .profile-stats-list { 
             background: rgba(255,255,255,0.01); 
             margin: 15px 20px; 
@@ -223,6 +227,36 @@
             align-items: center; 
             backdrop-filter: blur(8px); 
             -webkit-backdrop-filter: blur(8px);
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            width: 85%;
+            background: rgba(30, 32, 36, 0.95);
+            border-radius: 30px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 24px;
+            opacity: 0.5;
         }
 
         /* Кнопки */
@@ -360,6 +394,13 @@
 
     <div id="app" class="app-viewport"></div>
 
+    <div id="friendModal" class="modal-overlay" onclick="window.closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-close" onclick="window.closeModal()">×</div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
     <div class="tab-bar">
         <div class="tab-item active" onclick="window.navigate('home', this)"><i>🏠</i><span>Дом</span></div>
         <div class="tab-item" onclick="window.navigate('rank', this)"><i>🏆</i><span>Рейтинг</span></div>
@@ -471,9 +512,9 @@
                             <div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div>
                         </div>
                     </div>
-                    <div class="section-title">Топ-3 Друзей</div>
+                    <div class="section-title">Топ-3 Друзей (жми на друга)</div>
                     ${topFriends.map((u, i) => `
-                        <div class="table-row">
+                        <div class="table-row" onclick="window.showFriendCard('${u.id}')">
                             <span class="rank-num">${i + 1}</span>
                             <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini">
                             <span style="flex:1; font-weight:500;">${u.name}</span>
@@ -565,6 +606,46 @@
                             </div>`).join('')}
                     </div>`;
             }
+        };
+
+        window.showFriendCard = (friendId) => {
+            const friend = window.friendUsers.find(u => u.id === friendId);
+            if (!friend) return;
+
+            const modal = document.getElementById('friendModal');
+            const body = document.getElementById('modalBody');
+            
+            const steps = friend.stats?.steps_today || 0;
+            const dist = (steps * 0.00075).toFixed(2);
+            const kcal = (steps * 0.04).toFixed(0);
+            const frame = friend.selected?.frame || 'white';
+            const bg = friend.selected?.bg || 'default';
+
+            body.innerHTML = `
+                <div style="background-image: url('${bgStyles[bg]}'); background-size: cover; border-radius: 20px; padding: 20px;">
+                    <div class="avatar-wrapper">
+                        <div class="profile-frame" style="border: ${frameStyles[frame]}"></div>
+                        <img src="${friend.photo_url || 'https://ui-avatars.com/api/?name='+friend.name}" class="user-avatar">
+                    </div>
+                    <h2 style="margin: 15px 0 5px;">${friend.name}</h2>
+                    <div style="font-size: 18px; font-weight: bold; color: var(--main-color); margin-bottom: 20px;">${steps.toLocaleString()} шагов</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px;">
+                            <span style="font-size: 10px; opacity: 0.5;">ДИСТАНЦИЯ</span><br><b>${dist} км</b>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px;">
+                            <span style="font-size: 10px; opacity: 0.5;">ЭНЕРГИЯ</span><br><b>${kcal} ккал</b>
+                        </div>
+                    </div>
+                    <button class="main-button" style="margin-top: 20px; width: 100%;" onclick="window.closeModal(); window.navigate('shop')">ХОЧУ ТАК ЖЕ</button>
+                </div>
+            `;
+            modal.style.display = 'flex';
+        };
+
+        window.closeModal = (e) => {
+            document.getElementById('friendModal').style.display = 'none';
         };
 
         window.claimDailyGift = async () => {
