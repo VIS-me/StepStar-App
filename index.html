@@ -5,12 +5,75 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>StepStar</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        :root {
+            --main-color: #248bcf;
+            --bg-color: #1a1c20;
+            --text-color: #ffffff;
+            --secondary-bg: rgba(255,255,255,0.08);
+            --accent-gold: #FFD700;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: -apple-system, system-ui, sans-serif;
+            background: var(--bg-color); color: var(--text-color);
+            height: 100vh; width: 100vw; overflow: hidden;
+        }
+
+        .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
+
+        /* Stats Grid on Home */
+        .stats-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 10px; padding: 0 20px; margin-top: 20px;
+        }
+        .stat-card {
+            background: var(--secondary-bg); padding: 12px 5px;
+            border-radius: 18px; text-align: center;
+        }
+        .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
+        .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
+
+        /* Tab Bar */
+        .tab-bar { 
+            height: 70px; display: flex; background: #15171a; 
+            position: fixed; bottom: 0; width: 100%; 
+            border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+        }
+        .tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; cursor: pointer; }
+        .tab-item.active { color: var(--main-color); }
+        .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
+
+        /* Avatars & Frames */
+        .avatar-wrapper { position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
+        .user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; background: #333; }
+
+        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+        .table-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; margin: 0 12px; background: #333; }
+
+        /* Shop */
+        .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
+        .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; border: 2px solid transparent; }
+        .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 8px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: #222; padding: 25px; border-radius: 24px; width: 85%; text-align: center; }
+    </style>
 </head>
 <body>
-    <div id="app" class="app-viewport"></div>
+
+    <div id="app" class="app-viewport">
+        <div style="display:flex; justify-content:center; align-items:center; height:100%;">Загрузка...</div>
+    </div>
+
     <div class="tab-bar">
         <div class="tab-item active" onclick="window.navigate('home', this)"><i>🏠</i><span>Дом</span></div>
         <div class="tab-item" onclick="window.navigate('rank', this)"><i>🏆</i><span>Ранг</span></div>
@@ -18,10 +81,8 @@
         <div class="tab-item" onclick="window.navigate('prof', this)"><i>👤</i><span>Профиль</span></div>
     </div>
 
-    <script src="assets.js"></script>
-    <script src="pages.js"></script>
-
     <script>
+        // --- CONFIG & STATE ---
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -37,42 +98,148 @@
         window.userState = { frame: 'white', steps: 0, steps_total: 0, coins: 0, inventoryFrames: ['white'], isRegistered: false, friends: [] };
         window.topUsers = []; window.tourUsers = []; window.friendUsers = [];
 
+        const frameStyles = {
+            'white': '3px solid #ffffff',
+            'green': '3px solid #4CAF50',
+            'lightblue': '3px solid #00BCD4',
+            'blue': '3px solid #2196F3',
+            'pink': '3px solid #E91E63',
+            'purple': '3px solid #9C27B0',
+            'gold': '3px solid #FFD700'
+        };
+
+        // --- HELPER FUNCTIONS ---
+        window.getFrameStyle = (id) => frameStyles[id] || frameStyles['white'];
+        window.calcStats = (steps) => {
+            const s = parseInt(steps) || 0;
+            return { dist: (s * 0.00075).toFixed(2), kcal: (s * 0.04).toFixed(0), time: (s / 100).toFixed(0) };
+        };
+
+        // --- NAVIGATION & PAGES ---
         window.navigate = function(pageId, el) {
             const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
             const lang = user.language_code === 'ru' ? 'ru' : 'en';
             const appDiv = document.getElementById('app');
-            if (appDiv && window.Pages[pageId]) {
-                appDiv.innerHTML = window.Pages[pageId](user, window.userState, lang);
-            }
+            
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
+
+            if (pageId === 'home') {
+                const s = window.calcStats(window.userState.steps);
+                const offset = 628 - (628 * Math.min(window.userState.steps / 10000, 1));
+                appDiv.innerHTML = `
+                    <div style="text-align:center; padding-top:20px;">
+                        <div class="avatar-wrapper">
+                            <div class="profile-frame" style="border: ${window.getFrameStyle(window.userState.frame)}"></div>
+                            <img src="${user.photo_url}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${user.first_name}'">
+                        </div>
+                        <h3>${user.first_name}</h3>
+                        <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
+                            <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;"><circle stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/><circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.5s; stroke-linecap:round;"/></svg>
+                            <div><h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.5;">шагов сегодня</div></div>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><b>${s.kcal}</b><span>ккал</span></div>
+                            <div class="stat-card"><b>${s.dist}</b><span>км</span></div>
+                            <div class="stat-card"><b>${s.time}</b><span>мин</span></div>
+                        </div>
+                        <button class="main-button" style="margin-top:30px;" onclick="window.inviteFriends()">Пригласить друзей</button>
+                    </div>`;
+            }
+
+            if (pageId === 'rank') {
+                const winner = window.topUsers[0] || { name: "Champion" };
+                appDiv.innerHTML = `
+                    <div class="winner-card" style="background:linear-gradient(135deg, #FFD700 0%, #FFA500 100%); margin:15px; border-radius:20px; padding:15px; display:flex; align-items:center; color:black;">
+                        <img src="${winner.photo_url}" style="width:50px; height:50px; border-radius:50%; margin-right:15px;">
+                        <div><div style="font-size:10px; opacity:0.7;">ЛИДЕР НЕДЕЛИ</div><div style="font-weight:bold;">${winner.name}</div></div>
+                    </div>
+                    <div style="padding:0 15px 15px; display:flex; gap:10px;">
+                        <button onclick="document.getElementById('g-rank').style.display='block'; document.getElementById('f-rank').style.display='none';" style="flex:1; background:var(--main-color); border:none; padding:10px; border-radius:10px; color:white;">МИР</button>
+                        <button onclick="document.getElementById('g-rank').style.display='none'; document.getElementById('f-rank').style.display='block';" style="flex:1; background:#333; border:none; padding:10px; border-radius:10px; color:white;">ДРУЗЬЯ</button>
+                    </div>
+                    <div id="g-rank">${window.topUsers.map((u, i) => `<div class="table-row"><span>${i+1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_total || 0).toLocaleString()}</b></div>`).join('')}</div>
+                    <div id="f-rank" style="display:none;">${window.friendUsers.map((u, i) => `<div class="table-row"><span>${i+1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b style="color:var(--main-color);">${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}</div>
+                `;
+            }
+
+            if (pageId === 'tour') {
+                const prize = (window.tourUsers.length * 50) + 1000;
+                appDiv.innerHTML = `
+                    <div style="padding:40px 20px; text-align:center; background:rgba(255,215,0,0.05);">
+                        <h1 style="color:var(--accent-gold); margin:0; font-size:42px;">💰 ${prize}</h1>
+                        <div style="opacity:0.6; font-size:11px;">ПРИЗОВОЙ ФОНД</div>
+                    </div>
+                    ${!window.userState.isRegistered ? `<button class="main-button" style="background:var(--accent-gold); color:black;" onclick="window.joinTournament()">Вступить за 50 💰</button>` : `<div style="text-align:center; padding:20px; color:#00FF00;">✅ ВЫ УЧАСТНИК</div>`}
+                    <div style="padding:10px 20px; opacity:0.4; font-size:11px;">ЛИДЕРЫ</div>
+                    ${window.tourUsers.map((u, i) => `<div class="table-row"><span>${i+1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                `;
+            }
+
+            if (pageId === 'prof') {
+                appDiv.innerHTML = `
+                    <div style="padding-top:20px; text-align:center;">
+                        <div class="avatar-wrapper">
+                            <div class="profile-frame" style="border: ${window.getFrameStyle(window.userState.frame)}"></div>
+                            <img src="${user.photo_url}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${user.first_name}'">
+                        </div>
+                        <h3>${user.first_name}</h3>
+                        <div style="background:var(--secondary-bg); margin:20px; border-radius:20px; padding:10px; text-align:left;">
+                            <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Сегодня <span>${window.userState.steps.toLocaleString()}</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:15px; border-bottom:1px solid rgba(255,255,255,0.05);">Всего <span>${window.userState.steps_total.toLocaleString()}</span></div>
+                            <div style="display:flex; justify-content:space-between; padding:15px;">Баланс <span>💰 ${window.userState.coins}</span></div>
+                        </div>
+                        <button class="main-button" onclick="window.navigate('shop')">Магазин рамок</button>
+                    </div>`;
+            }
+
+            if (pageId === 'shop') {
+                const frames = [{id:'white', p:0}, {id:'green', p:50}, {id:'lightblue', p:50}, {id:'blue', p:50}, {id:'pink', p:50}, {id:'purple', p:50}, {id:'gold', p:500}];
+                appDiv.innerHTML = `
+                    <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                        <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
+                        <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
+                        <button onclick="document.getElementById('earn-modal').style.display='flex'" style="background:var(--accent-gold); border:none; color:black; padding:8px 15px; border-radius:10px; font-weight:bold; font-size:11px;">ДОБЫТЬ</button>
+                    </div>
+                    <div class="shop-grid-4">
+                        ${frames.map(f => `
+                            <div class="shop-item-mini" onclick="window.handleFrameAction('${f.id}', ${f.p})" style="border-color:${window.userState.frame === f.id ? 'var(--main-color)' : 'transparent'}">
+                                <div class="frame-preview" style="border:${window.getFrameStyle(f.id)}"></div>
+                                <div style="font-size:10px; opacity:0.8;">${window.userState.frame === f.id ? 'Уст.' : (window.userState.inventoryFrames.includes(f.id) ? 'Взять' : f.p)}</div>
+                            </div>`).join('')}
+                    </div>
+                    <div id="earn-modal" class="modal-overlay">
+                        <div class="modal-content">
+                            <h3>Заработать 💰</h3>
+                            <button class="main-button" onclick="window.claimDailyBonus()">🎁 10к шагов (10 💰)</button>
+                            <button onclick="document.getElementById('earn-modal').style.display='none'" style="background:none; border:none; color:gray; margin-top:15px;">Закрыть</button>
+                        </div>
+                    </div>`;
+            }
         };
 
+        // --- DATA LOGIC ---
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
                 if (!tgUser) { window.navigate('home'); return; }
 
-                const startParam = window.tg.initDataUnsafe?.start_param;
                 const userRef = db.collection("users").doc(String(tgUser.id));
+                const startParam = window.tg.initDataUnsafe?.start_param;
                 let doc = await userRef.get();
 
                 if (!doc.exists) {
                     await userRef.set({
                         name: tgUser.first_name, photo_url: tgUser.photo_url || "",
                         friends: startParam ? [String(startParam)] : [],
-                        economy: { balance: 10 },
-                        stats: { steps_today: 0, steps_total: 0 },
-                        inventory: { frames: ['white'] },
-                        selected: { frame: 'white' },
+                        economy: { balance: 10 }, stats: { steps_today: 0, steps_total: 0 },
+                        inventory: { frames: ['white'] }, selected: { frame: 'white' },
                         tournament: { is_registered: false }
                     });
                     if (startParam) {
-                        await db.collection("users").doc(String(startParam)).update({
-                            friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
-                        });
+                        await db.collection("users").doc(String(startParam)).update({ friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id)) });
                     }
                     doc = await userRef.get();
                 }
@@ -89,23 +256,18 @@
                     friends: d.friends || []
                 };
 
+                // Загружаем топы
                 const snapRank = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
                 window.topUsers = snapRank.docs.map(doc => doc.data());
                 
                 if (window.userState.friends.length > 0) {
                     const fIds = [...window.userState.friends, window.userState.id];
                     const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                    window.friendUsers = fSnap.docs.map(doc => ({
-                        ...doc.data(),
-                        steps_today: doc.data().stats?.steps_today || 0
-                    })).sort((a,b) => b.steps_today - a.steps_today);
+                    window.friendUsers = fSnap.docs.map(doc => doc.data()).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 }
 
                 const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
-                window.tourUsers = snapTour.docs.map(doc => ({
-                    ...doc.data(),
-                    steps_today: doc.data().stats?.steps_today || 0
-                })).sort((a,b) => b.steps_today - a.steps_today);
+                window.tourUsers = snapTour.docs.map(doc => doc.data()).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
 
                 window.navigate('home');
             } catch (e) {
@@ -115,46 +277,34 @@
         }
 
         window.joinTournament = async () => {
-            if (window.userState.coins < 50) { window.tg.showAlert("Нужно 50 💰!"); return; }
-            await db.collection("users").doc(window.userState.id).update({
-                "economy.balance": window.userState.coins - 50,
-                "tournament.is_registered": true
-            });
-            window.tg.showAlert("Вы вступили в турнир!");
+            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - 50, "tournament.is_registered": true });
             loadData();
         };
 
         window.handleFrameAction = async (id, price) => {
-            const userRef = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryFrames.includes(id)) {
-                window.userState.frame = id;
-                await userRef.update({ "selected.frame": id });
+                await db.collection("users").doc(window.userState.id).update({ "selected.frame": id });
             } else if (window.userState.coins >= price) {
-                window.userState.coins -= price;
-                window.userState.inventoryFrames.push(id);
-                window.userState.frame = id;
-                await userRef.update({ 
-                    "economy.balance": window.userState.coins, 
-                    "inventory.frames": window.userState.inventoryFrames, 
-                    "selected.frame": id 
-                });
+                const newInv = [...window.userState.inventoryFrames, id];
+                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.frames": newInv, "selected.frame": id });
             }
-            window.navigate('shop');
+            loadData();
         };
 
         window.claimDailyBonus = async () => {
-            if (window.userState.steps < 10000) { window.tg.showAlert("Нужно 10к шагов!"); return; }
+            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10к шагов!");
             await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 10 });
-            window.tg.showAlert("Бонус получен!");
             loadData();
         };
 
         window.inviteFriends = () => {
             const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Кто пройдет больше? 👟`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Пойдем гулять! 👟`);
         };
 
         window.tg.ready();
+        window.tg.expand();
         loadData();
     </script>
 </body>
