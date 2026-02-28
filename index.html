@@ -12,10 +12,10 @@
 <body>
     <div id="app" class="app-viewport"></div>
     <div class="tab-bar">
-        <div class="tab-item active" id="btn-home" onclick="navigate('home', this)"><i>🏠</i><span>Дом</span></div>
-        <div class="tab-item" id="btn-rank" onclick="navigate('rank', this)"><i>🏆</i><span>Ранг</span></div>
-        <div class="tab-item" id="btn-tour" onclick="navigate('tour', this)"><i>🏁</i><span>Турнир</span></div>
-        <div class="tab-item" id="btn-prof" onclick="navigate('prof', this)"><i>👤</i><span>Профиль</span></div>
+        <div class="tab-item active" onclick="navigate('home', this)"><i>🏠</i><span>Дом</span></div>
+        <div class="tab-item" onclick="navigate('rank', this)"><i>🏆</i><span>Ранг</span></div>
+        <div class="tab-item" onclick="navigate('tour', this)"><i>🏁</i><span>Турнир</span></div>
+        <div class="tab-item" onclick="navigate('prof', this)"><i>👤</i><span>Профиль</span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -39,13 +39,17 @@
 
         window.navigate = function(pageId, el) {
             const user = window.tg.initDataUnsafe?.user || { first_name: "User" };
-            document.getElementById('app').innerHTML = Pages[pageId](user, window.userState, (window.tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'en'));
-            if (el) { document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+            const lang = window.tg.initDataUnsafe?.user?.language_code === 'ru' ? 'ru' : 'en';
+            document.getElementById('app').innerHTML = Pages[pageId](user, window.userState, lang);
+            if (el) {
+                document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
         };
 
         async function loadData() {
             const tgUser = window.tg.initDataUnsafe?.user;
-            if (!tgUser) return window.navigate('home');
+            if (!tgUser) { window.navigate('home'); return; }
 
             const startParam = window.tg.initDataUnsafe?.start_param;
             const userRef = db.collection("users").doc(String(tgUser.id));
@@ -67,12 +71,6 @@
                     });
                 }
                 doc = await userRef.get();
-            } else if (startParam && !doc.data().friends.includes(String(startParam))) {
-                // Если пользователь уже был, но перешел по НОВОЙ ссылке другого друга
-                await userRef.update({ friends: firebase.firestore.FieldValue.arrayUnion(String(startParam)) });
-                await db.collection("users").doc(String(startParam)).update({
-                    friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
-                });
             }
 
             const d = doc.data();
@@ -87,23 +85,34 @@
                 friends: d.friends || []
             };
 
-            // Глобальный топ
+            // Загрузка списков
             const snapRank = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
             window.topUsers = snapRank.docs.map(doc => ({ ...doc.data(), steps_total: doc.data().stats.steps_total }));
             
-            // Топ друзей (WeRun)
             if (window.userState.friends.length > 0) {
                 const fIds = [...window.userState.friends, window.userState.id];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ ...doc.data(), steps_today: doc.data().stats.steps_today })).sort((a,b) => b.steps_today - a.steps_today);
             }
 
-            // Турнир
             const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).orderBy("stats.steps_today", "desc").limit(10).get();
             window.tourUsers = snapTour.docs.map(doc => ({ ...doc.data(), steps_today: doc.data().stats.steps_today }));
 
+            // АВТОМАТИЧЕСКИЙ ПЕРЕХОД НА ГЛАВНУЮ ПОСЛЕ ЗАГРУЗКИ
             window.navigate('home');
         }
+
+        window.joinTournament = async () => {
+            if (window.userState.coins < 50) { window.tg.showAlert("Нужно 50 💰!"); return; }
+            window.userState.coins -= 50;
+            window.userState.isRegistered = true;
+            await db.collection("users").doc(window.userState.id).update({
+                "economy.balance": window.userState.coins,
+                "tournament.is_registered": true
+            });
+            window.tg.showAlert("Вы в турнире!");
+            await loadData();
+        };
 
         window.handleFrameAction = async (id, price) => {
             const userRef = db.collection("users").doc(window.userState.id);
@@ -114,18 +123,14 @@
                 window.userState.coins -= price;
                 window.userState.inventoryFrames.push(id);
                 window.userState.frame = id;
-                await userRef.update({ 
-                    "economy.balance": window.userState.coins,
-                    "inventory.frames": window.userState.inventoryFrames,
-                    "selected.frame": id
-                });
+                await userRef.update({ "economy.balance": window.userState.coins, "inventory.frames": window.userState.inventoryFrames, "selected.frame": id });
             }
             window.navigate('shop');
         };
 
         window.inviteFriends = () => {
             const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Кто пройдет больше за сегодня? 👟`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Пойдем гулять! 👟`);
         };
 
         loadData();
