@@ -28,13 +28,11 @@
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
-        /* HOME PAGE STYLES */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
         .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
-        /* RATING & TOURNAMENT COMMON STYLES */
         .leader-hero-container { position: relative; width: 100%; height: 40vh; overflow: hidden; background: #222; }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
         .leader-info-overlay {
@@ -78,9 +76,6 @@
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
         .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; }
         .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-content { background: #222; padding: 25px; border-radius: 24px; width: 85%; text-align: center; }
-
         .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; }
         .join-btn { background: var(--main-color); color: white; border: none; padding: 10px 18px; border-radius: 14px; font-weight: bold; font-size: 13px; cursor: pointer; }
         
@@ -115,8 +110,6 @@
         const db = firebase.firestore();
 
         window.tg = window.Telegram.WebApp;
-        
-        // Базовая заглушка, если вообще ничего нет
         const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
         window.userState = { 
@@ -167,7 +160,7 @@
             if (pageId === 'rank') {
                 const leader = window.userState.lastWeekFriendWinner;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
-                const top3 = window.friendUsers.slice(0, 3);
+                const top10 = window.friendUsers.slice(0, 10);
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
                         <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆&size=512'">
@@ -180,8 +173,9 @@
                         <div><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ВАШ РАНГ</div><div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div></div>
                         <div style="text-align:right;"><div style="font-size:9px; opacity:0.5; margin-bottom:2px;">ШАГИ СЕГОДНЯ</div><div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
-                    <div class="section-title">ТОП-3 Друзей</div>
-                    ${top3.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                    <div class="section-title">Список друзей</div>
+                    ${top10.map((u, i) => `<div class="table-row"><span class="rank-num">${i + 1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
+                    ${window.friendUsers.length <= 1 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Друзей пока нет</div>' : ''}
                     <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
@@ -272,7 +266,9 @@
         };
 
         window.inviteFriends = () => {
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=Давай ходить вместе! 👟`);
+            const myId = window.userState.id;
+            const link = `https://t.me/StepStarAppBot/app?startapp=${myId}`;
+            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Давай ходить вместе в StepStar! 👟`);
         };
 
         window.joinTournament = async () => {
@@ -303,7 +299,6 @@
                 const tgUser = window.tg.initDataUnsafe?.user;
                 if (!tgUser) { window.navigate('home'); return; }
                 
-                // Устанавливаем пользователя как временного лидера (пока не придут данные из базы)
                 window.userState.lastWeekFriendWinner = {
                     name: tgUser.first_name + ' (Претендент)',
                     photo_url: tgUser.photo_url || placeholderImg
@@ -312,15 +307,25 @@
                 const userRef = db.collection("users").doc(String(tgUser.id));
                 const doc = await userRef.get();
                 
-                // Победитель турнира
-                const globalRef = await db.collection("settings").doc("tournament").get();
-                if (globalRef.exists && globalRef.data().last_winner) {
-                    const gd = globalRef.data();
-                    window.userState.lastWinner = gd.last_winner;
-                    window.adminPrizePool = gd.admin_prize || 2500;
+                // Логика добавления друга через рефералку
+                const startParam = window.tg.initDataUnsafe?.start_param;
+                if (startParam && startParam !== String(tgUser.id)) {
+                    // Добавляем тебя к другу
+                    await db.collection("users").doc(startParam).set({
+                        friends: firebase.firestore.FieldValue.arrayUnion(String(tgUser.id))
+                    }, { merge: true });
+                    // Добавляем друга к тебе
+                    await db.collection("users").doc(String(tgUser.id)).set({
+                        friends: firebase.firestore.FieldValue.arrayUnion(startParam)
+                    }, { merge: true });
                 }
 
-                // Победитель недели (если есть - заменяем пользователя)
+                const globalRef = await db.collection("settings").doc("tournament").get();
+                if (globalRef.exists && globalRef.data().last_winner) {
+                    window.userState.lastWinner = globalRef.data().last_winner;
+                    window.adminPrizePool = globalRef.data().admin_prize || 2500;
+                }
+
                 const weeklyRef = await db.collection("settings").doc("weekly_rating").get();
                 if (weeklyRef.exists && weeklyRef.data().last_winner) {
                     window.userState.lastWeekFriendWinner = weeklyRef.data().last_winner;
@@ -337,8 +342,11 @@
                     };
                     
                     const fIds = [...window.userState.friends, window.userState.id];
-                    const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
-                    window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+                    // Firebase не любит пустые или слишком длинные IN-запросы
+                    if (fIds.length > 0) {
+                        const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
+                        window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+                    }
                     
                     const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                     window.tourUsers = snapTour.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
