@@ -2,12 +2,12 @@ const translations = {
     ru: {
         home: "Дом", rank: "Ранг", tour: "Турнир", prof: "Профиль",
         invite: "Пригласить", shop: "Магазин", week_winner: "Лидер недели",
-        global: "МИР", friends_tab: "ДРУЗЬЯ"
+        global: "МИР", friends_tab: "ДРУЗЬЯ", kcal: "ккал", km: "км", min: "мин"
     },
     en: {
         home: "Home", rank: "Rank", tour: "Tour", prof: "Profile",
         invite: "Invite", shop: "Shop", week_winner: "Weekly Leader",
-        global: "GLOBAL", friends_tab: "FRIENDS"
+        global: "GLOBAL", friends_tab: "FRIENDS", kcal: "kcal", km: "km", min: "min"
     }
 };
 
@@ -27,3 +27,12 @@ const frameStyles = {
 };
 
 window.getFrameStyle = (id) => frameStyles[id] || frameStyles['white'];
+
+// Расчеты на основе шагов
+window.calcStats = (steps) => {
+    return {
+        dist: (steps * 0.00075).toFixed(2), // 1 шаг ~ 0.75м
+        kcal: (steps * 0.04).toFixed(0),   // 1 шаг ~ 0.04 ккал
+        time: (steps / 100).toFixed(0)     // 100 шагов в минуту
+    };
+};
