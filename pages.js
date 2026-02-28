@@ -1,16 +1,15 @@
 const Pages = {
     home: (user, state, lang) => {
         const goal = 10000;
-        const currentSteps = state.steps || 0;
-        const offset = 628 - (628 * Math.min(currentSteps / goal, 1));
+        const offset = 628 - (628 * Math.min(state.steps / goal, 1));
         return `
         <div class="page-content home-center">
             <div class="avatar-section">
                 <div class="avatar-wrapper">
                     <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
-                    <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.style.display='none'">
+                    <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${user.first_name}'">
                 </div>
-                <h3 class="centered-name">${user.first_name || 'User'}</h3>
+                <h3 class="centered-name">${user.first_name}</h3>
             </div>
             <div class="progress-container">
                 <svg width="230" height="230" class="progress-ring">
@@ -19,68 +18,113 @@ const Pages = {
                             style="stroke-dashoffset: ${offset}; stroke-dasharray: 628;"/>
                 </svg>
                 <div class="steps-content">
-                    <h1>${currentSteps.toLocaleString()}</h1>
-                    <div class="steps-label">${t('steps', lang)}</div>
+                    <h1>${state.steps.toLocaleString()}</h1>
+                    <div class="steps-label">шагов сегодня</div>
                 </div>
             </div>
-            <div class="stats-grid">
-                <div class="stat-item"><span>${Math.round(currentSteps * 0.04)}</span><label>${t('kcal', lang)}</label></div>
-                <div class="stat-item"><span>${(currentSteps * 0.0007).toFixed(1)}</span><label>${t('km', lang)}</label></div>
-                <div class="stat-item"><span>${Math.round(currentSteps / 100)}</span><label>${t('min', lang)}</label></div>
-            </div>
-            <button class="main-button" onclick="window.shareResult(${currentSteps})">${t('shareBtn', lang)}</button>
+            <button class="main-button" onclick="window.inviteFriends()">Пригласить друзей</button>
         </div>`;
     },
-    rank: (user, state, lang) => {
-        return `
-        <div class="page-content rank-page">
+
+    rank: (user, state, lang) => `
+        <div class="page-content">
             <div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000')">
-                <div class="leader-overlay"><div class="leader-info"><span class="crown-badge">👑 ${t('champion', lang)}</span><h2 class="leader-name-big">Дмитрий</h2></div></div>
-            </div>
-            <div class="user-rank-bar" style="display:flex; justify-content:space-between; padding:15px 25px; background:rgba(36,139,207,0.15); margin:10px 20px; border-radius:15px;">
-                <span>#124 ${user.first_name}</span>
-                <strong style="color:var(--main-color);">${(state.steps || 0).toLocaleString()}</strong>
+                <div class="leader-overlay"><h2>Общий рейтинг (Все время)</h2></div>
             </div>
             <div class="top-ten-list">
-                <div style="padding:15px 20px; opacity:0.5; font-size:12px; font-weight:bold;">ДРУЗЬЯ</div>
-                <div class="invite-row-btn" onclick="window.tg.showAlert('Coming soon')" style="text-align:center; padding:15px; cursor:pointer;">➕ ${t('invite', lang)}</div>
+                ${(window.topUsers || []).map(f => `
+                    <div class="table-row">
+                        <span class="t-pos">${f.pos}</span>
+                        <img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'">
+                        <span class="t-name">${f.name}</span>
+                        <span class="t-steps">${(f.stats?.steps_total || 0).toLocaleString()}</span>
+                    </div>
+                `).join('')}
+                <div class="main-button" onclick="window.inviteFriends()">Позвать друзей</div>
             </div>
-        </div>`;
-    },
+        </div>`,
+
+    tour: (user, state, lang) => `
+        <div class="page-content">
+            <div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000')">
+                <div class="leader-overlay" style="flex-direction:column; justify-content:center;">
+                    <h1 style="color:#FFD700; font-size:40px; margin:0;">💰 1000</h1>
+                    <p style="margin:0; opacity:0.8;">ПРИЗОВОЙ ФОНД</p>
+                </div>
+            </div>
+            <div style="padding:15px;">
+                <button class="main-button" onclick="window.joinTournament()">Присоединиться за 50 💰</button>
+                <div style="padding:10px; opacity:0.5; font-size:12px; font-weight:bold;">ТОП-10 ТУРНИРА</div>
+                <div class="top-ten-list">
+                    ${(window.tourUsers || []).map(f => `
+                        <div class="table-row">
+                            <span class="t-pos">${f.pos}</span>
+                            <img src="${f.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${f.name}'">
+                            <span class="t-name">${f.name}</span>
+                            <span class="t-steps">${(f.stats?.steps_today || 0).toLocaleString()}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>`,
+
     prof: (user, state, lang) => `
         <div class="page-content">
             <div class="profile-header" style="text-align:center; padding: 20px 0;">
                 <div class="avatar-wrapper">
                     <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
-                    <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.style.display='none'">
+                    <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.src='https://ui-avatars.com/api/?name=${user.first_name}'">
                 </div>
-                <h3 class="centered-name">${user.first_name || 'User'} ${state.isVip ? '👑' : ''}</h3>
+                <h3>${user.first_name} ${state.isVip ? '👑' : ''}</h3>
             </div>
             <div class="info-block">
-                <div class="info-item">${lang === 'ru' ? 'Шаги' : 'Steps'} <span>${(state.steps || 0).toLocaleString()}</span></div>
-                <div class="info-item">${lang === 'ru' ? 'Калории' : 'Calories'} <span>${Math.round((state.steps || 0) * 0.04)}</span></div>
+                <div class="info-item">Сегодня <span>${state.steps.toLocaleString()}</span></div>
+                <div class="info-item">За неделю <span>${state.steps_week.toLocaleString()}</span></div>
+                <div class="info-item">За месяц <span>${state.steps_month.toLocaleString()}</span></div>
+                <div class="info-item">Всего <span>${state.steps_total.toLocaleString()}</span></div>
             </div>
             <div class="info-block wallet-row" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;">
-                <div><div class="wallet-label">${t('balance', lang)}</div><div class="wallet-amount">💰 ${(state.coins || 0).toLocaleString()}</div></div>
-                <button class="go-shop-btn" onclick="window.navigate('shop')" style="background:var(--main-color); border:none; color:white; padding:8px 15px; border-radius:10px;">${t('shop', lang)} →</button>
+                <div><div class="wallet-label">Баланс</div><div class="wallet-amount">💰 ${state.coins.toLocaleString()}</div></div>
+                <button class="go-shop-btn" onclick="window.navigate('shop')" style="background:var(--main-color); border:none; color:white; padding:10px 20px; border-radius:10px;">В магазин</button>
             </div>
         </div>`,
+
     shop: (user, state, lang) => {
         const frames = [
-            { id: 'white', name: 'White', price: 0 },
-            { id: 'green', name: 'Green', price: 50 },
-            { id: 'lightblue', name: 'Azure', price: 50 },
-            { id: 'blue', name: 'Blue', price: 50 },
-            { id: 'pink', name: 'Pink', price: 50 },
-            { id: 'purple', name: 'Purple', price: 50 }
+            { id: 'white', p: 0 }, { id: 'green', p: 50 }, { id: 'lightblue', p: 50 }, { id: 'blue', p: 50 },
+            { id: 'pink', p: 50 }, { id: 'purple', p: 50 }, { id: 'gold', p: 500 }, { id: 'gold_vip_frame', p: 2500 }
         ];
-        const vipCard = state.isVip ? `<div class="shop-card active-frame" style="grid-column: span 2; background: linear-gradient(45deg, #FFD700, #b8860b); color: #000; border:none;"><h3>👑 VIP ACTIVE</h3></div>` : `<div class="shop-card" style="grid-column: span 2; border: 2px solid #FFD700;"><h3 style="margin:5px">👑 ${t('vip_status', lang)}</h3><button class="buy-btn" onclick="window.handleVipPurchase()">2500 💰</button></div>`;
-        const gridHtml = frames.map(item => {
-            const isOwned = state.inventoryFrames.includes(item.id);
-            const isSelected = state.frame === item.id;
-            return `<div class="shop-card ${isSelected ? 'active-frame' : ''}"><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="profile-frame" style="border: ${getFrameStyle(item.id)}"></div><img src="${user.photo_url}" class="user-avatar" style="width:80%; height:80%;"></div><p>${item.name}</p><button class="shop-btn" onclick="window.handleFrameAction('${item.id}', ${item.price})">${isSelected ? 'Equipped' : (isOwned ? 'Select' : item.price + ' 💰')}</button></div>`;
-        }).join('');
-        return `<div class="page-content shop-page"><h2 style="text-align:center;">${t('shop', lang)}</h2><div style="text-align:center; color:var(--accent-gold); font-size:20px; margin-bottom:20px;">💰 ${state.coins}</div><div class="shop-grid-large">${vipCard}${gridHtml}</div></div>`;
-    },
-    tour: (user, state, lang) => `<div class="page-content tour-page"><div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000')"><div class="leader-overlay"><h2>Турниры</h2></div></div><div style="padding:20px; text-align:center;">${t('noTour', lang)}</div></div>`
+        return `
+            <div class="page-content">
+                <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
+                    <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:18px;">← Назад</button>
+                    <div style="font-weight:bold; color:var(--accent-gold); font-size:18px;">💰 ${state.coins}</div>
+                    <button onclick="document.getElementById('earn-modal').style.display='flex'" style="background:var(--accent-gold); border:none; color:black; padding:8px 15px; border-radius:10px; font-weight:bold;">Получить</button>
+                </div>
+                
+                <div class="shop-grid-4">
+                    ${frames.map(f => {
+                        const isOwned = state.inventoryFrames.includes(f.id);
+                        const isSelected = state.frame === f.id;
+                        return `
+                        <div class="shop-item-mini" onclick="window.handleFrameAction('${f.id}', ${f.p})" style="${isSelected ? 'border:1px solid var(--main-color)' : ''}">
+                            <div class="frame-preview" style="border:${getFrameStyle(f.id)}"></div>
+                            <div style="font-size:10px; margin-top:5px; opacity:0.8;">${isSelected ? 'Уст.' : (isOwned ? 'Выбрать' : f.p)}</div>
+                        </div>`;
+                    }).join('')}
+                </div>
+
+                <div id="earn-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:2000; flex-direction:column; align-items:center; justify-content:center;">
+                    <div style="background:#222; padding:25px; border-radius:24px; width:85%; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                        <h3 style="margin-bottom:20px;">Заработать монеты</h3>
+                        <button class="main-button" style="font-size:14px;" onclick="window.claimDailyBonus()">🎁 Ежедневная награда (10к шагов)</button>
+                        <div style="margin:15px 0; opacity:0.3; font-size:12px;">КУПИТЬ ЗА ЗВЕЗДЫ</div>
+                        <button class="main-button" style="background:#333; font-size:14px;" onclick="window.buyStars(150, 300)">150 ⭐️ = 300 💰</button>
+                        <button class="main-button" style="background:#333; font-size:14px;" onclick="window.buyStars(250, 600)">250 ⭐️ = 600 💰</button>
+                        <button class="main-button" style="background:#333; font-size:14px;" onclick="window.buyStars(1000, 3000)">1000 ⭐️ = 3000 💰</button>
+                        <button onclick="document.getElementById('earn-modal').style.display='none'" style="background:none; border:none; color:gray; margin-top:15px;">Закрыть</button>
+                    </div>
+                </div>
+            </div>`;
+    }
 };
