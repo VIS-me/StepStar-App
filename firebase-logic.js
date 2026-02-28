@@ -16,14 +16,18 @@ export async function syncUser(tgUser) {
         return userSnap.data();
     } else {
         const newUser = {
-            ...freshData,
-            economy: { balance: 0, total_earned: 0 },
-            inventory: { frames: ["white"] },
-            selected: { frame: "white" },
-            stats: { steps_today: 0, calories_today: 0, steps_total: 0 },
-            settings: { is_vip: false, privacy_mode: "public" },
-            tournament: { is_registered: false }
-        };
+    ...freshData,
+    economy: { balance: 0, total_earned: 0 },
+    inventory: { frames: ["white"] },
+    selected: { frame: "white" },
+    stats: { 
+        steps_today: 0, 
+        calories_today: 0, // Добавили
+        steps_total: 0 
+    },
+    settings: { is_vip: false, privacy_mode: "public" },
+    tournament: { is_registered: false }
+};
         await setDoc(userRef, newUser);
         return newUser;
     }
