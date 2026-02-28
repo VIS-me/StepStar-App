@@ -35,7 +35,7 @@
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
         /* RATING & TOURNAMENT COMMON STYLES */
-        .leader-hero-container { position: relative; width: 100%; height: 40vh; overflow: hidden; }
+        .leader-hero-container { position: relative; width: 100%; height: 40vh; overflow: hidden; background: #222; }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
         .leader-info-overlay {
             position: absolute; bottom: 50px; left: 25px; text-align: left; z-index: 5;
@@ -115,11 +115,15 @@
         const db = firebase.firestore();
 
         window.tg = window.Telegram.WebApp;
+        
+        // Базовая заглушка, если вообще ничего нет
+        const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
+
         window.userState = { 
             id: '', frame: 'white', steps: 0, steps_total: 0, coins: 0, 
             inventoryFrames: ['white'], isRegistered: false, friends: [],
-            lastWinner: { name: 'Победитель', photo_url: 'https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800' },
-            lastWeekFriendWinner: { name: 'Лидер Друзей', photo_url: 'https://images.unsplash.com/photo-1551632432-c735e7a03288?w=800' }
+            lastWinner: { name: 'Ждем чемпиона', photo_url: placeholderImg },
+            lastWeekFriendWinner: { name: 'Стань лидером!', photo_url: placeholderImg }
         };
         window.friendUsers = []; window.tourUsers = []; 
         window.adminPrizePool = 2500; 
@@ -166,7 +170,7 @@
                 const top3 = window.friendUsers.slice(0, 3);
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=L&size=512'">
+                        <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆&size=512'">
                         <div class="leader-info-overlay">
                             <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ЛИДЕР ПРОШЛОЙ НЕДЕЛИ (ДРУЗЬЯ)</div>
                             <h2 style="margin:0; font-size:22px;">${leader.name}</h2>
@@ -191,7 +195,7 @@
 
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=W&size=512'">
+                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑&size=512'">
                         <div class="leader-info-overlay">
                             <div style="font-size:10px; opacity:0.8; letter-spacing:1px; margin-bottom:2px;">ПОБЕДИТЕЛЬ ПРОШЛОГО ТУРНИРА</div>
                             <h2 style="margin:0; font-size:22px;">${winner.name}</h2>
@@ -223,7 +227,6 @@
                             <span style="flex:1;">${u.name}</span>
                             <b>${(u.stats?.steps_today || 0).toLocaleString()}</b>
                         </div>`).join('')}
-                    ${window.tourUsers.length === 0 ? '<div style="text-align:center; padding:20px; opacity:0.3;">Пока нет участников</div>' : ''}
                 `;
             }
 
@@ -250,7 +253,6 @@
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
                         <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
                         <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
-                        <button onclick="document.getElementById('earn-modal').style.display='flex'" style="background:var(--accent-gold); border:none; color:black; padding:8px 15px; border-radius:10px; font-weight:bold; font-size:11px;">ДОБЫТЬ</button>
                     </div>
                     <div class="shop-grid-4">
                         ${frames.map(f => `
@@ -265,14 +267,12 @@
 
         window.shareResult = () => {
             const steps = window.userState.steps.toLocaleString();
-            const text = `Я прошел сегодня ${steps} шагов in StepStar! 👟\nСможешь больше?`;
-            const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+            const text = `Я прошел сегодня ${steps} шагов! 👟`;
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(text)}`);
         };
 
         window.inviteFriends = () => {
-            const link = `https://t.me/StepStarAppBot/start?startapp=${window.userState.id}`;
-            window.tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=Кто пройдет больше? 👟`);
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=Давай ходить вместе! 👟`);
         };
 
         window.joinTournament = async () => {
@@ -302,20 +302,28 @@
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
                 if (!tgUser) { window.navigate('home'); return; }
+                
+                // Устанавливаем пользователя как временного лидера (пока не придут данные из базы)
+                window.userState.lastWeekFriendWinner = {
+                    name: tgUser.first_name + ' (Претендент)',
+                    photo_url: tgUser.photo_url || placeholderImg
+                };
+
                 const userRef = db.collection("users").doc(String(tgUser.id));
                 const doc = await userRef.get();
                 
+                // Победитель турнира
                 const globalRef = await db.collection("settings").doc("tournament").get();
-                if (globalRef.exists) {
+                if (globalRef.exists && globalRef.data().last_winner) {
                     const gd = globalRef.data();
-                    window.userState.lastWinner = gd.last_winner || window.userState.lastWinner;
+                    window.userState.lastWinner = gd.last_winner;
                     window.adminPrizePool = gd.admin_prize || 2500;
                 }
 
+                // Победитель недели (если есть - заменяем пользователя)
                 const weeklyRef = await db.collection("settings").doc("weekly_rating").get();
-                if (weeklyRef.exists) {
-                    const wd = weeklyRef.data();
-                    window.userState.lastWeekFriendWinner = wd.last_winner || window.userState.lastWeekFriendWinner;
+                if (weeklyRef.exists && weeklyRef.data().last_winner) {
+                    window.userState.lastWeekFriendWinner = weeklyRef.data().last_winner;
                 }
 
                 if (doc.exists) {
@@ -327,6 +335,7 @@
                         inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false,
                         friends: d.friends || [] 
                     };
+                    
                     const fIds = [...window.userState.friends, window.userState.id];
                     const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                     window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
