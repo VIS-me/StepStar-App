@@ -70,7 +70,7 @@
             object-fit: cover; 
         }
 
-        /* Надпись Лидер прошлой недели */
+        /* Общий стиль плашки лидера */
         .leader-badge {
             position: absolute;
             top: 20px;
@@ -185,7 +185,7 @@
             font-style: normal; 
         }
 
-        /* ПРОФИЛЬ */
+        /* ПРОФИЛЬ - УЛЬТРА ПРОЗРАЧНОСТЬ 0.01 */
         .profile-stats-list { 
             background: rgba(255,255,255,0.01); 
             margin: 15px 20px; 
@@ -486,6 +486,7 @@
                 const winner = window.userState.lastWinner;
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
+                        <div class="leader-badge">Победитель прошлого турнира</div>
                         <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑'">
                         <div class="leader-info-overlay"><h2>${winner.name}</h2></div>
                     </div>
