@@ -18,7 +18,7 @@ export async function syncUser(tgUser) {
     } else {
         const newUser = {
             ...freshData,
-            economy: { balance: 100, total_earned: 100 },
+            economy: { balance: 0, total_earned: 0 },
             inventory: { frames: ["blue_default"], backgrounds: ["standard"] },
             selected: { frame: "blue_default", background: "standard" },
             stats: { steps_today: 0, calories_today: 0, steps_total: 0 },
