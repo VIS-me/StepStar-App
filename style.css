@@ -26,10 +26,10 @@ body {
     overflow-y: auto; 
     width: 100%; 
     -webkit-overflow-scrolling: touch; 
-    padding-bottom: 100px; /* Отступ увеличен для безопасности */
+    padding-bottom: 100px; 
 }
 
-/* --- ГЛАВНАЯ (ИСПРАВЛЕННЫЙ КРУГ) --- */
+/* --- ГЛАВНАЯ (ПРОГРЕСС) --- */
 .home-center { display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
 
 .progress-container { 
@@ -39,7 +39,7 @@ body {
     display: flex; align-items: center; justify-content: center; 
 }
 .progress-ring { 
-    position: absolute; /* Чтобы не сдвигал текст */
+    position: absolute;
     transform: rotate(-90deg); 
     filter: drop-shadow(0 0 10px rgba(36, 139, 207, 0.3)); 
 }
@@ -59,13 +59,30 @@ body {
 .steps-content h1 { font-size: 48px; margin: 0; font-weight: 800; letter-spacing: -1px; }
 .steps-label { opacity: 0.5; font-size: 14px; text-transform: uppercase; }
 
-/* Аватар */
-.avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
-.user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
+/* АВАТАР И РАМКИ */
+.avatar-wrapper { 
+    position: relative; 
+    width: 100px; height: 100px; 
+    display: flex; align-items: center; justify-content: center; 
+    margin: 0 auto; 
+}
+.profile-frame { 
+    position: absolute; 
+    width: 100%; height: 100%; 
+    border-radius: 50%; 
+    z-index: 2; 
+    pointer-events: none; 
+    box-sizing: border-box;
+}
+.user-avatar { 
+    width: 85%; height: 85%; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    z-index: 1;
+}
 .centered-name { text-align: center; margin: 10px 0 20px; font-size: 22px; font-weight: 700; }
 
-/* --- ПРОФИЛЬ (3 БЛОКА) --- */
+/* --- ПРОФИЛЬ И БЛОКИ --- */
 .info-block {
     background: var(--secondary-bg);
     margin: 15px 20px;
@@ -74,7 +91,6 @@ body {
     overflow: hidden;
 }
 
-/* Блок 1: Статистика */
 .info-item {
     display: flex; justify-content: space-between;
     padding: 16px 20px;
@@ -84,25 +100,54 @@ body {
 .info-item:last-child { border-bottom: none; }
 .info-item span { font-weight: bold; color: var(--main-color); }
 
-/* Блок 2: Кошелек */
 .wallet-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 16px 20px;
 }
-.wallet-info { display: flex; flex-direction: column; }
 .wallet-label { font-size: 11px; opacity: 0.5; text-transform: uppercase; margin-bottom: 4px; }
 .wallet-amount { font-size: 20px; font-weight: 800; color: var(--accent-gold); }
 .go-shop-btn { background: var(--main-color); color: white; border: none; padding: 10px 18px; border-radius: 12px; font-weight: bold; font-size: 13px; }
 
-/* Блок 3: Достижения */
-.achievement-row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 20px;
-    cursor: pointer;
+/* --- МАГАЗИН (SHOP) --- */
+.shop-grid-large {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    padding: 0 20px;
 }
-.achievement-row:active { background: rgba(255,255,255,0.03); }
 
-/* --- РЕЙТИНГ И ТУРНИР --- */
+.shop-card {
+    background: var(--secondary-bg);
+    padding: 20px 10px;
+    border-radius: 24px;
+    text-align: center;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s ease;
+}
+
+.shop-card.active-frame {
+    border-color: var(--main-color);
+    background: rgba(36, 139, 207, 0.1);
+    transform: scale(1.02);
+}
+
+.shop-btn {
+    width: 100%;
+    border: none;
+    padding: 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.buy-btn { background: var(--main-color); color: white; }
+.select-btn { background: rgba(255,255,255,0.1); color: white; }
+.shop-btn:active { opacity: 0.8; }
+.shop-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* --- ТАБЛИЦЫ И СПИСКИ --- */
 .top-ten-list { background: var(--secondary-bg); border-radius: 20px; overflow: hidden; margin: 0 20px 20px; border: 1px solid rgba(255,255,255,0.05); }
 .table-row {
     display: flex; padding: 15px 20px;
@@ -113,15 +158,13 @@ body {
 .t-pos { width: 25px; font-weight: bold; color: var(--main-color); }
 .t-name { flex: 1; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Кнопка пригласить друга (внутри списка) */
 .invite-row-btn {
     display: flex; align-items: center; justify-content: center;
     padding: 18px; background: rgba(36, 139, 207, 0.1);
     color: var(--main-color); font-weight: 700; cursor: pointer;
 }
-.invite-row-btn:active { background: rgba(36, 139, 207, 0.2); }
 
-/* Баннер лидера */
+/* --- БАННЕРЫ --- */
 .leader-banner { width: 100%; height: 280px; background-size: cover; background-position: center; position: relative; }
 .leader-overlay { 
     width: 100%; height: 100%; 
@@ -131,13 +174,13 @@ body {
 .crown-badge { background: var(--accent-gold); color: #000; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 800; margin-bottom: 8px; display: inline-block; }
 .leader-name-big { font-size: 32px; margin: 0; font-weight: 900; }
 
-/* Стат-сетка (Кал, Км, Мин) */
+/* --- СЕТКА СТАТИСТИКИ --- */
 .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 92%; margin: 20px auto; }
 .stat-item { background: var(--secondary-bg); padding: 15px 5px; border-radius: 18px; text-align: center; border: 1px solid rgba(255,255,255,0.03); }
 .stat-item span { display: block; font-size: 18px; font-weight: bold; }
 .stat-item label { font-size: 11px; opacity: 0.5; text-transform: uppercase; }
 
-/* Таб-бар */
+/* --- НАВИГАЦИЯ (TAB BAR) --- */
 .tab-bar { 
     height: 75px; display: flex; background: #15171a; 
     border-top: 1px solid rgba(255,255,255,0.05); 
@@ -148,4 +191,16 @@ body {
 .tab-item.active { color: var(--main-color); }
 .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 20px; font-size: 16px; font-weight: bold; margin: 10px auto; display: block; }
+.main-button { 
+    width: 90%; background: var(--main-color); color: white; border: none; 
+    padding: 18px; border-radius: 20px; font-size: 16px; font-weight: bold; 
+    margin: 10px auto; display: block; 
+}
+
+/* Фикс для кнопок в турнире */
+.join-tournament-card {
+    background: var(--secondary-bg);
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
