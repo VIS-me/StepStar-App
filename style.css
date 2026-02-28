@@ -2,93 +2,78 @@
     --main-color: #248bcf;
     --bg-color: #1a1c20;
     --text-color: #ffffff;
-    --secondary-bg: rgba(255,255,255,0.05);
+    --secondary-bg: rgba(255,255,255,0.08);
     --accent-gold: #FFD700;
 }
 
-* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
 body {
     margin: 0; padding: 0;
     font-family: -apple-system, system-ui, sans-serif;
     background: var(--bg-color); color: var(--text-color);
     height: 100vh; width: 100vw; overflow: hidden;
-    display: flex; flex-direction: column;
 }
 
-.app-viewport { flex: 1; overflow-y: auto; padding-bottom: 90px; }
+.app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: env(safe-area-inset-bottom); }
 
-/* ИСПРАВЛЕННАЯ СЕТКА МАГАЗИНА */
+/* МАГАЗИН: ГАРАНТИРОВАННЫЕ КРУГИ */
 .shop-grid-4 {
     display: grid !important;
     grid-template-columns: repeat(4, 1fr) !important;
-    gap: 10px;
+    gap: 12px;
     padding: 15px;
-    width: 100%;
 }
 
 .shop-item-mini {
     background: var(--secondary-bg);
-    padding: 10px 5px;
-    border-radius: 12px;
+    padding: 15px 5px;
+    border-radius: 16px;
     text-align: center;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid transparent;
+    display: flex; flex-direction: column; align-items: center;
+    border: 2px solid transparent;
+    transition: 0.2s;
 }
 
 .frame-preview { 
-    width: 45px; 
-    height: 45px; 
-    border-radius: 50%; 
-    margin-bottom: 5px;
+    width: 45px !important; 
+    height: 45px !important; 
+    border-radius: 50% !important; 
+    margin-bottom: 8px;
+    background: rgba(255,255,255,0.03);
     flex-shrink: 0;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
 }
 
-/* Стили модального окна */
-.modal-overlay {
-    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85); z-index: 2000; flex-direction: column;
-    align-items: center; justify-content: center; backdrop-filter: blur(5px);
+/* РЕЙТИНГ И ПОБЕДИТЕЛЬ */
+.winner-card {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    margin: 15px; border-radius: 20px; padding: 15px;
+    display: flex; align-items: center; color: black;
 }
-
-.modal-content {
-    background: #222; padding: 25px; border-radius: 24px; width: 85%;
-    text-align: center; border: 1px solid rgba(255,255,255,0.1);
-}
-
-/* Остальные стили */
-.home-center { display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-.progress-container { position: relative; width: 230px; height: 230px; margin: 20px auto; display: flex; align-items: center; justify-content: center; }
-.progress-ring { position: absolute; transform: rotate(-90deg); }
-.progress-ring__circle { stroke-dasharray: 628; transition: stroke-dashoffset 0.8s ease; stroke-linecap: round; }
-.steps-content { position: absolute; text-align: center; }
-.steps-content h1 { font-size: 40px; margin: 0; }
-.steps-label { opacity: 0.5; font-size: 12px; }
-
-.avatar-wrapper { position: relative; width: 90px; height: 90px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
-.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
-.user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
-
-.info-block { background: var(--secondary-bg); margin: 10px 20px; border-radius: 20px; overflow: hidden; }
-.info-item { display: flex; justify-content: space-between; padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
-.info-item span { font-weight: bold; color: var(--main-color); }
-
-.tab-bar { height: 70px; display: flex; background: #15171a; position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom); }
-.tab-item { flex: 1; text-align: center; padding-top: 10px; color: #666; font-size: 10px; }
-.tab-item.active { color: var(--main-color); }
-.tab-item i { display: block; font-size: 20px; margin-bottom: 4px; font-style: normal; }
-
-.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+.winner-photo { width: 55px; height: 55px; border-radius: 50%; border: 3px solid white; margin-right: 15px; object-fit: cover; }
+.winner-info h2 { margin: 0; font-size: 18px; }
 
 .table-row { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
 .rank-photo-mini { width: 35px; height: 35px; border-radius: 50%; margin: 0 12px; background: #333; }
 .t-pos { width: 25px; font-weight: bold; opacity: 0.5; }
-.t-name { flex: 1; font-size: 14px; }
-.t-steps { font-weight: bold; color: var(--main-color); }
+.t-name { flex: 1; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.leader-banner { width: 100%; height: 200px; background-size: cover; background-position: center; position: relative; }
-.leader-overlay { width: 100%; height: 100%; background: linear-gradient(to top, var(--bg-color), transparent); display: flex; align-items: flex-end; padding: 20px; }
+/* ТАБ БАР */
+.tab-bar { 
+    height: 70px; display: flex; background: #15171a; 
+    position: fixed; bottom: 0; width: 100%; 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+    padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; }
+.tab-item.active { color: var(--main-color); }
+.tab-item i { display: block; font-size: 20px; margin-bottom: 4px; font-style: normal; }
+
+/* ОБЩИЕ ЭЛЕМЕНТЫ */
+.main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+.avatar-wrapper { position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+.profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
+.user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; }
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.modal-content { background: #222; padding: 25px; border-radius: 24px; width: 85%; text-align: center; }
