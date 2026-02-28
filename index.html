@@ -37,25 +37,72 @@
         const db = firebase.firestore();
 
         window.tg = window.Telegram.WebApp;
-        window.userState = { frame: 'white', steps: 0, coins: 0, isVip: false, inventoryFrames: ['white'] };
+        window.userState = { 
+            frame: 'white', steps: 0, steps_week: 0, steps_month: 0, steps_total: 0,
+            coins: 0, isVip: false, inventoryFrames: ['white'], last_bonus: null 
+        };
+        window.topUsers = [];
+        window.tourUsers = [];
         window.appLang = (window.tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
         window.navigate = function(pageId, el) {
             const app = document.getElementById('app');
-            const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
-            if (Pages[pageId]) app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
+            const user = window.tg.initDataUnsafe?.user || { first_name: "Walker", photo_url: "" };
+            if (Pages[pageId]) {
+                app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
+                window.tg.HapticFeedback?.impactOccurred('light');
+            }
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
             }
         };
 
-        // Функции действий
-        window.shareResult = (steps) => {
-            const text = t('shareMsg', window.appLang).replace('{n}', steps);
+        // Живые рейтинги из БД
+        async function loadRankings() {
+            try {
+                // Общий топ (по всем шагам)
+                const snap = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
+                window.topUsers = snap.docs.map((d, i) => ({ pos: i+1, ...d.data() }));
+                
+                // Топ турнира (кто зарегистрирован и сегодня прошел больше всех)
+                const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true)
+                    .orderBy("stats.steps_today", "desc").limit(10).get();
+                window.tourUsers = tourSnap.docs.map((d, i) => ({ pos: i+1, ...d.data() }));
+            } catch (e) { console.error("Rank error:", e); }
+        }
+
+        // Кнопка пригласить
+        window.inviteFriends = function() {
+            const text = "Присоединяйся к StepStar! Давай соревноваться в шагах! 👟✨";
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(text)}`);
         };
 
+        // Покупка за звезды
+        window.buyStars = function(stars, coins) {
+            window.tg.showConfirm(`Купить ${coins} монет за ${stars} ⭐️?`, (ok) => {
+                if(ok) window.tg.showAlert("Для активации платежей настройте Invoice в BotFather.");
+            });
+        };
+
+        // Ежедневный бонус
+        window.claimDailyBonus = async function() {
+            const today = new Date().toISOString().split('T')[0];
+            if (window.userState.last_bonus === today) return window.tg.showAlert("Уже получено сегодня!");
+            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10,000 шагов за сегодня!");
+
+            const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
+            await userRef.update({
+                "economy.balance": firebase.firestore.FieldValue.increment(10),
+                "economy.last_bonus": today
+            });
+            window.userState.coins += 10;
+            window.userState.last_bonus = today;
+            window.tg.showAlert("Начислено 10 💰!");
+            window.navigate('shop');
+        };
+
+        // Магазин: рамки
         window.handleFrameAction = async (id, price) => {
             const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
             if (window.userState.inventoryFrames.includes(id)) {
@@ -74,17 +121,18 @@
             window.navigate('shop');
         };
 
-        window.handleVipPurchase = async () => {
-            if (window.userState.coins < 2500) return window.tg.showAlert("Недостаточно 💰");
+        // Участие в турнире
+        window.joinTournament = async () => {
+            if (window.userState.coins < 50) return window.tg.showAlert("Недостаточно 50 💰");
             const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
             await userRef.update({
-                "economy.balance": firebase.firestore.FieldValue.increment(-2500),
-                "settings.is_vip": true,
-                "selected.frame": "gold_vip_frame",
-                "inventory.frames": firebase.firestore.FieldValue.arrayUnion("gold_vip_frame")
+                "economy.balance": firebase.firestore.FieldValue.increment(-50),
+                "tournament.is_registered": true
             });
-            window.userState.isVip = true; window.userState.coins -= 2500; window.userState.frame = "gold_vip_frame";
-            window.navigate('prof');
+            window.userState.coins -= 50;
+            window.tg.showAlert("Вы зарегистрированы в турнире!");
+            await loadRankings();
+            window.navigate('tour');
         };
 
         async function start() {
@@ -94,22 +142,31 @@
                 const userRef = db.collection("users").doc(String(tgUser.id));
                 const doc = await userRef.get();
                 if (doc.exists) {
-                    const data = doc.data();
+                    const d = doc.data();
                     window.userState = {
-                        steps: data.stats?.steps_today || 0,
-                        coins: data.economy?.balance || 0,
-                        frame: data.selected?.frame || 'white',
-                        isVip: data.settings?.is_vip || false,
-                        inventoryFrames: data.inventory?.frames || ['white']
+                        steps: d.stats?.steps_today || 0,
+                        steps_week: d.stats?.steps_week || 0,
+                        steps_month: d.stats?.steps_month || 0,
+                        steps_total: d.stats?.steps_total || 0,
+                        coins: d.economy?.balance || 0,
+                        frame: d.selected?.frame || 'white',
+                        isVip: d.settings?.is_vip || false,
+                        inventoryFrames: d.inventory?.frames || ['white'],
+                        last_bonus: d.economy?.last_bonus || null
                     };
                 } else {
-                    await userRef.set({ name: tgUser.first_name, economy: { balance: 0 }, stats: { steps_today: 0 }, inventory: { frames: ['white'] }, selected: { frame: 'white' } });
+                    await userRef.set({ 
+                        name: tgUser.first_name, 
+                        photo_url: tgUser.photo_url || "",
+                        economy: { balance: 0 }, 
+                        stats: { steps_today: 0, steps_week: 0, steps_month: 0, steps_total: 0 }, 
+                        inventory: { frames: ['white'] }, 
+                        selected: { frame: 'white' },
+                        tournament: { is_registered: false }
+                    });
                 }
+                await loadRankings();
             }
-            document.getElementById('txt-home').innerText = t('home', window.appLang);
-            document.getElementById('txt-rank').innerText = t('rank', window.appLang);
-            document.getElementById('txt-tour').innerText = t('tour', window.appLang);
-            document.getElementById('txt-prof').innerText = t('prof', window.appLang);
             window.navigate('home', document.getElementById('btn-home'));
         }
         start();
