@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>StepStar Ultra Edition</title>
-    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -41,6 +40,7 @@
             background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043&auto=format&fit=crop') center/cover no-repeat !important; 
         }
         
+        /* НОВЫЙ HD ФОН МАЛЬТЕЗЕ */
         body.bg-maltese { 
             background: url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988&auto=format&fit=crop') center/cover no-repeat !important; 
         }
@@ -57,7 +57,6 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
-        /* Лидерборд и герои */
         .leader-hero-container { 
             position: relative; 
             width: 100%; 
@@ -122,7 +121,6 @@
             cursor: pointer;
         }
 
-        /* Навигация */
         .tab-bar { 
             height: 70px; 
             display: flex; 
@@ -153,7 +151,6 @@
             font-style: normal; 
         }
 
-        /* Виджеты статистики */
         .stat-box-blur {
             background: rgba(255,255,255,0.05); 
             padding: 12px; 
@@ -174,7 +171,6 @@
             border-bottom: 1px solid rgba(255,255,255,0.05); 
         }
 
-        /* Модальные окна */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -210,7 +206,6 @@
             z-index: 10;
         }
 
-        /* Кнопки */
         .main-button { 
             width: 90%; 
             background: var(--main-color); 
@@ -233,7 +228,6 @@
             border-radius: 20px; 
             margin: 10px auto; 
             display: block; 
-            font-weight: bold;
         }
 
         .shop-bonus-btn {
@@ -261,7 +255,6 @@
             background: var(--success-green); 
         }
 
-        /* Аватары и Магазин */
         .avatar-wrapper { 
             position: relative; 
             width: 105px; 
@@ -386,6 +379,7 @@
         const bgStylesFull = {
             'default': 'var(--bg-color)',
             'cats': "url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043')",
+            /* ССЫЛКА НА НОВЫЙ HD ФОН В ОБЪЕКТЕ */
             'maltese': "url('https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1988')"
         };
 
@@ -658,10 +652,10 @@
             }
             
             await db.collection("users").doc(window.userState.id).update({ 
-                "economy.balance": window.userState.coins + 20, 
+                "economy.balance": window.userState.coins + 15, 
                 "economy.last_gift_date": today 
             });
-            window.tg.showAlert("Поздравляем! Вы получили 20 💰");
+            window.tg.showAlert("Поздравляем! Вы получили 15 💰");
             loadData();
         };
 
@@ -696,9 +690,7 @@
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`);
         };
 
-        /**
-         * ЛОГИКА ЗАВЕРШЕНИЯ ТУРНИРА (8-е ЧИСЛО)
-         */
+        // TOURNAMENT RESET LOGIC
         async function checkTournamentEnd() {
             const now = new Date(); 
             const day = now.getDate(); 
@@ -711,13 +703,13 @@
                 const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true).get();
                 if (!tourSnap.empty) {
                     let best = null; 
-                    let maxSteps = -1; 
+                    let max = -1; 
                     let participants = [];
                     tourSnap.forEach(doc => {
                         const d = doc.data(); 
                         participants.push(doc.id);
-                        if (d.stats.steps_today > maxSteps) { 
-                            maxSteps = d.stats.steps_today; 
+                        if (d.stats.steps_today > max) { 
+                            max = d.stats.steps_today; 
                             best = { id: doc.id, name: d.name, photo: d.photo_url, bal: d.economy.balance }; 
                         }
                     });
@@ -736,9 +728,7 @@
             }
         }
 
-        /**
-         * ЗАГРУЗКА ДАННЫХ
-         */
+        // LOAD DATA
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -764,14 +754,14 @@
                     d = (await userDocRef.get()).data();
                 }
 
-                // Реферальная система
+                // Start param (Referral)
                 const sp = window.tg.initDataUnsafe?.start_param;
                 if (sp && sp !== myId) {
                     await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
                     await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
                 }
 
-                // Глобальные настройки турнира
+                // Global Settings
                 const gRef = await db.collection("settings").doc("tournament").get();
                 if (gRef.exists) { 
                     const gData = gRef.data();
@@ -779,7 +769,7 @@
                     window.userState.lastWeekFriendWinner = gData.last_week_friend_winner || { name: '', photo_url: '' };
                 }
 
-                // Обновление локального стейта
+                // Update Local State
                 window.userState = { 
                     ...window.userState, 
                     name: d.name, 
@@ -798,13 +788,13 @@
                     friends: d.friends || [] 
                 };
                 
-                // Рейтинг друзей
+                // Load Friends List
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                               .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 
-                // Участники турнира
+                // Load Tournament List
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
                                            .sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
@@ -812,12 +802,9 @@
                 const activeTab = document.querySelector('.tab-item.active span')?.innerText || 'Дом';
                 const map = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
                 window.navigate(map[activeTab] || 'home');
-            } catch (e) { 
-                console.error("Ошибка загрузки данных:", e); 
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Запуск
         window.tg.ready(); 
         window.tg.expand(); 
         loadData();
