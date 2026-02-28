@@ -21,16 +21,12 @@
     <script src="pages.js"></script>
 
     <script type="module">
-        import { syncUser, db, doc, updateDoc, increment, arrayUnion } from './firebase-logic.js';
+        import { syncUser, buyVipInDb, db, doc, updateDoc, increment, arrayUnion } from './firebase-logic.js';
 
         window.tg = window.Telegram.WebApp;
         
         window.userState = { 
-            frame: 'white', 
-            steps: 0, 
-            coins: 0, 
-            isVip: false,
-            inventoryFrames: ['white']
+            frame: 'white', steps: 0, coins: 0, isVip: false, inventoryFrames: ['white']
         };
 
         const userLang = window.tg.initDataUnsafe?.user?.language_code;
@@ -86,9 +82,23 @@
             }
         };
 
-        window.inviteFriends = function() {
-            const botUrl = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(t('shareMsg', window.appLang).replace('{n}', window.userState.steps))}`;
-            window.tg.openTelegramLink(botUrl);
+        window.handleVipPurchase = async function() {
+            const userId = window.tg.initDataUnsafe?.user?.id;
+            if (window.userState.coins >= 2500) {
+                window.tg.showConfirm("Купить VIP за 2500 💰?", async (confirm) => {
+                    if(confirm) {
+                        await buyVipInDb(userId);
+                        window.userState.isVip = true;
+                        window.userState.coins -= 2500;
+                        window.userState.frame = 'gold_vip_frame';
+                        window.userState.inventoryFrames.push('gold_vip_frame');
+                        window.navigate('prof');
+                        window.tg.showAlert("👑 VIP АКТИВИРОВАН!");
+                    }
+                });
+            } else {
+                window.tg.showAlert("Нужно 2500 монет!");
+            }
         };
 
         window.shareResult = function(steps) {
@@ -99,6 +109,7 @@
         async function initApp() {
             window.tg.expand();
             window.tg.ready();
+            document.getElementById('app').innerHTML = '<div style="padding:50px; text-align:center;">🚀 Loading StepStar...</div>';
 
             const tgUser = window.tg.initDataUnsafe?.user;
             if (tgUser) {
@@ -106,20 +117,19 @@
                     const dbData = await syncUser(tgUser);
                     if (dbData) {
                         window.userState.coins = dbData.economy?.balance || 0;
-                        window.userState.steps = dbData.stats?.steps_total || 0;
+                        window.userState.steps = dbData.stats?.steps_today || 0;
                         window.userState.frame = dbData.selected?.frame || 'white';
                         window.userState.inventoryFrames = dbData.inventory?.frames || ['white'];
+                        window.userState.isVip = dbData.settings?.is_vip || false;
                     }
                 } catch (e) { console.error("Firebase error:", e); }
             }
 
-            // Установка названий в меню
             document.getElementById('txt-home').innerText = t('home', window.appLang);
             document.getElementById('txt-rank').innerText = t('rank', window.appLang);
             document.getElementById('txt-tour').innerText = t('tour', window.appLang);
             document.getElementById('txt-prof').innerText = t('prof', window.appLang);
 
-            // Первая загрузка
             window.navigate('home', document.getElementById('btn-home'));
         }
 
