@@ -31,41 +31,46 @@
             transition: background 0.4s ease;
         }
 
+        /* Слои фона для прозрачности */
         body.bg-cats { background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043') center/cover no-repeat !important; }
         body.bg-maltese { background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat !important; }
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 30px; position: relative; z-index: 1; }
         .readable-text { text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 1px 3px rgba(0,0,0,1); }
 
+        /* Герой-блок для лидеров */
         .leader-hero-container { position: relative; width: 100%; height: 38vh; overflow: hidden; background: #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
         .leader-badge { position: absolute; top: 25px; left: 20px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(5px); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 7px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 6; }
         .leader-info-overlay { position: absolute; bottom: 55px; left: 25px; z-index: 5; }
 
+        /* Карточка статистики поверх фона */
         .overlap-card { background: rgba(30, 32, 36, 0.85); backdrop-filter: blur(15px); margin: -35px 20px 20px; padding: 18px 25px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         .section-title { padding: 15px 25px 8px; font-size: 12px; font-weight: 800; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); }
         
-        .table-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; background: rgba(0,0,0,0.15); }
+        .table-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; background: rgba(0,0,0,0.15); transition: 0.2s; }
+        .table-row:active { background: rgba(255,255,255,0.05); }
 
         .tab-bar { height: 75px; display: flex; background: rgba(15, 17, 20, 0.95); backdrop-filter: blur(10px); position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.08); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #666; font-size: 10px; font-weight: 500; }
-        .tab-item.active { color: var(--main-color); }
+        .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #666; font-size: 10px; font-weight: 500; transition: 0.3s; }
+        .tab-item.active { color: var(--main-color); transform: translateY(-2px); }
         .tab-item i { display: block; font-size: 24px; margin-bottom: 4px; font-style: normal; }
 
         .stat-box-blur { background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); padding: 15px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); text-align: center; }
         .profile-stats-list { background: rgba(0,0,0,0.4); margin: 15px 20px; border-radius: 22px; padding: 8px 0; border: 1px solid rgba(255,255,255,0.08); }
         .p-stat-row { display: flex; justify-content: space-between; padding: 14px 22px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        /* Модалки */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; animation: fadeIn 0.3s; }
         .modal-content { width: 92%; max-height: 85vh; background: #1a1c20; border-radius: 35px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.1); }
-        .modal-inner-bg { padding: 40px 25px; min-height: 450px; display: flex; flex-direction: column; align-items: center; }
-        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 32px; color: white; z-index: 10; }
+        .modal-inner-bg { padding: 40px 25px; min-height: 450px; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 32px; color: white; z-index: 10; opacity: 0.7; }
 
         .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 22px; font-size: 16px; font-weight: bold; margin: 20px auto; display: block; box-shadow: 0 8px 20px rgba(36, 139, 207, 0.4); }
         .shop-btn-prof { width: 90%; background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.15); padding: 18px; border-radius: 22px; margin: 12px auto; display: block; font-weight: bold; }
         .shop-bonus-btn { width: 90%; background: rgba(255, 215, 0, 0.1); color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 16px; border-radius: 20px; margin: 10px auto 20px; display: block; font-weight: 800; }
         
-        .join-btn { background: var(--main-color); color: white; border: none; padding: 12px 22px; border-radius: 16px; font-weight: 800; }
+        .join-btn { background: var(--main-color); color: white; border: none; padding: 12px 22px; border-radius: 16px; font-weight: 800; font-size: 12px; }
         .join-btn.active-status { background: var(--success-green); }
 
         .avatar-wrapper { position: relative; width: 115px; height: 115px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
@@ -73,16 +78,19 @@
         .user-avatar { width: 90%; height: 90%; border-radius: 50%; object-fit: cover; background: #333; z-index: 1; }
 
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0 20px; margin-bottom: 25px; }
-        .shop-item-mini { background: rgba(0,0,0,0.6); padding: 14px 5px; border-radius: 18px; text-align: center; border: 2px solid transparent; }
+        .shop-item-mini { background: rgba(0,0,0,0.6); padding: 14px 5px; border-radius: 18px; text-align: center; border: 2px solid transparent; transition: 0.3s; }
         .shop-item-mini.selected { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
         .bg-preview { width: 45px; height: 45px; border-radius: 10px; margin: 0 auto 8px; border: 1px solid rgba(255,255,255,0.2); }
 
+        /* Спец. секции магазина */
         .stars-container { background: rgba(49, 166, 245, 0.05); margin: 15px 20px; border-radius: 22px; padding: 15px; border: 1px solid rgba(49, 166, 245, 0.2); }
         .star-pack { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(49, 166, 245, 0.1); }
         .star-pack:last-child { border-bottom: none; }
         .star-btn { background: var(--star-blue); color: white; border: none; padding: 8px 15px; border-radius: 12px; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 5px; }
         .vip-btn { background: var(--vip-purple); }
         .vip-status-tag { color: var(--vip-purple); font-size: 10px; font-weight: 900; letter-spacing: 1px; margin-top: 5px; display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -163,8 +171,7 @@
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
                             <img src="${window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name}" class="user-avatar">
                         </div>
-                        <h2 style="margin-top:18px; font-weight:800; font-size:22px;">${window.userState.name}</h2>
-                        ${window.userState.isVip ? '<span class="vip-status-tag">VIP STATUS</span>' : ''}
+                        <h2 style="margin-top:18px; font-weight:800; font-size:22px;">${window.userState.name} ${window.userState.isVip ? '👑' : ''}</h2>
                         <div style="position:relative; width:240px; height:240px; margin:25px auto; display:flex; align-items:center; justify-content:center;">
                             <svg width="240" height="240" style="transform: rotate(-90deg); position:absolute;">
                                 <circle stroke="rgba(255,255,255,0.1)" stroke-width="14" fill="transparent" r="105" cx="120" cy="120"/>
@@ -182,9 +189,16 @@
             }
 
             if (pageId === 'rank') {
+                const leaderName = window.userState.lastWeekFriendWinner.name || window.userState.name;
+                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+leaderName;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
                 appDiv.innerHTML = `
-                    <div class="overlap-card readable-text" style="margin-top:20px;">
+                    <div class="leader-hero-container">
+                        <div class="leader-badge">ЛИДЕР ПРОШЛОЙ НЕДЕЛИ</div>
+                        <img src="${leaderPhoto}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆'">
+                        <div class="leader-info-overlay readable-text"><h2 style="font-size:28px; margin:0;">${leaderName}</h2></div>
+                    </div>
+                    <div class="overlap-card readable-text">
                         <div><div style="font-size:10px; opacity:0.8; font-weight:bold;">МОЙ РАНГ</div><div style="font-size:22px; font-weight:900; color:var(--main-color);">#${myIndex || '-'}</div></div>
                         <div style="text-align:right;"><div style="font-size:10px; opacity:0.8; font-weight:bold;">ШАГИ</div><div style="font-size:20px; font-weight:900;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
@@ -199,6 +213,27 @@
                     <button class="main-button" style="margin-top:25px;" onclick="window.inviteFriends()">ПРИГЛАСИТЬ ДРУЗЕЙ</button>`;
             }
 
+            if (pageId === 'tour') {
+                const winner = window.userState.lastWinner;
+                appDiv.innerHTML = `
+                    <div class="leader-hero-container">
+                        <div class="leader-badge">ПОБЕДИТЕЛЬ ТУРНИРА</div>
+                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑'">
+                        <div class="leader-info-overlay readable-text"><h2 style="font-size:28px; margin:0;">${winner.name}</h2></div>
+                    </div>
+                    <div class="overlap-card readable-text">
+                        <div><div style="font-size:10px; opacity:0.8; font-weight:bold;">ФОНД</div><div style="font-size:20px; font-weight:900; color:var(--accent-gold);">${window.adminPrizePool} 💰</div></div>
+                        <button class="join-btn ${window.userState.isRegistered ? 'active-status' : ''}" onclick="window.joinTournament()">${window.userState.isRegistered ? 'ВЫ УЧАСТНИК' : 'УЧАСТВОВАТЬ (50)'}</button>
+                    </div>
+                    <div class="section-title">Лидеры гонки</div>
+                    ${window.tourUsers.map((u, i) => `
+                        <div class="table-row readable-text">
+                            <span style="width:25px; font-weight:bold; opacity:0.5;">${i + 1}</span>
+                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:40px; height:40px; border-radius:50%; margin:0 15px; border:1px solid rgba(255,255,255,0.1); object-fit:cover;">
+                            <span style="font-weight:600;">${u.name} ${u.isVip ? '👑' : ''}</span><b style="margin-left:auto; font-size:15px;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
+                        </div>`).join('')}`;
+            }
+
             if (pageId === 'prof') {
                 appDiv.innerHTML = `
                     <div style="padding-top:40px; text-align:center;" class="readable-text">
@@ -208,6 +243,11 @@
                         </div>
                         <h2 style="margin-top:20px; font-weight:800;">${window.userState.name} ${window.userState.isVip ? '👑' : ''}</h2>
                         <div style="font-size:12px; opacity:0.5; margin-bottom:25px;">UID: ${window.userState.id}</div>
+                        <div class="section-title" style="text-align:left;">Статистика</div>
+                        <div class="profile-stats-list">
+                            <div class="p-stat-row"><span>Сегодня</span><b style="color:var(--main-color);">${window.userState.steps.toLocaleString()}</b></div>
+                            <div class="p-stat-row"><span>За всё время</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
+                        </div>
                         <div class="overlap-card" style="margin: 20px 20px;">
                             <span style="font-weight:bold; letter-spacing:1px;">БАЛАНС</span>
                             <b style="color:var(--accent-gold); font-size:20px;">${window.userState.coins} 💰</b>
@@ -217,6 +257,7 @@
             }
 
             if (pageId === 'shop') {
+                const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
                 const bgs = [
                     {id:'default', n:'Стандарт', p:0}, 
                     {id:'cats', n:'Котята', p:100}, 
@@ -240,10 +281,22 @@
                         <div class="star-pack" style="flex-direction:column; align-items:flex-start; gap:10px;">
                             <div style="font-weight:bold; color:var(--vip-purple);">⭐ VIP СТАТУС (ИНКОГНИТО)</div>
                             <small style="opacity:0.7; font-size:11px;">Друзья не увидят ваши калории, км и шаги в окне профиля.</small>
-                            <button class="star-btn vip-btn" style="width:100%; justify-content:center;" onclick="window.buyVip()">1000 ⭐️ — АКТИВИРОВАТЬ</button>
+                            <button class="star-btn vip-btn" style="width:100%; justify-content:center;" onclick="window.buyVip()">${window.userState.isVip ? 'АКТИВЕН' : '1000 ⭐️ — АКТИВИРОВАТЬ'}</button>
                         </div>
                     </div>
 
+                    <div class="section-title">Ежедневный бонус</div>
+                    <button class="shop-bonus-btn" onclick="window.claimDailyGift()">🎁 ПОДАРОК ЗА 10 000 ШАГОВ (+20 💰)</button>
+
+                    <div class="section-title">Рамки профиля (50 💰)</div>
+                    <div class="shop-grid-4">
+                        ${frames.map(f => `
+                            <div class="shop-item-mini ${window.userState.frame === f ? 'selected' : ''}" onclick="window.handleFrameAction('${f}', 50)">
+                                <div style="width:38px; height:38px; border:${frameStyles[f]}; border-radius:50%; margin:0 auto 8px;"></div>
+                                <small style="font-weight:bold;">${window.userState.inventoryFrames.includes(f) ? 'ВЗЯТЬ' : '50'}</small>
+                            </div>`).join('')}
+                    </div>
+                    
                     <div class="section-title">Эксклюзивные фоны</div>
                     <div class="shop-grid-4">
                         ${bgs.map(b => `
@@ -293,17 +346,41 @@
         window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
 
         window.buyStars = (coins, stars) => {
-            window.tg.showAlert(`Покупка ${coins} монет за ${stars} ⭐️. Скоро будет доступно!`);
+            window.tg.showAlert(`Покупка ${coins} монет за ${stars} ⭐️ инициирована.`);
         };
 
         window.buyVip = async () => {
+            if(window.userState.isVip) return window.tg.showAlert("VIP статус уже активен!");
             window.tg.showConfirm("Активировать VIP-статус за 1000 ⭐️?", async (ok) => {
                 if(ok) {
                     await db.collection("users").doc(window.userState.id).update({ isVip: true });
-                    window.tg.showAlert("Поздравляем! Теперь вы VIP. 👑 Ваши данные скрыты от друзей.");
+                    window.tg.showAlert("Поздравляем! Теперь вы VIP. 👑");
                     loadData();
                 }
             });
+        };
+
+        window.claimDailyGift = async () => {
+            if (window.userState.steps < 10000) return window.tg.showAlert("Пройди 10 000 шагов за сегодня! 👟");
+            const today = new Date().toLocaleDateString();
+            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Бонус уже получен!");
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 20, "economy.last_gift_date": today });
+            window.tg.showAlert("Бонус +20 💰 зачислен!");
+            loadData();
+        };
+
+        window.handleFrameAction = async (id, price) => {
+            const userDoc = db.collection("users").doc(window.userState.id);
+            if (window.userState.inventoryFrames.includes(id)) { 
+                await userDoc.update({ "selected.frame": id }); 
+            } else if (window.userState.coins >= price) { 
+                await userDoc.update({ 
+                    "economy.balance": window.userState.coins - price, 
+                    "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id), 
+                    "selected.frame": id 
+                }); 
+            } else { window.tg.showAlert("Нужно больше монет! 💰"); }
+            loadData();
         };
 
         window.handleBgAction = async (id, price) => {
@@ -320,6 +397,22 @@
             loadData();
         };
 
+        window.joinTournament = async () => {
+            if (window.userState.isRegistered) return;
+            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 монет! 💰");
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - 50, "tournament.is_registered": true });
+            window.tg.showAlert("Вы зарегистрированы в турнире! 🏁");
+            loadData();
+        };
+
+        window.shareResult = () => {
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent('Мой результат: ' + window.userState.steps + ' шагов!')}`);
+        };
+
+        window.inviteFriends = () => {
+            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`);
+        };
+
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -330,17 +423,43 @@
                 let d = (await userDocRef.get()).data();
                 
                 if (!d) {
-                    await userDocRef.set({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", stats: { steps_today: 0, steps_total: 0 }, economy: { balance: 0 }, inventory: { frames: ['white'], bgs: ['default'] }, selected: { frame: 'white', bg: 'default' }, isVip: false, friends: [] });
+                    await userDocRef.set({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", stats: { steps_today: 0, steps_total: 0 }, economy: { balance: 0 }, inventory: { frames: ['white'], bgs: ['default'] }, selected: { frame: 'white', bg: 'default' }, isVip: false, tournament: {is_registered: false}, friends: [] });
                     d = (await userDocRef.get()).data();
                 }
 
-                window.userState = { ...window.userState, name: d.name, photo_url: d.photo_url, steps: d.stats?.steps_today || 0, coins: d.economy?.balance || 0, bg: d.selected?.bg || 'default', inventoryBgs: d.inventory?.bgs || ['default'], isVip: d.isVip || false, friends: d.friends || [] };
+                const gRef = await db.collection("settings").doc("tournament").get();
+                if (gRef.exists) { 
+                    const gData = gRef.data();
+                    window.userState.lastWinner = gData.last_winner || window.userState.lastWinner; 
+                    window.userState.lastWeekFriendWinner = gData.last_friend_winner || {name: '', photo_url: ''};
+                    window.adminPrizePool = gData.admin_prize || 500;
+                }
+
+                window.userState = { 
+                    ...window.userState, 
+                    name: d.name, photo_url: d.photo_url, 
+                    steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0,
+                    coins: d.economy?.balance || 0, 
+                    frame: d.selected?.frame || 'white', 
+                    bg: d.selected?.bg || 'default', 
+                    inventoryFrames: d.inventory?.frames || ['white'],
+                    inventoryBgs: d.inventory?.bgs || ['default'], 
+                    lastGiftDate: d.economy?.last_gift_date,
+                    isRegistered: d.tournament?.is_registered || false,
+                    isVip: d.isVip || false, 
+                    friends: d.friends || [] 
+                };
                 
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 
-                window.navigate('home');
+                const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
+                window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+                
+                const currentTab = document.querySelector('.tab-item.active span')?.innerText || 'Дом';
+                const tabMap = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
+                window.navigate(tabMap[currentTab] || 'home');
             } catch (e) { console.error(e); }
         }
 
