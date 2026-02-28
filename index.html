@@ -11,10 +11,10 @@
     <div id="app" class="app-viewport"></div>
 
     <div class="tab-bar">
-        <div class="tab-item active" id="btn-home" onclick="navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
-        <div class="tab-item" id="btn-rank" onclick="navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
-        <div class="tab-item" id="btn-tour" onclick="navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
-        <div class="tab-item" id="btn-prof" onclick="navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
+        <div class="tab-item active" id="btn-home" onclick="window.navigate('home', this)"><i>🏠</i><span id="txt-home"></span></div>
+        <div class="tab-item" id="btn-rank" onclick="window.navigate('rank', this)"><i>🏆</i><span id="txt-rank"></span></div>
+        <div class="tab-item" id="btn-tour" onclick="window.navigate('tour', this)"><i>🏁</i><span id="txt-tour"></span></div>
+        <div class="tab-item" id="btn-prof" onclick="window.navigate('prof', this)"><i>👤</i><span id="txt-prof"></span></div>
     </div>
 
     <script src="assets.js"></script>
@@ -23,9 +23,10 @@
     <script type="module">
         import { syncUser, buyVip } from './firebase-logic.js';
 
-        const tg = window.Telegram.WebApp;
+        // 1. Делаем Telegram WebApp глобальным
+        window.tg = window.Telegram.WebApp;
         
-        // Глобальное состояние (window делает его видимым для всех скриптов)
+        // 2. Глобальное состояние (теперь Pages.js его увидит)
         window.userState = { 
             frame: 'blue', 
             steps: 0, 
@@ -34,15 +35,20 @@
             calories: 0 
         };
 
-        const userLang = tg.initDataUnsafe?.user?.language_code;
+        const userLang = window.tg.initDataUnsafe?.user?.language_code;
         window.appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
 
-        // Выносим навигацию в глобальную область
+        // 3. ФУНКЦИЯ НАВИГАЦИИ
         window.navigate = function(pageId, el) {
             try {
                 const app = document.getElementById('app');
-                const user = tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
+                const user = window.tg.initDataUnsafe?.user || { first_name: "User", photo_url: "" };
                 
+                if (pageId === 'shop') {
+                    app.innerHTML = Pages.shop(user, window.userState, window.appLang);
+                    return;
+                }
+
                 if (typeof Pages !== 'undefined' && Pages[pageId]) {
                     app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
                 }
@@ -51,63 +57,78 @@
                     document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                     el.classList.add('active');
                 }
-                if (tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+                if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
             } catch (e) {
                 console.error("Navigation error:", e);
             }
         };
 
-        // Специальная функция для покупки VIP
-        window.handleBuyVip = async () => {
-            const success = await buyVip(tg.initDataUnsafe.user.id);
-            if (success) {
-                // Обновляем локальное состояние после покупки
-                window.userState.isVip = true;
-                window.userState.coins -= 2500;
-                window.navigate('prof');
-            }
+        // 4. ПРИГЛАСИТЬ ДРУЗЕЙ
+        window.inviteFriends = function() {
+            const botUsername = 'StepStarAppBot'; 
+            const inviteText = encodeURIComponent("Привет! Давай считать шаги вместе в StepStar 👟");
+            const inviteUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${inviteText}`;
+            window.tg.openTelegramLink(inviteUrl);
+            if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('medium');
         };
 
-        // Логика вступления в турнир (теперь внутри модуля)
+        // 5. ПОДЕЛИТЬСЯ РЕЗУЛЬТАТОМ
+        window.shareResult = function(steps) {
+            const botUsername = 'StepStarAppBot'; 
+            const message = encodeURIComponent(`Я прошел ${steps} шагов в StepStar! Присоединяйся! 👟`);
+            const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}&text=${message}`;
+            window.tg.openTelegramLink(shareUrl);
+        };
+
+        // 6. ВЫБОР РАМКИ
+        window.changeFrame = function(color) {
+            window.userState.frame = color;
+            window.navigate('shop');
+            if (window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
+        };
+
+        // 7. ВСТУПИТЬ В ТУРНИР
         window.processTournamentJoin = function(fee) {
             if (window.userState.coins >= fee) {
                 const msg = window.appLang === 'ru' ? `Списать ${fee} 💰?` : `Spend ${fee} 💰?`;
-                tg.showConfirm(msg, async (confirm) => {
+                window.tg.showConfirm(msg, (confirm) => {
                     if (confirm) {
-                        // Здесь в будущем добавим updateDoc в Firebase
                         window.userState.coins -= fee;
-                        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                        if (window.tg.HapticFeedback) window.tg.HapticFeedback.notificationOccurred('success');
                         window.navigate('tour');
                     }
                 });
             } else {
-                tg.showAlert(window.appLang === 'ru' ? "Недостаточно монет!" : "Not enough coins!");
+                window.tg.showAlert(window.appLang === 'ru' ? "Недостаточно монет!" : "Not enough coins!");
             }
         };
 
-        // Запуск при загрузке
+        // 8. ЗАПУСК ПРИ ЗАГРУЗКЕ
         window.onload = async () => {
-            tg.expand();
-            tg.ready();
+            window.tg.expand();
+            window.tg.ready();
 
-            // Перевод кнопок меню
-            if (typeof t === 'function') {
-                document.getElementById('txt-home').innerText = t('home', window.appLang);
+            // Перевод таб-бара
+            const homeTab = document.getElementById('txt-home');
+            if (homeTab && typeof t === 'function') {
+                homeTab.innerText = t('home', window.appLang);
                 document.getElementById('txt-rank').innerText = t('rank', window.appLang);
                 document.getElementById('txt-tour').innerText = t('tour', window.appLang);
                 document.getElementById('txt-prof').innerText = t('prof', window.appLang);
             }
 
-            const tgUser = tg.initDataUnsafe?.user;
+            const tgUser = window.tg.initDataUnsafe?.user;
             if (tgUser) {
-                const dbData = await syncUser(tgUser);
-                if (dbData) {
-                    window.userState.coins = dbData.economy.balance;
-                    window.userState.steps = dbData.stats.steps_total;
-                    window.userState.isVip = dbData.settings.is_vip;
-                    window.userState.frame = dbData.selected.frame;
-                    window.userState.calories = dbData.stats.calories_total || 0;
-                }
+                try {
+                    const dbData = await syncUser(tgUser);
+                    if (dbData) {
+                        window.userState.coins = dbData.economy.balance;
+                        window.userState.steps = dbData.stats.steps_total;
+                        window.userState.isVip = dbData.settings.is_vip;
+                        window.userState.frame = dbData.selected.frame;
+                        window.userState.calories = dbData.stats.calories_today || 0;
+                    }
+                } catch (e) { console.error("Firebase sync error:", e); }
             }
 
             window.navigate('home', document.getElementById('btn-home'));
