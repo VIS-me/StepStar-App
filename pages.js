@@ -1,12 +1,19 @@
 const Pages = {
     home: (user, state, lang) => {
         const goal = 10000;
-        const offset = 628 - (628 * Math.min(state.steps / goal, 1));
+        const currentSteps = state.steps || 0;
+        const offset = 628 - (628 * Math.min(currentSteps / goal, 1));
+        
+        // Проверка на наличие функций из assets.js
+        const stepLabel = typeof t === 'function' ? t('steps', lang) : 'steps';
+        const shareText = typeof t === 'function' ? t('shareBtn', lang) : 'Share';
+        const frameStyle = typeof getFrameStyle === 'function' ? getFrameStyle(state.frame) : '4px solid white';
+
         return `
         <div class="page-content home-center">
             <div class="avatar-section">
                 <div class="avatar-wrapper">
-                    <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
+                    <div class="profile-frame" style="border: ${frameStyle}"></div>
                     <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.style.display='none'">
                 </div>
                 <h3 class="centered-name">${user.first_name || 'User'}</h3>
@@ -18,16 +25,16 @@ const Pages = {
                             style="stroke-dashoffset: ${offset}; stroke-dasharray: 628;"/>
                 </svg>
                 <div class="steps-content">
-                    <h1>${state.steps.toLocaleString()}</h1>
-                    <div class="steps-label">${t('steps', lang)}</div>
+                    <h1>${currentSteps.toLocaleString()}</h1>
+                    <div class="steps-label">${stepLabel}</div>
                 </div>
             </div>
             <div class="stats-grid">
-                <div class="stat-item"><span>${Math.round(state.steps * 0.04)}</span><label>${t('kcal', lang)}</label></div>
-                <div class="stat-item"><span>${(state.steps * 0.0007).toFixed(1)}</span><label>${t('km', lang)}</label></div>
-                <div class="stat-item"><span>${Math.round(state.steps / 100)}</span><label>${t('min', lang)}</label></div>
+                <div class="stat-item"><span>${Math.round(currentSteps * 0.04)}</span><label>${typeof t === 'function' ? t('kcal', lang) : 'kcal'}</label></div>
+                <div class="stat-item"><span>${(currentSteps * 0.0007).toFixed(1)}</span><label>${typeof t === 'function' ? t('km', lang) : 'km'}</label></div>
+                <div class="stat-item"><span>${Math.round(currentSteps / 100)}</span><label>${typeof t === 'function' ? t('min', lang) : 'min'}</label></div>
             </div>
-            <button class="main-button" onclick="shareResult(${state.steps})">${t('shareBtn', lang)}</button>
+            <button class="main-button" onclick="window.shareResult(${currentSteps})">${shareText}</button>
         </div>`;
     },
 
@@ -44,12 +51,12 @@ const Pages = {
             </div>
             <div class="user-rank-bar" style="display:flex; justify-content:space-between; padding:15px 25px; background:rgba(36,139,207,0.15); margin:10px 20px; border-radius:15px;">
                 <span>#124 ${user.first_name}</span>
-                <strong style="color:var(--main-color);">${state.steps.toLocaleString()}</strong>
+                <strong style="color:var(--main-color);">${(state.steps || 0).toLocaleString()}</strong>
             </div>
             <div class="top-ten-list">
                 <div style="padding:15px 20px; opacity:0.5; font-size:12px; font-weight:bold;">ДРУЗЬЯ</div>
                 ${friends.map(f => `<div class="table-row"><span class="t-pos">${f.pos}</span><div class="rank-photo-mini"></div><span class="t-name">${f.name}</span><span class="t-steps">${f.steps.toLocaleString()}</span></div>`).join('')}
-                <div class="invite-row-btn" onclick="inviteFriends()" style="text-align:center; padding:15px; cursor:pointer;">➕ ${t('invite', lang)}</div>
+                <div class="invite-row-btn" onclick="window.tg.showAlert('Coming soon')" style="text-align:center; padding:15px; cursor:pointer;">➕ ${t('invite', lang)}</div>
             </div>
         </div>`;
     },
@@ -75,11 +82,11 @@ const Pages = {
                 <h3 class="centered-name">${user.first_name || 'User'} ${state.isVip ? '👑' : ''}</h3>
             </div>
             <div class="info-block">
-                <div class="info-item">${lang === 'ru' ? 'Шаги' : 'Steps'} <span>${state.steps.toLocaleString()}</span></div>
-                <div class="info-item">${lang === 'ru' ? 'Калории' : 'Calories'} <span>${Math.round(state.steps * 0.04)}</span></div>
+                <div class="info-item">${lang === 'ru' ? 'Шаги' : 'Steps'} <span>${(state.steps || 0).toLocaleString()}</span></div>
+                <div class="info-item">${lang === 'ru' ? 'Калории' : 'Calories'} <span>${Math.round((state.steps || 0) * 0.04)}</span></div>
             </div>
             <div class="info-block wallet-row" style="display:flex; justify-content:space-between; align-items:center; padding: 15px 20px;">
-                <div><div class="wallet-label">${t('balance', lang)}</div><div class="wallet-amount">💰 ${state.coins.toLocaleString()}</div></div>
+                <div><div class="wallet-label">${t('balance', lang)}</div><div class="wallet-amount">💰 ${(state.coins || 0).toLocaleString()}</div></div>
                 <button class="go-shop-btn" onclick="window.navigate('shop')" style="background:var(--main-color); border:none; color:white; padding:8px 15px; border-radius:10px;">${t('shop', lang)} →</button>
             </div>
         </div>`,
@@ -102,35 +109,15 @@ const Pages = {
             `<div class="shop-card" style="grid-column: span 2; border: 2px solid #FFD700; background: rgba(255,215,0,0.05);">
                 <h3 style="margin:5px">👑 ${t('vip_status', lang)}</h3>
                 <p style="font-size:10px; margin-bottom:10px;">${t('vip_desc', lang)}</p>
-                <button class="buy-btn" style="background:#FFD700; color:#000; width:80%; padding:10px; border-radius:10px; border:none; font-weight:bold;" onclick="handleVipPurchase()">2500 💰</button>
+                <button class="buy-btn" style="background:#FFD700; color:#000; width:80%; padding:10px; border-radius:10px; border:none; font-weight:bold;" onclick="window.handleVipPurchase()">2500 💰</button>
             </div>`;
 
         const gridHtml = frames.map(item => {
-            const isOwned = state.inventoryFrames.includes(item.id);
+            const isOwned = (state.inventoryFrames || []).includes(item.id);
             const isSelected = state.frame === item.id;
             let btnText = isOwned ? 'Select' : `${item.price} 💰`;
             if (isSelected) btnText = 'Equipped';
 
             return `
                 <div class="shop-card ${isSelected ? 'active-frame' : ''}">
-                    <div class="avatar-wrapper" style="width:50px; height:50px;">
-                        <div class="profile-frame" style="border: ${getFrameStyle(item.id)}"></div>
-                        <img src="${user.photo_url || ''}" class="user-avatar" style="width:80%; height:80%;">
-                    </div>
-                    <p style="font-size:12px; margin:5px 0;">${item.name}</p>
-                    <button class="shop-btn ${isOwned ? 'select-btn' : 'buy-btn'}" 
-                            onclick="window.handleFrameAction('${item.id}', ${item.price})" ${isSelected ? 'disabled' : ''}>
-                        ${btnText}
-                    </button>
-                </div>`;
-        }).join('');
-
-        return `
-            <div class="page-content shop-page">
-                <h2 style="text-align:center; margin-top:20px;">${t('shop', lang)}</h2>
-                <div style="text-align:center; color:var(--accent-gold); font-size:20px; font-weight:800; margin-bottom:20px;">💰 ${state.coins}</div>
-                <div class="shop-grid-large">${vipCard}${gridHtml}</div>
-                <button class="main-button" style="background:rgba(255,255,255,0.05);" onclick="window.navigate('prof')">Back</button>
-            </div>`;
-    }
-};
+                    <div class="avatar-wrapper" style
