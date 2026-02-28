@@ -45,6 +45,21 @@
         window.tourUsers = [];
         window.appLang = (window.tg.initDataUnsafe?.user?.language_code === 'ru') ? 'ru' : 'en';
 
+        // Глобальная функция для отрисовки рамок
+        window.getFrameStyle = function(id) {
+            const styles = {
+                'white': '3px solid #ffffff',
+                'green': '3px solid #4CAF50',
+                'lightblue': '3px solid #00BCD4',
+                'blue': '3px solid #2196F3',
+                'pink': '3px solid #E91E63',
+                'purple': '3px solid #9C27B0',
+                'gold': '3px solid #FFD700',
+                'gold_vip_frame': '4px double #FFD700'
+            };
+            return styles[id] || styles['white'];
+        };
+
         window.navigate = function(pageId, el) {
             const app = document.getElementById('app');
             const user = window.tg.initDataUnsafe?.user || { first_name: "Walker", photo_url: "" };
@@ -58,38 +73,31 @@
             }
         };
 
-        // Живые рейтинги из БД
         async function loadRankings() {
             try {
-                // Общий топ (по всем шагам)
                 const snap = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
                 window.topUsers = snap.docs.map((d, i) => ({ pos: i+1, ...d.data() }));
-                
-                // Топ турнира (кто зарегистрирован и сегодня прошел больше всех)
                 const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true)
                     .orderBy("stats.steps_today", "desc").limit(10).get();
                 window.tourUsers = tourSnap.docs.map((d, i) => ({ pos: i+1, ...d.data() }));
-            } catch (e) { console.error("Rank error:", e); }
+            } catch (e) { console.error(e); }
         }
 
-        // Кнопка пригласить
         window.inviteFriends = function() {
-            const text = "Присоединяйся к StepStar! Давай соревноваться в шагах! 👟✨";
+            const text = "Соревнуйся со мной в StepStar! 👟";
             window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(text)}`);
         };
 
-        // Покупка за звезды
         window.buyStars = function(stars, coins) {
             window.tg.showConfirm(`Купить ${coins} монет за ${stars} ⭐️?`, (ok) => {
-                if(ok) window.tg.showAlert("Для активации платежей настройте Invoice в BotFather.");
+                if(ok) window.tg.showAlert("Для оплаты звездами нужно создать Invoice в BotFather.");
             });
         };
 
-        // Ежедневный бонус
         window.claimDailyBonus = async function() {
             const today = new Date().toISOString().split('T')[0];
             if (window.userState.last_bonus === today) return window.tg.showAlert("Уже получено сегодня!");
-            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10,000 шагов за сегодня!");
+            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10,000 шагов!");
 
             const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
             await userRef.update({
@@ -98,11 +106,10 @@
             });
             window.userState.coins += 10;
             window.userState.last_bonus = today;
-            window.tg.showAlert("Начислено 10 💰!");
+            window.tg.showAlert("Получено 10 💰!");
             window.navigate('shop');
         };
 
-        // Магазин: рамки
         window.handleFrameAction = async (id, price) => {
             const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
             if (window.userState.inventoryFrames.includes(id)) {
@@ -117,20 +124,21 @@
                     "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id),
                     "selected.frame": id
                 });
+            } else {
+                window.tg.showAlert("Недостаточно монет!");
             }
             window.navigate('shop');
         };
 
-        // Участие в турнире
         window.joinTournament = async () => {
-            if (window.userState.coins < 50) return window.tg.showAlert("Недостаточно 50 💰");
+            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
             const userRef = db.collection("users").doc(String(window.tg.initDataUnsafe.user.id));
             await userRef.update({
                 "economy.balance": firebase.firestore.FieldValue.increment(-50),
                 "tournament.is_registered": true
             });
             window.userState.coins -= 50;
-            window.tg.showAlert("Вы зарегистрированы в турнире!");
+            window.tg.showAlert("Вы участвуете!");
             await loadRankings();
             window.navigate('tour');
         };
@@ -150,20 +158,9 @@
                         steps_total: d.stats?.steps_total || 0,
                         coins: d.economy?.balance || 0,
                         frame: d.selected?.frame || 'white',
-                        isVip: d.settings?.is_vip || false,
                         inventoryFrames: d.inventory?.frames || ['white'],
                         last_bonus: d.economy?.last_bonus || null
                     };
-                } else {
-                    await userRef.set({ 
-                        name: tgUser.first_name, 
-                        photo_url: tgUser.photo_url || "",
-                        economy: { balance: 0 }, 
-                        stats: { steps_today: 0, steps_week: 0, steps_month: 0, steps_total: 0 }, 
-                        inventory: { frames: ['white'] }, 
-                        selected: { frame: 'white' },
-                        tournament: { is_registered: false }
-                    });
                 }
                 await loadRankings();
             }
