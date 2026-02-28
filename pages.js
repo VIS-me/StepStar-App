@@ -3,17 +3,11 @@ const Pages = {
         const goal = 10000;
         const currentSteps = state.steps || 0;
         const offset = 628 - (628 * Math.min(currentSteps / goal, 1));
-        
-        // Проверка на наличие функций из assets.js
-        const stepLabel = typeof t === 'function' ? t('steps', lang) : 'steps';
-        const shareText = typeof t === 'function' ? t('shareBtn', lang) : 'Share';
-        const frameStyle = typeof getFrameStyle === 'function' ? getFrameStyle(state.frame) : '4px solid white';
-
         return `
         <div class="page-content home-center">
             <div class="avatar-section">
                 <div class="avatar-wrapper">
-                    <div class="profile-frame" style="border: ${frameStyle}"></div>
+                    <div class="profile-frame" style="border: ${getFrameStyle(state.frame)}"></div>
                     <img src="${user.photo_url || ''}" class="user-avatar" onerror="this.style.display='none'">
                 </div>
                 <h3 class="centered-name">${user.first_name || 'User'}</h3>
@@ -26,24 +20,18 @@ const Pages = {
                 </svg>
                 <div class="steps-content">
                     <h1>${currentSteps.toLocaleString()}</h1>
-                    <div class="steps-label">${stepLabel}</div>
+                    <div class="steps-label">${t('steps', lang)}</div>
                 </div>
             </div>
             <div class="stats-grid">
-                <div class="stat-item"><span>${Math.round(currentSteps * 0.04)}</span><label>${typeof t === 'function' ? t('kcal', lang) : 'kcal'}</label></div>
-                <div class="stat-item"><span>${(currentSteps * 0.0007).toFixed(1)}</span><label>${typeof t === 'function' ? t('km', lang) : 'km'}</label></div>
-                <div class="stat-item"><span>${Math.round(currentSteps / 100)}</span><label>${typeof t === 'function' ? t('min', lang) : 'min'}</label></div>
+                <div class="stat-item"><span>${Math.round(currentSteps * 0.04)}</span><label>${t('kcal', lang)}</label></div>
+                <div class="stat-item"><span>${(currentSteps * 0.0007).toFixed(1)}</span><label>${t('km', lang)}</label></div>
+                <div class="stat-item"><span>${Math.round(currentSteps / 100)}</span><label>${t('min', lang)}</label></div>
             </div>
-            <button class="main-button" onclick="window.shareResult(${currentSteps})">${shareText}</button>
+            <button class="main-button" onclick="window.shareResult(${currentSteps})">${t('shareBtn', lang)}</button>
         </div>`;
     },
-
     rank: (user, state, lang) => {
-        const friends = [
-            { pos: 1, name: "Алексей", steps: 12400 },
-            { pos: 2, name: "Мария", steps: 10200 },
-            { pos: 3, name: "Иван К.", steps: 9800 }
-        ];
         return `
         <div class="page-content rank-page">
             <div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1000')">
@@ -55,23 +43,10 @@ const Pages = {
             </div>
             <div class="top-ten-list">
                 <div style="padding:15px 20px; opacity:0.5; font-size:12px; font-weight:bold;">ДРУЗЬЯ</div>
-                ${friends.map(f => `<div class="table-row"><span class="t-pos">${f.pos}</span><div class="rank-photo-mini"></div><span class="t-name">${f.name}</span><span class="t-steps">${f.steps.toLocaleString()}</span></div>`).join('')}
                 <div class="invite-row-btn" onclick="window.tg.showAlert('Coming soon')" style="text-align:center; padding:15px; cursor:pointer;">➕ ${t('invite', lang)}</div>
             </div>
         </div>`;
     },
-
-    tour: (user, state, lang) => `
-        <div class="page-content tour-page">
-            <div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000')">
-                <div class="leader-overlay"><div class="leader-info"><span class="crown-badge">👑 ${t('winner', lang)}</span><h2 class="leader-name-big">Champion_2026</h2></div></div>
-            </div>
-            <div class="join-tournament-card" style="margin:20px; background:rgba(255,255,255,0.05); padding:20px; border-radius:20px; text-align:center;">
-                <p style="margin-bottom:15px; opacity:0.7;">Регистрация с 20-го числа</p>
-                <button class="main-button" onclick="window.tg.showAlert('Регистрация откроется 20 марта!')">${t('joinBtn', lang)} 50 💰</button>
-            </div>
-        </div>`,
-
     prof: (user, state, lang) => `
         <div class="page-content">
             <div class="profile-header" style="text-align:center; padding: 20px 0;">
@@ -90,7 +65,6 @@ const Pages = {
                 <button class="go-shop-btn" onclick="window.navigate('shop')" style="background:var(--main-color); border:none; color:white; padding:8px 15px; border-radius:10px;">${t('shop', lang)} →</button>
             </div>
         </div>`,
-
     shop: (user, state, lang) => {
         const frames = [
             { id: 'white', name: 'White', price: 0 },
@@ -100,24 +74,13 @@ const Pages = {
             { id: 'pink', name: 'Pink', price: 50 },
             { id: 'purple', name: 'Purple', price: 50 }
         ];
-
-        const vipCard = state.isVip ? 
-            `<div class="shop-card active-frame" style="grid-column: span 2; background: linear-gradient(45deg, #FFD700, #b8860b); color: #000; border:none;">
-                <h3 style="margin:5px">👑 VIP ACTIVE</h3>
-                <p style="font-size:10px">Privacy & Gold Frame On</p>
-            </div>` :
-            `<div class="shop-card" style="grid-column: span 2; border: 2px solid #FFD700; background: rgba(255,215,0,0.05);">
-                <h3 style="margin:5px">👑 ${t('vip_status', lang)}</h3>
-                <p style="font-size:10px; margin-bottom:10px;">${t('vip_desc', lang)}</p>
-                <button class="buy-btn" style="background:#FFD700; color:#000; width:80%; padding:10px; border-radius:10px; border:none; font-weight:bold;" onclick="window.handleVipPurchase()">2500 💰</button>
-            </div>`;
-
+        const vipCard = state.isVip ? `<div class="shop-card active-frame" style="grid-column: span 2; background: linear-gradient(45deg, #FFD700, #b8860b); color: #000; border:none;"><h3>👑 VIP ACTIVE</h3></div>` : `<div class="shop-card" style="grid-column: span 2; border: 2px solid #FFD700;"><h3 style="margin:5px">👑 ${t('vip_status', lang)}</h3><button class="buy-btn" onclick="window.handleVipPurchase()">2500 💰</button></div>`;
         const gridHtml = frames.map(item => {
-            const isOwned = (state.inventoryFrames || []).includes(item.id);
+            const isOwned = state.inventoryFrames.includes(item.id);
             const isSelected = state.frame === item.id;
-            let btnText = isOwned ? 'Select' : `${item.price} 💰`;
-            if (isSelected) btnText = 'Equipped';
-
-            return `
-                <div class="shop-card ${isSelected ? 'active-frame' : ''}">
-                    <div class="avatar-wrapper" style
+            return `<div class="shop-card ${isSelected ? 'active-frame' : ''}"><div class="avatar-wrapper" style="width:50px; height:50px;"><div class="profile-frame" style="border: ${getFrameStyle(item.id)}"></div><img src="${user.photo_url}" class="user-avatar" style="width:80%; height:80%;"></div><p>${item.name}</p><button class="shop-btn" onclick="window.handleFrameAction('${item.id}', ${item.price})">${isSelected ? 'Equipped' : (isOwned ? 'Select' : item.price + ' 💰')}</button></div>`;
+        }).join('');
+        return `<div class="page-content shop-page"><h2 style="text-align:center;">${t('shop', lang)}</h2><div style="text-align:center; color:var(--accent-gold); font-size:20px; margin-bottom:20px;">💰 ${state.coins}</div><div class="shop-grid-large">${vipCard}${gridHtml}</div></div>`;
+    },
+    tour: (user, state, lang) => `<div class="page-content tour-page"><div class="leader-banner" style="background-image: url('https://images.unsplash.com/photo-1552674605-db6ffd4facb5?q=80&w=1000')"><div class="leader-overlay"><h2>Турниры</h2></div></div><div style="padding:20px; text-align:center;">${t('noTour', lang)}</div></div>`
+};
