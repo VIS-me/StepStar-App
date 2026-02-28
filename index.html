@@ -297,7 +297,7 @@
                 await db.collection("users").doc(myId).set({
                     name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
                     stats: { steps_today: 0, steps_total: 0 },
-                    economy: { balance: 100 },
+                    economy: { balance: 0 },
                     inventory: { frames: ['white'] },
                     selected: { frame: 'white' },
                     tournament: { is_registered: false }
