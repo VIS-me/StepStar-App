@@ -12,7 +12,10 @@
 </head>
 <body>
     <div id="app" class="app-viewport">
-        <div style="padding:50px; text-align:center; color:white;">🚀 Запуск StepStar...</div>
+        <div style="padding:50px; text-align:center; color:white; font-family:sans-serif;">
+            <div class="loader">🚀</div>
+            <p>Запуск StepStar...</p>
+        </div>
     </div>
 
     <div class="tab-bar">
@@ -26,7 +29,7 @@
     <script src="pages.js"></script>
 
     <script>
-        // 1. Настройка Firebase (Compat версия для надежности)
+        // 1. Настройка Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -44,16 +47,18 @@
         window.userState = { 
             frame: 'white', steps: 0, coins: 0, isVip: false, inventoryFrames: ['white'] 
         };
+        
         const userLang = window.tg.initDataUnsafe?.user?.language_code;
         window.appLang = (userLang === 'ru' || userLang === 'uk') ? userLang : 'en';
 
-        // 3. Функция навигации
+        // 3. Навигация
         window.navigate = function(pageId, el) {
             const app = document.getElementById('app');
             const user = window.tg.initDataUnsafe?.user || { first_name: "Walker", photo_url: "" };
             
             if (typeof Pages !== 'undefined' && Pages[pageId]) {
                 app.innerHTML = Pages[pageId](user, window.userState, window.appLang);
+                if (window.tg.HapticFeedback) window.tg.HapticFeedback.impactOccurred('light');
             }
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
@@ -61,7 +66,7 @@
             }
         };
 
-        // 4. Логика синхронизации (замена firebase-logic.js)
+        // 4. Логика Firebase
         async function syncUser(tgUser) {
             const userRef = db.collection("users").doc(String(tgUser.id));
             const doc = await userRef.get();
@@ -89,7 +94,71 @@
             }
         }
 
-        // 5. Инициализация
+        // 5. Функции кнопок (Магазин, VIP, Шаринг)
+        window.handleFrameAction = async function(color, price) {
+            const userId = window.tg.initDataUnsafe?.user?.id;
+            if (!userId) return;
+
+            const userRef = db.collection("users").doc(String(userId));
+            const isOwned = window.userState.inventoryFrames.includes(color);
+
+            if (isOwned) {
+                window.userState.frame = color;
+                await userRef.update({ "selected.frame": color });
+                window.navigate('shop');
+            } else {
+                if (window.userState.coins >= price) {
+                    window.tg.showConfirm(`Купить за ${price} 💰?`, async (confirm) => {
+                        if (confirm) {
+                            await userRef.update({
+                                "economy.balance": firebase.firestore.FieldValue.increment(-price),
+                                "inventory.frames": firebase.firestore.FieldValue.arrayUnion(color),
+                                "selected.frame": color
+                            });
+                            window.userState.coins -= price;
+                            window.userState.frame = color;
+                            window.userState.inventoryFrames.push(color);
+                            window.navigate('shop');
+                            window.tg.HapticFeedback.notificationOccurred('success');
+                        }
+                    });
+                } else {
+                    window.tg.showAlert("Недостаточно монет!");
+                }
+            }
+        };
+
+        window.handleVipPurchase = async function() {
+            const userId = window.tg.initDataUnsafe?.user?.id;
+            if (window.userState.coins >= 2500) {
+                window.tg.showConfirm("Купить VIP за 2500 💰?", async (confirm) => {
+                    if(confirm) {
+                        const userRef = db.collection("users").doc(String(userId));
+                        await userRef.update({
+                            "settings.is_vip": true,
+                            "economy.balance": firebase.firestore.FieldValue.increment(-2500),
+                            "inventory.frames": firebase.firestore.FieldValue.arrayUnion('gold_vip_frame'),
+                            "selected.frame": 'gold_vip_frame'
+                        });
+                        window.userState.isVip = true;
+                        window.userState.coins -= 2500;
+                        window.userState.frame = 'gold_vip_frame';
+                        window.navigate('prof');
+                        window.tg.showAlert("👑 VIP АКТИВИРОВАН!");
+                    }
+                });
+            } else {
+                window.tg.showAlert("Нужно 2500 монет!");
+            }
+        };
+
+        window.shareResult = function(steps) {
+            const msg = t('shareMsg', window.appLang).replace('{n}', steps);
+            const url = `https://t.me/share/url?url=https://t.me/StepStarAppBot&text=${encodeURIComponent(msg)}`;
+            window.tg.openTelegramLink(url);
+        };
+
+        // 6. Старт
         async function start() {
             window.tg.ready();
             window.tg.expand();
@@ -105,14 +174,16 @@
                     window.userState.isVip = data.settings?.is_vip || false;
                 }
             } catch (e) {
-                console.error(e);
+                console.error("Firebase Sync Error:", e);
             }
 
-            // Переводим меню
-            document.getElementById('txt-home').innerText = t('home', window.appLang);
-            document.getElementById('txt-rank').innerText = t('rank', window.appLang);
-            document.getElementById('txt-tour').innerText = t('tour', window.appLang);
-            document.getElementById('txt-prof').innerText = t('prof', window.appLang);
+            // Локализация меню
+            if (typeof t === 'function') {
+                document.getElementById('txt-home').innerText = t('home', window.appLang);
+                document.getElementById('txt-rank').innerText = t('rank', window.appLang);
+                document.getElementById('txt-tour').innerText = t('tour', window.appLang);
+                document.getElementById('txt-prof').innerText = t('prof', window.appLang);
+            }
 
             window.navigate('home', document.getElementById('btn-home'));
         }
