@@ -85,7 +85,6 @@
                 friends: d.friends || []
             };
 
-            // Загрузка списков
             const snapRank = await db.collection("users").orderBy("stats.steps_total", "desc").limit(10).get();
             window.topUsers = snapRank.docs.map(doc => ({ ...doc.data(), steps_total: doc.data().stats.steps_total }));
             
@@ -98,7 +97,6 @@
             const snapTour = await db.collection("users").where("tournament.is_registered", "==", true).orderBy("stats.steps_today", "desc").limit(10).get();
             window.tourUsers = snapTour.docs.map(doc => ({ ...doc.data(), steps_today: doc.data().stats.steps_today }));
 
-            // АВТОМАТИЧЕСКИЙ ПЕРЕХОД НА ГЛАВНУЮ ПОСЛЕ ЗАГРУЗКИ
             window.navigate('home');
         }
 
@@ -125,6 +123,14 @@
                 window.userState.frame = id;
                 await userRef.update({ "economy.balance": window.userState.coins, "inventory.frames": window.userState.inventoryFrames, "selected.frame": id });
             }
+            window.navigate('shop');
+        };
+
+        window.claimDailyBonus = async () => {
+            if (window.userState.steps < 10000) return window.tg.showAlert("Нужно 10,000 шагов!");
+            window.userState.coins += 10;
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins });
+            window.tg.showAlert("Бонус получен!");
             window.navigate('shop');
         };
 
