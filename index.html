@@ -28,54 +28,52 @@
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
-        /* Home Stats */
+        /* HOME PAGE STYLES */
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
         .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
-        /* Leader Section (Rating Page) */
-        .leader-hero {
+        /* RATING PAGE STYLES */
+        .leader-hero-container {
             position: relative;
             width: 100%;
-            height: 280px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-color)), url('https://images.unsplash.com/photo-1551632432-c735e7a03288?q=80&w=1000&auto=format&fit=crop'); /* Заглушка фона */
-            background-size: cover;
-            background-position: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: center;
-            padding-bottom: 20px;
+            height: 45vh; /* Почти пол-экрана */
+            overflow: hidden;
         }
-        .leader-avatar-big {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            border: 4px solid var(--accent-gold);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+        .leader-img-full {
+            width: 100%;
+            height: 100%;
             object-fit: cover;
         }
-        .my-score-overlay {
+        .leader-info-overlay {
             position: absolute;
-            bottom: 20px; right: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: right;
+            bottom: 0; left: 0; right: 0;
+            padding: 40px 20px 20px;
+            background: linear-gradient(to top, var(--bg-color), transparent);
+            text-align: left;
+        }
+        .my-rank-card {
+            background: var(--main-color);
+            margin: -30px 20px 20px;
+            padding: 15px 20px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
 
-        /* Rating List */
-        .rating-list { padding: 10px; }
-        .table-row { display: flex; align-items: center; padding: 12px 15px; border-radius: 15px; margin-bottom: 5px; background: rgba(255,255,255,0.02); }
-        .top-1 { background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.2); }
-        .top-2 { background: rgba(192, 192, 192, 0.1); }
-        .top-3 { background: rgba(205, 127, 50, 0.1); }
-        .rank-num { width: 30px; font-weight: bold; opacity: 0.5; }
-        .rank-photo-mini { width: 40px; height: 40px; border-radius: 50%; margin: 0 12px; object-fit: cover; background: #333; }
+        .section-title { padding: 10px 25px; font-size: 14px; font-weight: bold; opacity: 0.6; letter-spacing: 1px; }
         
-        /* Tab Bar */
+        /* TABLE STYLES */
+        .table-row { display: flex; align-items: center; padding: 12px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .rank-num { width: 25px; font-size: 14px; opacity: 0.5; }
+        .rank-photo-mini { width: 38px; height: 38px; border-radius: 50%; margin: 0 12px; object-fit: cover; background: #333; }
+        
+        /* TAB BAR */
         .tab-bar { 
             height: 70px; display: flex; background: #15171a; 
             position: fixed; bottom: 0; width: 100%; 
@@ -85,11 +83,11 @@
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        /* Avatars & Shop */
+        /* AVATARS & SHOP */
         .avatar-wrapper { position: relative; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 84%; height: 84%; border-radius: 50%; object-fit: cover; background: #333; }
-        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; }
+        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 18px; font-size: 15px; font-weight: bold; margin: 10px auto; display: block; cursor: pointer; }
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
         .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; display: flex; flex-direction: column; align-items: center; border: 2px solid transparent; }
         .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin-bottom: 8px; background: rgba(255,255,255,0.05); flex-shrink: 0; }
@@ -123,7 +121,7 @@
         const db = firebase.firestore();
 
         window.tg = window.Telegram.WebApp;
-        window.userState = { frame: 'white', steps: 0, steps_total: 0, coins: 0, inventoryFrames: ['white'], isRegistered: false, friends: [] };
+        window.userState = { id: '', frame: 'white', steps: 0, steps_total: 0, coins: 0, inventoryFrames: ['white'], isRegistered: false, friends: [] };
         window.friendUsers = []; window.tourUsers = [];
 
         const frameStyles = {
@@ -171,27 +169,41 @@
             if (pageId === 'rank') {
                 const leader = window.friendUsers[0] || { name: "Лидер", photo_url: "" };
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
+                const top3 = window.friendUsers.slice(0, 3);
+
                 appDiv.innerHTML = `
-                    <div class="leader-hero">
-                        <img src="${leader.photo_url}" class="leader-avatar-big" onerror="this.src='https://ui-avatars.com/api/?name=L'">
-                        <h2 style="margin: 10px 0 5px;">${leader.name}</h2>
-                        <div style="font-size:12px; color:var(--accent-gold); font-weight:bold;">ЛИДЕР НЕДЕЛИ</div>
-                        <div class="my-score-overlay">
-                            <div style="font-size:10px; opacity:0.6;">МОЙ РАНГ</div>
-                            <div style="font-size:18px; font-weight:bold;">#${myIndex || '-'}</div>
-                            <div style="font-size:10px; color:var(--main-color);">${window.userState.steps.toLocaleString()} ш.</div>
+                    <div class="leader-hero-container">
+                        <img src="${leader.photo_url || 'https://images.unsplash.com/photo-1551632432-c735e7a03288?w=800'}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=L&size=512'">
+                        <div class="leader-info-overlay">
+                            <div style="font-size:12px; opacity:0.8; margin-bottom:4px;">ЛИДЕР НЕДЕЛИ</div>
+                            <h2 style="margin:0; font-size:28px;">${leader.name}</h2>
                         </div>
                     </div>
+
+                    <div class="my-rank-card">
+                        <div>
+                            <div style="font-size:10px; opacity:0.7;">ВАШЕ МЕСТО</div>
+                            <div style="font-size:22px; font-weight:bold;">#${myIndex || '-'}</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-size:10px; opacity:0.7;">СЕГОДНЯ</div>
+                            <div style="font-size:20px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">ТОП-3</div>
                     <div class="rating-list">
-                        ${window.friendUsers.map((u, i) => `
-                            <div class="table-row ${i < 3 ? 'top-' + (i+1) : ''}">
+                        ${top3.map((u, i) => `
+                            <div class="table-row">
                                 <span class="rank-num">${i + 1}</span>
                                 <img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'">
-                                <span style="flex:1; font-weight:${i < 3 ? 'bold' : 'normal'}">${u.name} ${u.id === window.userState.id ? '(Вы)' : ''}</span>
-                                <b>${(u.stats?.steps_today || 0).toLocaleString()}</b>
+                                <span style="flex:1;">${u.name} ${u.id === window.userState.id ? '(Вы)' : ''}</span>
+                                <b style="${i === 0 ? 'color:var(--accent-gold);' : ''}">${(u.stats?.steps_today || 0).toLocaleString()}</b>
                             </div>
                         `).join('')}
-                    </div>`;
+                    </div>
+                    
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
             }
 
             if (pageId === 'tour') {
@@ -202,7 +214,7 @@
                         <div style="opacity:0.6; font-size:11px;">ПРИЗОВОЙ ФОНД</div>
                     </div>
                     ${!window.userState.isRegistered ? `<button class="main-button" style="background:var(--accent-gold); color:black;" onclick="window.joinTournament()">Вступить за 50 💰</button>` : `<div style="text-align:center; padding:20px; color:#00FF00;">✅ ВЫ УЧАСТНИК</div>`}
-                    <div style="padding:10px 20px; opacity:0.4; font-size:11px;">УЧАСТНИКИ</div>
+                    <div class="section-title">УЧАСТНИКИ</div>
                     ${window.tourUsers.map((u, i) => `<div class="table-row"><span>${i+1}</span><img src="${u.photo_url}" class="rank-photo-mini" onerror="this.src='https://ui-avatars.com/api/?name=${u.name}'"><span style="flex:1;">${u.name}</span><b>${(u.stats?.steps_today || 0).toLocaleString()}</b></div>`).join('')}
                 `;
             }
@@ -281,7 +293,6 @@
                     friends: d.friends || []
                 };
 
-                // Загружаем друзей и себя для рейтинга
                 const fIds = [...window.userState.friends, window.userState.id];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
