@@ -24,21 +24,23 @@
             font-family: -apple-system, system-ui, sans-serif;
             background: var(--bg-color); color: var(--text-color);
             height: 100vh; width: 100vw; overflow: hidden;
+            transition: background 0.3s;
         }
+
+        /* Динамические фоны */
+        body.bg-cats { background: linear-gradient(rgba(26,28,32,0.8), rgba(26,28,32,0.8)), url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500') center/cover !important; }
+        body.bg-dogs { background: linear-gradient(rgba(26,28,32,0.8), rgba(26,28,32,0.8)), url('https://images.unsplash.com/photo-1517849845537-4d257902454a?w=500') center/cover !important; }
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
-        .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; }
+        .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(5px); }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
         .leader-hero-container { position: relative; width: 100%; height: 40vh; overflow: hidden; background: #222; }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
-        .leader-info-overlay {
-            position: absolute; bottom: 50px; left: 25px; text-align: left; z-index: 5;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
-        }
+        .leader-info-overlay { position: absolute; bottom: 50px; left: 25px; text-align: left; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
         
         .my-rank-card {
             background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -55,7 +57,7 @@
             border: 1px solid rgba(255,215,0,0.3);
         }
 
-        .section-title { padding: 10px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.4; letter-spacing: 1.2px; text-transform: uppercase; }
+        .section-title { padding: 15px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.4; letter-spacing: 1.2px; text-transform: uppercase; }
         
         .table-row { display: flex; align-items: center; padding: 12px 25px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .rank-num { width: 25px; font-size: 14px; opacity: 0.5; font-weight: bold; }
@@ -69,9 +71,17 @@
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 15px; }
+        /* Магазин спец-блоки */
+        .shop-promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 15px; margin-bottom: 15px; }
+        .promo-card { background: var(--secondary-bg); border-radius: 15px; padding: 10px 5px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); }
+        .promo-card i { display: block; font-style: normal; font-size: 20px; margin-bottom: 5px; }
+        .promo-card b { display: block; font-size: 11px; color: var(--accent-gold); }
+        .promo-card span { font-size: 8px; opacity: 0.6; display: flex; align-items: center; justify-content: center; gap: 2px; }
+
+        .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0 15px; margin-bottom: 20px; }
         .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; }
-        .frame-preview { width: 45px; height: 45px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
+        .frame-preview { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
+        .bg-preview { width: 40px; height: 40px; border-radius: 8px; margin: 0 auto 8px; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
 
         .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; }
         
@@ -79,7 +89,7 @@
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; }
 
-        .profile-stats-list { background: var(--secondary-bg); margin: 15px 20px; border-radius: 20px; padding: 5px 0; }
+        .profile-stats-list { background: var(--secondary-bg); margin: 15px 20px; border-radius: 20px; padding: 5px 0; backdrop-filter: blur(5px); }
         .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .p-stat-row:last-child { border-bottom: none; }
         .p-label { opacity: 0.6; font-size: 13px; }
@@ -90,6 +100,7 @@
             margin: 15px 20px; padding: 16px 20px; border-radius: 20px; 
             border: 1px solid rgba(255,215,0,0.25); 
             display: flex; justify-content: space-between; align-items: center; 
+            backdrop-filter: blur(5px);
         }
         .balance-text { font-size: 15px; font-weight: 500; opacity: 0.9; }
         .balance-val { font-size: 18px; font-weight: bold; color: var(--accent-gold); }
@@ -125,8 +136,8 @@
         const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
         window.userState = { 
-            id: '', frame: 'white', steps: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0, 
-            coins: 0, inventoryFrames: ['white'], isRegistered: false, friends: [],
+            id: '', frame: 'white', bg: 'default', steps: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0, 
+            coins: 0, inventoryFrames: ['white'], inventoryBgs: ['default'], lastGiftDate: '', isRegistered: false, friends: [],
             lastWinner: { name: 'Ждем чемпиона', photo_url: placeholderImg },
             lastWeekFriendWinner: { name: 'Стань лидером!', photo_url: placeholderImg }
         };
@@ -137,9 +148,20 @@
             'blue': '3px solid #2196F3', 'pink': '3px solid #E91E63', 'purple': '3px solid #9C27B0', 'gold': '3px solid #FFD700'
         };
 
+        const bgStyles = {
+            'default': 'transparent',
+            'cats': 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200',
+            'dogs': 'https://images.unsplash.com/photo-1517849845537-4d257902454a?w=200'
+        };
+
         window.navigate = function(pageId, el) {
             const user = window.tg.initDataUnsafe?.user || { first_name: "Игрок", photo_url: "" };
             const appDiv = document.getElementById('app');
+            
+            // Применяем фон к body
+            document.body.className = '';
+            if (window.userState.bg !== 'default') document.body.classList.add('bg-' + window.userState.bg);
+
             if (el) {
                 document.querySelectorAll('.tab-item').forEach(i => i.classList.remove('active'));
                 el.classList.add('active');
@@ -218,11 +240,22 @@
 
             if (pageId === 'shop') {
                 const frames = [{id:'white', p:0}, {id:'green', p:50}, {id:'lightblue', p:50}, {id:'blue', p:50}, {id:'pink', p:50}, {id:'purple', p:50}, {id:'gold', p:500}];
+                const bgs = [{id:'default', p:0, name:'Стоковый'}, {id:'cats', p:100, name:'Котята'}, {id:'dogs', p:100, name:'Собачки'}];
+                
                 appDiv.innerHTML = `
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
                         <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
                         <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
                     </div>
+
+                    <div class="shop-promo-grid">
+                        <div class="promo-card" onclick="window.claimDailyGift()"><i>🎁</i><b>Подарок</b><span>10 монет</span></div>
+                        <div class="promo-card" onclick="window.buyStars(250, 150)"><i>💰</i><b>250</b><span>150 ⭐</span></div>
+                        <div class="promo-card" onclick="window.buyStars(600, 300)"><i>💎</i><b>600</b><span>300 ⭐</span></div>
+                        <div class="promo-card" onclick="window.buyStars(2500, 1000)"><i>👑</i><b>2500</b><span>1000 ⭐</span></div>
+                    </div>
+
+                    <div class="section-title">Рамки профиля</div>
                     <div class="shop-grid-4">
                         ${frames.map(f => `
                             <div class="shop-item-mini" onclick="window.handleFrameAction('${f.id}', ${f.p})" style="border-color:${window.userState.frame === f.id ? 'var(--main-color)' : 'transparent'}">
@@ -230,8 +263,55 @@
                                 <div style="font-size:10px; opacity:0.8;">${window.userState.frame === f.id ? 'Уст.' : (window.userState.inventoryFrames.includes(f.id) ? 'Взять' : f.p)}</div>
                             </div>`).join('')}
                     </div>
+
+                    <div class="section-title">Фоны приложения</div>
+                    <div class="shop-grid-4">
+                        ${bgs.map(b => `
+                            <div class="shop-item-mini" onclick="window.handleBgAction('${b.id}', ${b.p})" style="border-color:${window.userState.bg === b.id ? 'var(--main-color)' : 'transparent'}">
+                                <div class="bg-preview" style="background-image:url('${bgStyles[b.id]}'); background-color:#333;"></div>
+                                <div style="font-size:9px; line-height:1.2;">${b.name}<br><span style="opacity:0.6;">${window.userState.bg === b.id ? 'Уст.' : (window.userState.inventoryBgs.includes(b.id) ? 'Взять' : b.p)}</span></div>
+                            </div>`).join('')}
+                    </div>
                 `;
             }
+        };
+
+        window.claimDailyGift = async () => {
+            const today = new Date().toLocaleDateString();
+            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Вы уже забирали подарок сегодня!");
+            if (window.userState.steps < 10000) return window.tg.showAlert("Сначала пройдите 10000 шагов!");
+            
+            await db.collection("users").doc(window.userState.id).update({
+                "economy.balance": window.userState.coins + 10,
+                "economy.last_gift_date": today
+            });
+            window.tg.showAlert("Ура! +10 монет получено.");
+            loadData();
+        };
+
+        window.buyStars = (coins, stars) => {
+            window.tg.showAlert(`Интерфейс оплаты: Покупка ${coins} монет за ${stars} звезд Телеграм.`);
+            // В реальном боте здесь будет window.tg.openInvoice()
+        };
+
+        window.handleFrameAction = async (id, price) => {
+            if (window.userState.inventoryFrames.includes(id)) {
+                await db.collection("users").doc(window.userState.id).update({ "selected.frame": id });
+            } else if (window.userState.coins >= price) {
+                const newInv = [...window.userState.inventoryFrames, id];
+                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.frames": newInv, "selected.frame": id });
+            }
+            loadData();
+        };
+
+        window.handleBgAction = async (id, price) => {
+            if (window.userState.inventoryBgs.includes(id)) {
+                await db.collection("users").doc(window.userState.id).update({ "selected.bg": id });
+            } else if (window.userState.coins >= price) {
+                const newInv = [...window.userState.inventoryBgs, id];
+                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.bgs": newInv, "selected.bg": id });
+            }
+            loadData();
         };
 
         window.shareResult = () => {
@@ -275,16 +355,6 @@
             loadData();
         };
 
-        window.handleFrameAction = async (id, price) => {
-            if (window.userState.inventoryFrames.includes(id)) {
-                await db.collection("users").doc(window.userState.id).update({ "selected.frame": id });
-            } else if (window.userState.coins >= price) {
-                const newInv = [...window.userState.inventoryFrames, id];
-                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.frames": newInv, "selected.frame": id });
-            }
-            loadData();
-        };
-
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -298,7 +368,9 @@
                     await userDocRef.set({
                         name: tgUser.first_name, photo_url: tgUser.photo_url || "", last_seen: new Date().getTime(),
                         stats: { steps_today: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0 },
-                        economy: { balance: 0 }, inventory: { frames: ['white'] }, selected: { frame: 'white' },
+                        economy: { balance: 0, last_gift_date: '' }, 
+                        inventory: { frames: ['white'], bgs: ['default'] }, 
+                        selected: { frame: 'white', bg: 'default' },
                         tournament: { is_registered: false }, friends: []
                     });
                 } else {
@@ -322,14 +394,18 @@
                 window.userState = { 
                     ...window.userState, steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0,
                     steps_last_week: d.stats?.steps_last_week || 0, steps_last_month: d.stats?.steps_last_month || 0,
-                    coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', 
-                    inventoryFrames: d.inventory?.frames || ['white'], isRegistered: d.tournament?.is_registered || false, friends: d.friends || [] 
+                    coins: d.economy?.balance || 0, lastGiftDate: d.economy?.last_gift_date || '',
+                    frame: d.selected?.frame || 'white', bg: d.selected?.bg || 'default',
+                    inventoryFrames: d.inventory?.frames || ['white'], 
+                    inventoryBgs: d.inventory?.bgs || ['default'],
+                    isRegistered: d.tournament?.is_registered || false, friends: d.friends || [] 
                 };
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
+                
                 const currentActiveTab = document.querySelector('.tab-item.active span')?.innerText;
                 const tabMap = { 'Дом': 'home', 'Рейтинг': 'rank', 'Турнир': 'tour', 'Профиль': 'prof' };
                 window.navigate(tabMap[currentActiveTab] || 'home');
