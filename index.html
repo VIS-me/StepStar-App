@@ -13,7 +13,7 @@
             --main-color: #248bcf;
             --bg-color: #1a1c20;
             --text-color: #ffffff;
-            --secondary-bg: rgba(255,255,255,0.08);
+            --secondary-bg: rgba(255,255,255,0.05); /* Уменьшил базовую непрозрачность */
             --accent-gold: #FFD700;
         }
 
@@ -27,21 +27,21 @@
             transition: background 0.3s ease;
         }
 
-        /* Динамические фоны с исправленными ссылками */
+        /* Динамические фоны */
         body.bg-cats { 
-            background: linear-gradient(rgba(26,28,32,0.7), rgba(26,28,32,0.7)), 
+            background: linear-gradient(rgba(26,28,32,0.6), rgba(26,28,32,0.6)), 
             url('https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
         }
         
         body.bg-maltese { 
-            background: linear-gradient(rgba(26,28,32,0.7), rgba(26,28,32,0.7)), 
+            background: linear-gradient(rgba(26,28,32,0.6), rgba(26,28,32,0.6)), 
             url('https://images.pexels.com/photos/3361739/pexels-photo-3361739.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
         }
 
         .app-viewport { height: calc(100vh - 70px); overflow-y: auto; padding-bottom: 20px; position: relative; z-index: 1; }
 
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 20px; margin-top: 20px; }
-        .stat-card { background: var(--secondary-bg); padding: 12px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .stat-card { background: rgba(255,255,255,0.06); padding: 12px 5px; border-radius: 18px; text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.05); }
         .stat-card b { display: block; font-size: 16px; margin-bottom: 2px; }
         .stat-card span { font-size: 10px; opacity: 0.5; text-transform: uppercase; }
 
@@ -50,19 +50,19 @@
         .leader-info-overlay { position: absolute; bottom: 50px; left: 25px; text-align: left; z-index: 5; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
         
         .my-rank-card {
-            background: rgba(255, 255, 255, 0.07); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             margin: -30px 20px 20px; padding: 12px 25px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            position: relative; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            position: relative; z-index: 10; border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
 
         .prize-block {
-            background: var(--secondary-bg);
+            background: rgba(255,255,255,0.05);
             margin: 0 20px 20px; padding: 15px 20px; border-radius: 20px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid rgba(255,215,0,0.3);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,215,0,0.2);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
 
         .section-title { padding: 15px 25px 5px; font-size: 11px; font-weight: bold; opacity: 0.4; letter-spacing: 1.2px; text-transform: uppercase; }
@@ -72,42 +72,45 @@
         .rank-photo-mini { width: 38px; height: 38px; border-radius: 50%; margin: 0 15px; object-fit: cover; background: #333; }
         
         .tab-bar { 
-            height: 70px; display: flex; background: #15171a; 
-            position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.1); z-index: 1000;
+            height: 70px; display: flex; background: rgba(21, 23, 26, 0.95); 
+            position: fixed; bottom: 0; width: 100%; border-top: 1px solid rgba(255,255,255,0.05); z-index: 1000;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .tab-item { flex: 1; text-align: center; padding-top: 12px; color: #666; font-size: 10px; cursor: pointer; }
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
         .shop-promo-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0 15px; margin-bottom: 15px; }
-        .promo-card { background: var(--secondary-bg); border-radius: 15px; padding: 10px 5px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(5px); }
+        .promo-card { background: rgba(255,255,255,0.05); border-radius: 15px; padding: 10px 5px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .promo-card i { display: block; font-style: normal; font-size: 20px; margin-bottom: 5px; }
         .promo-card b { display: block; font-size: 11px; color: var(--accent-gold); }
         .promo-card span { font-size: 8px; opacity: 0.6; display: flex; align-items: center; justify-content: center; gap: 2px; }
 
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; padding: 0 15px; margin-bottom: 20px; }
-        .shop-item-mini { background: var(--secondary-bg); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; backdrop-filter: blur(5px); }
+        .shop-item-mini { background: rgba(255,255,255,0.05); padding: 12px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
         .frame-preview { width: 40px; height: 40px; border-radius: 50%; margin: 0 auto 8px; background: rgba(255,255,255,0.05); }
         .bg-preview { width: 40px; height: 40px; border-radius: 8px; margin: 0 auto 8px; background-size: cover; background-position: center; border: 1px solid rgba(255,255,255,0.2); }
 
-        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-size: 15px; font-weight: bold; margin: 15px auto; display: block; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         
         .avatar-wrapper { position: relative; width: 100px; height: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #333; }
 
-        .profile-stats-list { background: var(--secondary-bg); margin: 15px 20px; border-radius: 20px; padding: 5px 0; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
-        .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        /* ОБНОВЛЕНО: Повышенная прозрачность для профиля */
+        .profile-stats-list { background: rgba(255,255,255,0.03); margin: 15px 20px; border-radius: 20px; padding: 5px 0; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        .p-stat-row { display: flex; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.03); }
         .p-stat-row:last-child { border-bottom: none; }
         .p-label { opacity: 0.6; font-size: 13px; }
         .p-value { font-weight: bold; font-size: 14px; }
         
+        /* ОБНОВЛЕНО: Прозрачность карточки баланса */
         .balance-inline-card { 
-            background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.05) 100%); 
+            background: linear-gradient(135deg, rgba(255,215,0,0.08) 0%, rgba(255,215,0,0.03) 100%); 
             margin: 15px 20px; padding: 16px 20px; border-radius: 20px; 
-            border: 1px solid rgba(255,215,0,0.3); 
+            border: 1px solid rgba(255,215,0,0.15); 
             display: flex; justify-content: space-between; align-items: center; 
-            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
         }
         .balance-text { font-size: 15px; font-weight: 500; opacity: 0.9; }
         .balance-val { font-size: 18px; font-weight: bold; color: var(--accent-gold); }
@@ -165,7 +168,6 @@
             const user = window.tg.initDataUnsafe?.user || { first_name: "Игрок", photo_url: "" };
             const appDiv = document.getElementById('app');
             
-            // Применяем фон к body ПРИ КАЖДОЙ навигации
             document.body.className = '';
             if (window.userState.bg && window.userState.bg !== 'default') {
                 document.body.classList.add('bg-' + window.userState.bg);
@@ -243,7 +245,7 @@
                             <div class="p-stat-row"><span class="p-label">Всего</span><span class="p-value">${(window.userState.steps_total || 0).toLocaleString()}</span></div>
                         </div>
                         <div class="balance-inline-card"><span class="balance-text">Баланс</span><span class="balance-val">${window.userState.coins} монет</span></div>
-                        <button class="main-button" style="margin-top:10px; background: #333;" onclick="window.navigate('shop')">Магазин</button>
+                        <button class="main-button" style="margin-top:10px; background: rgba(51, 51, 51, 0.6); backdrop-filter: blur(10px);" onclick="window.navigate('shop')">Магазин</button>
                     </div>`;
             }
 
