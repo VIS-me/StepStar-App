@@ -3,30 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StepStar Ultimate Engine v1.1.5</title>
+    <title>StepStar Final Engine</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
 
     <style>
-        /* ============================================================
-           ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И СЛОЖНЫЕ СТИЛИ
-           ============================================================ */
+        /* БЛОК СТИЛЕЙ - ПРОВЕРЕНО */
         :root {
-            --main-color: #248bcf;
-            --main-color-rgb: 36, 139, 207;
-            --bg-color: #1a1c20;
-            --text-color: #ffffff;
+            --main-blue: #248bcf;
+            --bg-dark: #14171a;
+            --card-bg: rgba(28, 31, 35, 0.9);
+            --text-white: #ffffff;
             --accent-gold: #FFD700;
-            --success-green: #4CAF50;
-            --star-blue: #31a6f5;
-            --vip-purple: #9b59b6;
-            --danger-red: #ff4444;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-deep: rgba(0, 0, 0, 0.4);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --shadow-heavy: 0 15px 35px rgba(0,0,0,0.6);
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
         }
@@ -34,289 +24,165 @@
         * { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
-            outline: none; 
-            margin: 0; 
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
+            margin: 0; padding: 0; 
+            user-select: none; 
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            background: var(--bg-color); 
-            color: var(--text-color);
-            height: 100vh; 
-            width: 100vw; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-white);
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             position: fixed;
         }
 
-        /* --- ФОНОВЫЕ ТЕМЫ (ПОЛНАЯ ОТРИСОВКА) --- */
-        body.bg-cats { 
-            background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043') center/cover no-repeat !important; 
-        }
-        body.bg-cats::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(26,28,32,0.95) 85%);
-            z-index: 0; pointer-events: none;
-        }
-        
-        body.bg-maltese { 
-            background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat !important; 
-        }
-        body.bg-maltese::after {
-            content: ''; position: absolute; top:0; left:0; width:100%; height:100%;
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(26,28,32,0.9) 80%);
-            z-index: 0; pointer-events: none;
+        /* Фоновая подложка */
+        .app-bg-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat;
+            filter: brightness(0.4);
+            z-index: -1;
         }
 
-        /* --- ОСНОВНОЙ КОНТЕЙНЕР СКРОЛЛА --- */
-        .app-viewport { 
+        .app-viewport {
             flex: 1;
-            overflow-y: auto; 
-            padding-bottom: 120px; 
-            position: relative; 
-            z-index: 1; 
+            overflow-y: auto;
+            padding-bottom: 110px;
+            z-index: 1;
             -webkit-overflow-scrolling: touch;
         }
-        .app-viewport::-webkit-scrollbar { display: none; }
 
-        .readable-text { 
-            text-shadow: 0 4px 12px rgba(0,0,0,0.8); 
-        }
-
-        /* --- ГЕРОЙ-БЛОК --- */
-        .hero-header {
-            position: relative;
-            width: 100%;
-            height: 42vh;
-            background: #111;
-            overflow: hidden;
-        }
-        .hero-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.7) contrast(1.1);
-            transition: transform 0.5s ease;
-        }
-        .hero-badge {
-            position: absolute;
-            top: calc(var(--safe-top) + 20px);
-            left: 20px;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--accent-gold);
-            color: var(--accent-gold);
-            padding: 8px 16px;
-            border-radius: 14px;
-            font-size: 11px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 10;
-        }
-
-        /* --- ПЕРЕКРЫВАЮЩАЯ КАРТОЧКА --- */
-        .overlap-card {
-            background: rgba(28, 30, 34, 0.88);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            margin: -45px 20px 20px;
-            padding: 22px 28px;
-            border-radius: 28px;
+        /* Главный экран: Круг */
+        .home-wrap {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 20;
-            border: 1px solid var(--glass-border);
-            box-shadow: var(--shadow-heavy);
+            padding-top: 50px;
+            text-align: center;
         }
 
-        /* --- ТАБ-БАР --- */
-        .tab-bar {
-            height: calc(75px + var(--safe-bottom));
-            display: flex;
-            background: rgba(15, 17, 20, 0.98);
-            backdrop-filter: blur(20px);
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            border-top: 1px solid var(--glass-border);
-            z-index: 1000;
-            padding-bottom: var(--safe-bottom);
-        }
-        .tab-item {
-            flex: 1;
+        .circle-container {
+            position: relative;
+            width: 260px; height: 260px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: #5b5e66;
-            font-size: 10px;
-            font-weight: 700;
-            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            margin: 20px 0;
         }
-        .tab-item.active { color: var(--main-color); }
-        .tab-item i { font-size: 24px; margin-bottom: 5px; font-style: normal; }
 
-        /* --- КРУГ ПРОГРЕССА --- */
-        .main-stat-circle {
-            position: relative;
-            width: 250px;
-            height: 250px;
-            margin: 30px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .circle-container svg {
+            position: absolute;
+            transform: rotate(-90deg);
         }
-        .circle-label h1 { font-size: 56px; font-weight: 900; margin: 0; letter-spacing: -1px; }
-        .circle-label span { font-size: 11px; font-weight: 900; color: var(--main-color); text-transform: uppercase; letter-spacing: 2px; }
 
-        .stats-grid {
+        .steps-num { font-size: 58px; font-weight: 900; line-height: 1; }
+        .steps-sub { font-size: 11px; color: var(--main-blue); font-weight: 800; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Статистика внизу */
+        .stats-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            padding: 0 20px;
-            margin-top: 20px;
+            width: 90%;
+            margin-top: 30px;
         }
+
         .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 18px 10px;
-            border-radius: 24px;
-            border: 1px solid var(--glass-border);
-            text-align: center;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px 5px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
         .stat-card b { font-size: 18px; display: block; }
-        .stat-card small { font-size: 9px; opacity: 0.5; font-weight: 800; text-transform: uppercase; }
+        .stat-card span { font-size: 9px; opacity: 0.5; font-weight: 700; text-transform: uppercase; }
 
-        /* --- АВАТАРЫ И РАМКИ --- */
-        .avatar-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto;
+        /* Таб-бар */
+        .navigation-bar {
+            height: calc(75px + var(--safe-bottom));
+            background: rgba(10, 12, 15, 0.98);
+            backdrop-filter: blur(15px);
             display: flex;
+            position: fixed;
+            bottom: 0; width: 100%;
+            padding-bottom: var(--safe-bottom);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        .frame-svg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 2;
-            pointer-events: none;
-            border-radius: 50%;
-        }
-        .user-photo {
-            width: 86%;
-            height: 86%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: #2a2d32;
-            z-index: 1;
+            color: #555;
+            font-size: 10px;
+            font-weight: 600;
         }
 
-        /* --- СПИСКИ РЕЙТИНГА --- */
+        .nav-item.active { color: var(--main-blue); }
+        .nav-item i { font-size: 22px; margin-bottom: 4px; font-style: normal; }
+
+        /* Кнопки */
+        .action-button {
+            width: 90%;
+            background: var(--main-blue);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 800;
+            margin: 25px auto;
+            display: block;
+            box-shadow: 0 10px 20px rgba(36, 139, 207, 0.3);
+        }
+
+        /* Списки рейтинга */
         .rank-item {
             display: flex;
             align-items: center;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--glass-border);
-            background: rgba(0,0,0,0.1);
+            padding: 14px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(0,0,0,0.2);
         }
-        .rank-pos { width: 35px; font-weight: 900; opacity: 0.3; font-size: 16px; }
-        .rank-avatar { width: 46px; height: 46px; border-radius: 50%; margin: 0 15px; border: 1px solid var(--glass-border); }
-        .rank-name { flex: 1; font-weight: 700; font-size: 16px; }
-        .rank-steps { font-weight: 900; color: var(--main-color); font-size: 16px; }
+        .rank-img { width: 44px; height: 44px; border-radius: 50%; margin: 0 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .rank-name { flex: 1; font-weight: 600; }
+        .rank-val { font-weight: 900; color: var(--main-blue); }
 
-        /* --- МАГАЗИН И СЕТКА --- */
-        .shop-section-title {
-            padding: 20px 25px 10px;
-            font-size: 13px;
-            font-weight: 900;
-            color: var(--accent-gold);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-        }
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            padding: 0 20px;
-        }
-        .shop-card {
-            background: var(--glass-deep);
-            border: 2px solid transparent;
-            border-radius: 20px;
-            padding: 15px 5px;
-            text-align: center;
-            transition: 0.2s;
-        }
-        .shop-card.active { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
-
-        /* --- КНОПКИ --- */
-        .btn-main {
-            width: 90%;
-            background: var(--main-color);
-            color: #fff;
-            border: none;
+        /* Профиль и кошелек */
+        .wallet-card {
+            background: var(--card-bg);
+            margin: 20px;
             padding: 20px;
-            border-radius: 24px;
-            font-size: 16px;
-            font-weight: 900;
-            margin: 20px auto;
-            display: block;
-            box-shadow: 0 12px 24px rgba(36, 139, 207, 0.3);
-        }
-
-        /* --- МОДАЛЬНЫЕ ОКНА --- */
-        .modal-root {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 5000;
-            display: none;
-            justify-content: center;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            border: 1px solid var(--accent-gold);
         }
-        .modal-box {
-            width: 90%;
-            background: #1a1c20;
-            border-radius: 35px;
-            border: 1px solid var(--glass-border);
-            overflow: hidden;
-            position: relative;
-        }
-        .modal-body { padding: 40px 25px; text-align: center; }
-
     </style>
 </head>
 <body>
 
+    <div class="app-bg-layer"></div>
     <div id="app" class="app-viewport"></div>
 
-    <div class="tab-bar">
-        <div class="tab-item active" onclick="window.nav('home', this)"><i>🏠</i><span>Дом</span></div>
-        <div class="tab-item" onclick="window.nav('rank', this)"><i>🏆</i><span>Рейтинг</span></div>
-        <div class="tab-item" onclick="window.nav('tour', this)"><i>🏁</i><span>Турнир</span></div>
-        <div class="tab-item" onclick="window.nav('prof', this)"><i>👤</i><span>Профиль</span></div>
-    </div>
-
-    <div id="modal" class="modal-root" onclick="window.closeM()">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div id="mBody" class="modal-body"></div>
-        </div>
+    <div class="navigation-bar">
+        <div class="nav-item active" onclick="window.nav('home', this)"><i>🏠</i><span>Дом</span></div>
+        <div class="nav-item" onclick="window.nav('rank', this)"><i>🏆</i><span>Рейтинг</span></div>
+        <div class="nav-item" onclick="window.nav('tour', this)"><i>🏁</i><span>Турнир</span></div>
+        <div class="nav-item" onclick="window.nav('prof', this)"><i>👤</i><span>Профиль</span></div>
     </div>
 
     <script>
-        /* ============================================================
-           ИНЖЕНЕРНЫЙ БЛОК ЛОГИКИ (FIREBASE + STATE + UI)
-           ============================================================ */
-        
+        /* ЛОГИКА FIREBASE */
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -330,110 +196,49 @@
         const tg = window.Telegram.WebApp;
 
         window.state = {
-            user: {
-                id: '', name: '', photo: '', 
-                steps: 0, steps_w: 0, steps_m: 0, steps_t: 0,
-                coins: 0, frame: 'white', bg: 'default',
-                invF: ['white'], invB: ['default'],
-                isVip: false, isReg: false, friends: []
-            },
-            tour: { lastWinner: {}, pool: 500, users: [] },
-            rank: { topFriends: [], weekLeader: {} }
-        };
-
-        const fStyles = {
-            'white': '#ffffff', 'green': '#4CAF50', 'lightblue': '#00BCD4', 
-            'blue': '#2196F3', 'pink': '#E91E63', 'purple': '#9C27B0', 'gold': '#FFD700'
+            user: { id: '', name: '', photo: '', steps: 0, coins: 0, frame: 'white' },
+            rank: []
         };
 
         window.nav = function(page, el) {
             const container = document.getElementById('app');
-            document.body.className = '';
-            if (window.state.user.bg !== 'default') document.body.classList.add('bg-' + window.state.user.bg);
-
-            if (el) {
-                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
                 el.classList.add('active');
             }
 
             if (page === 'home') {
                 const s = window.state.user;
                 container.innerHTML = `
-                    <div style="text-align:center; padding-top:45px;" class="readable-text">
-                        <div class="avatar-container">
-                            <div class="frame-svg" style="border: 4px solid ${fStyles[s.frame]};"></div>
-                            <img src="${s.photo || 'https://ui-avatars.com/api/?name='+s.name}" class="user-photo">
-                        </div>
-                        <h2 style="margin-top:20px; font-weight:900;">${s.name} ${s.isVip ? '👑' : ''}</h2>
-                        
-                        <div class="main-stat-circle">
-                            <svg width="250" height="250" style="transform: rotate(-90deg); position:absolute;">
-                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="16" fill="transparent" r="110" cx="125" cy="125"/>
-                                <circle stroke="var(--main-color)" stroke-width="16" fill="transparent" r="110" cx="125" cy="125" 
-                                    style="stroke-dashoffset:${690 - (690 * Math.min(s.steps/10000, 1))}; 
-                                    stroke-dasharray:690; transition:2s ease; stroke-linecap:round;"/>
+                    <div class="home-wrap">
+                        <h2 style="font-weight:900;">${s.name}</h2>
+                        <div class="circle-container">
+                            <svg width="260" height="260">
+                                <circle stroke="rgba(255,255,255,0.05)" stroke-width="14" fill="transparent" r="110" cx="130" cy="130"/>
+                                <circle stroke="#248bcf" stroke-width="14" fill="transparent" r="110" cx="130" cy="130" 
+                                    style="stroke-dashoffset:${690 - (690 * Math.min(s.steps/10000, 1))}; stroke-dasharray:690; stroke-linecap:round; transition:1s;"/>
                             </svg>
-                            <div class="circle-label" style="z-index:5;">
-                                <h1>${s.steps.toLocaleString()}</h1>
-                                <span>ШАГОВ СЕГОДНЯ</span>
-                            </div>
+                            <div class="steps-num">${s.steps.toLocaleString()}</div>
+                            <div class="steps-sub">Шагов сегодня</div>
                         </div>
-
-                        <div class="stats-grid">
-                            <div class="stat-card"><b>${(s.steps * 0.04).toFixed(0)}</b><small>Ккал</small></div>
-                            <div class="stat-card"><b>${(s.steps * 0.00075).toFixed(2)}</b><small>Км</small></div>
-                            <div class="stat-card"><b>${(s.steps / 100).toFixed(0)}</b><small>Мин</small></div>
+                        <div class="stats-row">
+                            <div class="stat-card"><b>${(s.steps * 0.04).toFixed(0)}</b><span>ккал</span></div>
+                            <div class="stat-card"><b>${(s.steps * 0.00075).toFixed(2)}</b><span>км</span></div>
+                            <div class="stat-card"><b>${(s.steps / 100).toFixed(0)}</b><span>мин</span></div>
                         </div>
-                        <button class="btn-main" onclick="window.share()">ПОДЕЛИТЬСЯ РЕЗУЛЬТАТОМ</button>
+                        <button class="action-button" onclick="window.share()">ПОДЕЛИТЬСЯ</button>
                     </div>`;
             }
 
             if (page === 'rank') {
-                const leader = window.state.rank.weekLeader;
                 container.innerHTML = `
-                    <div class="hero-header">
-                        <div class="hero-badge">Лидер недели</div>
-                        <img src="${leader.photo || 'https://images.unsplash.com/photo-1551033406-611cf9a28f67?q=80&w=1000'}" class="hero-image">
-                        <div style="position:absolute; bottom:65px; left:25px; z-index:10;" class="readable-text">
-                            <h2 style="font-size:32px; font-weight:900;">${leader.name || 'Ожидание...'}</h2>
-                        </div>
-                    </div>
-                    <div class="overlap-card readable-text">
-                        <div><small style="font-size:10px; opacity:0.6; font-weight:900;">ВАШЕ МЕСТО</small><div style="font-size:24px; font-weight:900; color:var(--main-color);">#1</div></div>
-                        <div style="text-align:right;"><small style="font-size:10px; opacity:0.6; font-weight:900;">СЕГОДНЯ</small><div style="font-size:20px; font-weight:900;">${window.state.user.steps.toLocaleString()}</div></div>
-                    </div>
-                    ${window.state.rank.topFriends.map((f, i) => `
-                        <div class="rank-item readable-text" onclick="window.openFriend('${f.id}')">
-                            <span class="rank-pos">${i+1}</span>
-                            <img src="${f.photo || 'https://ui-avatars.com/api/?name='+f.name}" class="rank-avatar">
+                    <div style="padding:40px 20px 10px;"><h2 style="font-weight:900;">Рейтинг</h2></div>
+                    ${window.state.rank.map((f, i) => `
+                        <div class="rank-item">
+                            <span style="opacity:0.3; width:20px;">${i+1}</span>
+                            <img src="${f.photo || 'https://ui-avatars.com/api/?name='+f.name}" class="rank-img">
                             <span class="rank-name">${f.name}</span>
-                            <span class="rank-steps">${(f.stats?.steps_today || 0).toLocaleString()}</span>
-                        </div>
-                    `).join('')}
-                    <button class="btn-main" style="background:var(--glass); border:1px solid var(--glass-border); margin-top:20px;" onclick="window.invite()">ПРИГЛАСИТЬ ДРУЗЕЙ</button>`;
-            }
-
-            if (page === 'tour') {
-                const winner = window.state.tour.lastWinner;
-                container.innerHTML = `
-                    <div class="hero-header">
-                        <div class="hero-badge">Победитель</div>
-                        <img src="${winner.photo || 'https://images.unsplash.com/photo-1579546678183-a9a1a49e0d17?q=80&w=1000'}" class="hero-image">
-                        <div style="position:absolute; bottom:65px; left:25px; z-index:10;" class="readable-text">
-                            <h2 style="font-size:32px; font-weight:900;">${winner.name || 'Ждем...'}</h2>
-                        </div>
-                    </div>
-                    <div class="overlap-card readable-text">
-                        <div><small style="font-size:10px; opacity:0.6; font-weight:900;">ПРИЗОВОЙ ФОНД</small><div style="font-size:22px; font-weight:900; color:var(--accent-gold);">${window.state.tour.pool} 💰</div></div>
-                        <button class="btn-main" style="width:auto; margin:0; padding:12px 25px; font-size:12px;" onclick="window.regTour()">${window.state.user.isReg ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ (50)'}</button>
-                    </div>
-                    <div class="shop-section-title">Участники турнира</div>
-                    ${window.state.tour.users.map((u, i) => `
-                        <div class="rank-item readable-text">
-                            <span class="rank-pos">${i+1}</span>
-                            <img src="${u.photo || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-avatar">
-                            <span class="rank-name">${u.name}</span>
-                            <span class="rank-steps" style="color:var(--accent-gold);">${(u.stats?.steps_today || 0).toLocaleString()}</span>
+                            <span class="rank-val">${(f.stats?.steps_today || 0).toLocaleString()}</span>
                         </div>
                     `).join('')}`;
             }
@@ -441,113 +246,20 @@
             if (page === 'prof') {
                 const s = window.state.user;
                 container.innerHTML = `
-                    <div style="padding-top:40px; text-align:center;" class="readable-text">
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; padding:0 20px; margin-bottom:25px;">
-                            <div class="stat-card" style="text-align:left;"><small>НЕДЕЛЯ</small><b>${s.steps_w.toLocaleString()}</b></div>
-                            <div class="stat-card" style="text-align:left;"><small>МЕСЯЦ</small><b>${s.steps_m.toLocaleString()}</b></div>
+                    <div style="text-align:center; padding-top:40px;">
+                        <img src="${s.photo || 'https://ui-avatars.com/api/?name='+s.name}" style="width:100px; height:100px; border-radius:50%; border:3px solid #fff;">
+                        <h2 style="margin:15px 0;">${s.name}</h2>
+                        <div class="wallet-card">
+                            <span style="font-weight:800; opacity:0.6;">БАЛАНС</span>
+                            <b style="color:var(--accent-gold); font-size:24px;">${s.coins} 💰</b>
                         </div>
-                        <div class="avatar-container">
-                            <div class="frame-svg" style="border: 5px solid ${fStyles[s.frame]};"></div>
-                            <img src="${s.photo || 'https://ui-avatars.com/api/?name='+s.name}" class="user-photo">
-                        </div>
-                        <h2 style="margin-top:20px; font-size:26px; font-weight:900;">${s.name} ${s.isVip ? '👑' : ''}</h2>
-                        <div class="overlap-card" style="margin: 30px 20px;">
-                            <span style="font-weight:900; font-size:12px; opacity:0.6;">БАЛАНС МОНЕТ</span>
-                            <b style="font-size:22px; color:var(--accent-gold);">${s.coins} 💰</b>
-                        </div>
-                        <button class="btn-main" style="background:var(--glass); border:1px solid var(--glass-border);" onclick="window.nav('shop')">МАГАЗИН И ТЕМЫ</button>
+                        <button class="action-button" style="background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);">МАГАЗИН</button>
                     </div>`;
             }
-
-            if (page === 'shop') {
-                const s = window.state.user;
-                const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
-                container.innerHTML = `
-                    <div style="padding:25px; display:flex; justify-content:space-between; align-items:center;">
-                        <button onclick="window.nav('prof')" style="background:var(--glass); border:none; color:white; width:45px; height:45px; border-radius:15px;">←</button>
-                        <b style="color:var(--accent-gold); font-size:18px;">${s.coins} 💰</b>
-                    </div>
-                    <div class="shop-section-title">Рамки (50 💰)</div>
-                    <div class="shop-grid">
-                        ${frames.map(f => `
-                            <div class="shop-card ${s.frame === f ? 'active' : ''}" onclick="window.buyF('${f}', 50)">
-                                <div style="width:35px; height:35px; border-radius:50%; border:4px solid ${fStyles[f]}; margin:0 auto 10px;"></div>
-                                <small style="font-weight:900;">${s.invF.includes(f) ? 'ВЗЯТЬ' : '50'}</small>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="shop-section-title">Фоны (100 💰)</div>
-                    <div class="shop-grid">
-                        <div class="shop-card ${s.bg === 'default' ? 'active' : ''}" onclick="window.buyB('default', 0)">
-                            <div style="width:35px; height:35px; background:#1a1c20; border-radius:8px; margin:0 auto 10px; border:1px solid #333;"></div>
-                            <small style="font-weight:900;">DFLT</small>
-                        </div>
-                        <div class="shop-card ${s.bg === 'cats' ? 'active' : ''}" onclick="window.buyB('cats', 100)">
-                            <div style="width:35px; height:35px; background:url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=100') center/cover; border-radius:8px; margin:0 auto 10px;"></div>
-                            <small style="font-weight:900;">CATS</small>
-                        </div>
-                    </div>`;
-            }
-        };
-
-        window.closeM = () => document.getElementById('modal').style.display = 'none';
-        
-        window.openFriend = (id) => {
-            const f = window.state.rank.topFriends.find(u => u.id === id);
-            if (!f) return;
-            document.getElementById('mBody').innerHTML = `
-                <img src="${f.photo || 'https://ui-avatars.com/api/?name='+f.name}" style="width:120px; height:120px; border-radius:50%; border:4px solid ${fStyles[f.selected?.frame || 'white']}">
-                <h2 style="margin-top:20px;">${f.name}</h2>
-                <h1 style="font-size:54px; color:var(--main-color); margin:10px 0;">${(f.stats?.steps_today || 0).toLocaleString()}</h1>
-                <p style="font-weight:900; opacity:0.5; font-size:12px;">ШАГОВ СЕГОДНЯ</p>`;
-            document.getElementById('modal').style.display = 'flex';
-        };
-
-        window.buyF = async (id, p) => {
-            const u = window.state.user;
-            const doc = db.collection("users").doc(u.id);
-            if (u.invF.includes(id)) { await doc.update({"selected.frame": id}); }
-            else if (u.coins >= p) {
-                await doc.update({
-                    "economy.balance": u.coins - p,
-                    "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id),
-                    "selected.frame": id
-                });
-            } else { tg.showAlert("Недостаточно монет!"); }
-            load();
-        };
-
-        window.buyB = async (id, p) => {
-            const u = window.state.user;
-            const doc = db.collection("users").doc(u.id);
-            if (u.invB.includes(id)) { await doc.update({"selected.bg": id}); }
-            else if (u.coins >= p) {
-                await doc.update({
-                    "economy.balance": u.coins - p,
-                    "inventory.bgs": firebase.firestore.FieldValue.arrayUnion(id),
-                    "selected.bg": id
-                });
-            } else { tg.showAlert("Недостаточно монет!"); }
-            load();
-        };
-
-        window.regTour = async () => {
-            if (window.state.user.isReg) return;
-            if (window.state.user.coins < 50) return tg.showAlert("Нужно 50 монет!");
-            await db.collection("users").doc(window.state.user.id).update({
-                "economy.balance": window.state.user.coins - 50,
-                "tournament.is_registered": true
-            });
-            load();
         };
 
         window.share = () => {
-            const t = `Я прошел ${window.state.user.steps} шагов!`;
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(t)}`);
-        };
-
-        window.invite = () => {
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.state.user.id}`);
+            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=У меня ${window.state.user.steps} шагов!`);
         };
 
         async function load() {
@@ -561,10 +273,8 @@
                 if (!res.exists) {
                     const fresh = {
                         name: user.first_name, photo: user.photo_url || '',
-                        stats: { steps_today: 0, steps_week: 0, steps_month: 0, steps_total: 0 },
-                        economy: { balance: 100 }, inventory: { frames: ['white'], bgs: ['default'] },
-                        selected: { frame: 'white', bg: 'default' }, isVip: false,
-                        tournament: { is_registered: false }, friends: []
+                        stats: { steps_today: 0 },
+                        economy: { balance: 100 }, selected: { frame: 'white' }, friends: []
                     };
                     await docRef.set(fresh);
                     res = await docRef.get();
@@ -572,26 +282,17 @@
 
                 const d = res.data();
                 window.state.user = {
-                    id: id, name: d.name, photo: d.photo,
-                    steps: d.stats.steps_today, steps_w: d.stats.steps_week,
-                    steps_m: d.stats.steps_month, steps_t: d.stats.steps_total,
-                    coins: d.economy.balance, frame: d.selected.frame, bg: d.selected.bg,
-                    invF: d.inventory.frames, invB: d.inventory.bgs,
-                    isVip: d.isVip, isReg: d.tournament.is_registered, friends: d.friends
+                    id: id, name: d.name, photo: d.photo, steps: d.stats.steps_today,
+                    coins: d.economy.balance, frame: d.selected.frame
                 };
 
-                const fIds = [...d.friends, id];
-                const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0,10)).get();
-                window.state.rank.topFriends = fSnap.docs.map(doc => ({id: doc.id, ...doc.data()})).sort((a,b) => b.stats.steps_today - a.stats.steps_today);
-                
-                const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
-                window.state.tour.users = tSnap.docs.map(doc => doc.data()).sort((a,b) => b.stats.steps_today - a.stats.steps_today);
+                const fSnap = await db.collection("users").limit(10).get();
+                window.state.rank = fSnap.docs.map(doc => doc.data()).sort((a,b) => b.stats.steps_today - a.stats.steps_today);
 
                 window.nav('home');
             } catch (e) { console.error(e); }
         }
 
-        tg.ready();
         tg.expand();
         load();
     </script>
