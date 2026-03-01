@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StepStar Final Full Edition</title>
+    <title>StepStar Gold Standard</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
@@ -31,57 +31,47 @@
             height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* Фоновые темы */
         body.bg-cats { background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043') center/cover no-repeat !important; }
         body.bg-maltese { background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat !important; }
 
         .app-viewport { height: calc(100vh - 75px); overflow-y: auto; padding-bottom: 20px; position: relative; z-index: 1; }
         .readable-text { text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
-        /* Элементы хедера */
         .leader-hero-container { position: relative; width: 100%; height: 38vh; overflow: hidden; background: #222; }
         .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
         .leader-badge { position: absolute; top: 25px; left: 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 7px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 6; }
-        .leader-info-overlay { position: absolute; bottom: 55px; left: 25px; z-index: 5; }
 
         .overlap-card { background: rgba(30, 32, 36, 0.85); backdrop-filter: blur(15px); margin: -35px 20px 20px; padding: 18px 25px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         
         .section-title { padding: 15px 25px 8px; font-size: 12px; font-weight: 800; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); }
 
-        /* Списки */
         .table-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
         .clickable-row { cursor: pointer; }
         .clickable-row:active { background: rgba(255,255,255,0.05); }
 
-        /* Таб-бар */
         .tab-bar { height: 75px; display: flex; background: rgba(15, 17, 20, 0.98); backdrop-filter: blur(10px); position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--glass-border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
         .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #555; font-size: 10px; font-weight: 500; transition: 0.2s; }
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        /* Статистика на главном */
         .home-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 25px; margin-top: 10px; }
         .stat-box-blur { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; }
 
-        /* Модальные окна */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
         .modal-content { width: 92%; max-height: 85vh; background: #1a1c20; border-radius: 35px; overflow: hidden; position: relative; border: 1px solid var(--glass-border); }
         .modal-inner-bg { padding: 40px 25px; min-height: 420px; display: flex; flex-direction: column; align-items: center; }
         .modal-close { position: absolute; top: 20px; right: 25px; font-size: 30px; color: white; z-index: 10; opacity: 0.5; }
 
-        /* Кнопки */
         .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 22px; font-size: 16px; font-weight: bold; margin: 20px auto; display: block; box-shadow: 0 10px 20px rgba(36, 139, 207, 0.3); }
         .shop-btn-prof { width: 90%; background: var(--glass); color: white; border: 1px solid var(--glass-border); padding: 18px; border-radius: 22px; margin: 10px auto; display: block; font-weight: bold; }
         .shop-bonus-btn { width: 90%; background: rgba(255, 215, 0, 0.05); color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 16px; border-radius: 20px; margin: 10px auto; display: block; font-weight: 800; font-size: 12px; }
         .join-btn { background: var(--main-color); color: white; border: none; padding: 10px 20px; border-radius: 15px; font-weight: 800; font-size: 11px; }
         .join-btn.active-status { background: var(--success-green); }
 
-        /* Аватарки и рамки */
         .avatar-wrapper { position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
         .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
         .user-avatar { width: 90%; height: 90%; border-radius: 50%; object-fit: cover; background: #333; z-index: 1; }
 
-        /* Магазин */
         .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; margin-bottom: 20px; }
         .shop-item-mini { background: rgba(0,0,0,0.4); padding: 12px 5px; border-radius: 18px; text-align: center; border: 2px solid transparent; }
         .shop-item-mini.selected { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
@@ -113,7 +103,6 @@
     </div>
 
     <script>
-        // --- Конфиг и Состояние ---
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -130,7 +119,7 @@
             id: '', name: '', photo_url: '', frame: 'white', bg: 'default', 
             steps: 0, steps_total: 0, coins: 0, inventoryFrames: ['white'], inventoryBgs: ['default'], 
             lastGiftDate: '', isRegistered: false, isVip: false, friends: [],
-            lastWinner: { name: 'Ждем чемпиона', photo_url: '' },
+            lastWinner: { name: '', photo_url: '' },
             lastWeekFriendWinner: { name: '', photo_url: '' }
         };
 
@@ -150,7 +139,6 @@
             'maltese': "url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png')" 
         };
 
-        // --- Навигация ---
         window.navigate = function(pageId, el) {
             const appDiv = document.getElementById('app');
             document.body.className = '';
@@ -189,36 +177,34 @@
             }
 
             if (pageId === 'rank') {
-                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name;
+                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029';
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <div class="leader-badge">ТОП ПРОШЛОЙ НЕДЕЛИ</div>
+                        <div class="leader-badge">ТОП НЕДЕЛИ</div>
                         <img src="${leaderPhoto}" class="leader-img-full">
-                        <div class="leader-info-overlay readable-text"><h2 style="font-size:26px; margin:0;">${window.userState.lastWeekFriendWinner.name || '...'}</h2></div>
                     </div>
                     <div class="overlap-card readable-text">
                         <div><div style="font-size:10px; opacity:0.7; font-weight:bold;">МОЙ РАНГ</div><div style="font-size:20px; font-weight:900; color:var(--main-color);">#${myIndex || '-'}</div></div>
                         <div style="text-align:right;"><div style="font-size:10px; opacity:0.7; font-weight:bold;">ШАГИ</div><div style="font-size:18px; font-weight:900;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
-                    <div class="section-title">Топ-3 Друзей</div>
-                    ${window.friendUsers.slice(0, 3).map((u, i) => `
+                    <div class="section-title">Топ Друзей</div>
+                    ${window.friendUsers.slice(0, 5).map((u, i) => `
                         <div class="table-row clickable-row readable-text" onclick="window.showFriendCard('${u.id}')">
                             <span style="width:25px; font-weight:bold; opacity:0.5;">${i + 1}</span>
                             <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:40px; height:40px; border-radius:50%; margin:0 15px; border:1px solid var(--glass-border); object-fit:cover;">
                             <span style="flex:1; font-weight:600;">${u.name} ${u.isVip ? '👑' : ''}</span>
                             <b style="font-size:15px;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
                         </div>`).join('')}
-                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">ПРИГЛАСИТЬ ЕЩЁ</button>`;
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">ПРИГЛАСИТЬ ДРУЗЕЙ</button>`;
             }
 
             if (pageId === 'tour') {
-                const winnerPhoto = window.userState.lastWinner.photo_url || 'https://ui-avatars.com/api/?name=🏆';
+                const winnerPhoto = window.userState.lastWinner.photo_url || 'https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=2070';
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <div class="leader-badge">ПОБЕДИТЕЛЬ ТУРНИРА</div>
+                        <div class="leader-badge">ТУРНИР</div>
                         <img src="${winnerPhoto}" class="leader-img-full">
-                        <div class="leader-info-overlay readable-text"><h2 style="font-size:26px; margin:0;">${window.userState.lastWinner.name || 'Аноним'}</h2></div>
                     </div>
                     <div class="overlap-card readable-text">
                         <div><div style="font-size:10px; opacity:0.7; font-weight:bold;">ПРИЗОВОЙ ФОНД</div><div style="font-size:18px; font-weight:900; color:var(--accent-gold);">${window.adminPrizePool} 💰</div></div>
@@ -243,9 +229,9 @@
                         </div>
                         <h2 style="margin-top:15px; font-weight:800;">${window.userState.name} ${window.userState.isVip ? '👑' : ''}</h2>
                         <div style="font-size:11px; opacity:0.4; margin-bottom:20px;">ID: ${window.userState.id}</div>
-                        <div class="profile-stats-list">
-                            <div class="p-stat-row"><span>Сегодня</span><b style="color:var(--main-color);">${window.userState.steps.toLocaleString()}</b></div>
-                            <div class="p-stat-row"><span>За всё время</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
+                        <div class="profile-stats-list" style="padding: 0 25px;">
+                            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom:1px solid var(--glass-border);"><span>Сегодня</span><b style="color:var(--main-color);">${window.userState.steps.toLocaleString()}</b></div>
+                            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom:1px solid var(--glass-border);"><span>За всё время</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
                         </div>
                         <div class="overlap-card" style="margin: 20px;">
                             <span style="font-weight:bold; letter-spacing:1px; font-size:12px;">МОЙ КОШЕЛЕК</span>
@@ -299,7 +285,6 @@
             }
         };
 
-        // --- Модальное окно друга ---
         window.showFriendCard = (friendId) => {
             const f = window.friendUsers.find(u => u.id === friendId);
             if (!f) return;
@@ -328,7 +313,6 @@
 
         window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
 
-        // --- Игровая логика ---
         window.buyStars = (c, s) => { window.tg.showAlert(`Покупка ${c} монет за ${s} ⭐️ скоро!`); };
         
         window.buyVip = async () => {
@@ -379,7 +363,6 @@
         window.shareResult = () => { window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent('Смотри, я прошел ' + window.userState.steps + ' шагов!')}`); };
         window.inviteFriends = () => { window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`); };
 
-        // --- Загрузка ---
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
@@ -392,18 +375,13 @@
                 if (!d) {
                     await userDocRef.set({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", stats: { steps_today: 0, steps_total: 0 }, economy: { balance: 0 }, inventory: { frames: ['white'], bgs: ['default'] }, selected: { frame: 'white', bg: 'default' }, isVip: false, tournament: {is_registered: false}, friends: [] });
                     d = (await userDocRef.get()).data();
-                } else {
-                    // Синхронизация шагов при входе
-                    if (window.userState.steps > (d.stats?.steps_today || 0)) {
-                        await userDocRef.update({ "stats.steps_today": window.userState.steps });
-                    }
                 }
 
                 const gRef = await db.collection("settings").doc("tournament").get();
                 if (gRef.exists) { 
                     const gData = gRef.data();
-                    window.userState.lastWinner = gData.last_winner || {name: '...', photo_url: ''}; 
-                    window.userState.lastWeekFriendWinner = gData.last_friend_winner || {name: '...', photo_url: ''};
+                    window.userState.lastWinner = gData.last_winner || {name: '', photo_url: ''}; 
+                    window.userState.lastWeekFriendWinner = gData.last_friend_winner || {name: '', photo_url: ''};
                     window.adminPrizePool = gData.admin_prize || 500;
                 }
 
