@@ -54,7 +54,7 @@
         .tab-item.active { color: var(--main-color); }
         .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        .home-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 25px; margin-top: 10px; }
+        .home-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 25px; margin-top: 10px; width: 100%; }
         .stat-box-blur { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
@@ -290,6 +290,12 @@
             if (!f) return;
             const steps = f.stats?.steps_today || 0;
             const isVip = f.isVip || false;
+            
+            // Рассчитываем данные для друга
+            const kcal = (steps * 0.04).toFixed(0);
+            const dist = (steps * 0.00075).toFixed(2);
+            const time = (steps / 100).toFixed(0);
+
             document.getElementById('modalBody').innerHTML = `
                 <div class="modal-inner-bg readable-text" style="background: ${bgStylesFull[f.selected?.bg || 'default']} center/cover">
                     <div class="avatar-wrapper">
@@ -297,6 +303,7 @@
                         <img src="${f.photo_url || 'https://ui-avatars.com/api/?name='+f.name}" class="user-avatar">
                     </div>
                     <h2 style="margin: 15px 0 5px; font-size:24px;">${f.name} ${isVip ? '👑' : ''}</h2>
+                    
                     ${isVip ? `
                         <div style="margin-top:40px; background:rgba(0,0,0,0.5); backdrop-filter:blur(10px); padding:25px; border-radius:25px; border:1px solid var(--vip-purple); width:100%;">
                             <div style="font-size:32px;">🕵️‍♂️</div>
@@ -305,7 +312,13 @@
                         </div>
                     ` : `
                         <h1 style="font-size:48px; margin:0; color:var(--main-color);">${steps.toLocaleString()}</h1>
-                        <p style="margin:0; opacity:0.7; font-weight:bold; font-size:11px;">ШАГОВ СЕГОДНЯ</p>
+                        <p style="margin:0 0 20px; opacity:0.7; font-weight:bold; font-size:11px;">ШАГОВ СЕГОДНЯ</p>
+                        
+                        <div class="home-stat-grid" style="margin-top:0;">
+                            <div class="stat-box-blur"><b>${kcal}</b><br><small style="opacity:0.5; font-size:9px;">ККАЛ</small></div>
+                            <div class="stat-box-blur"><b>${dist}</b><br><small style="opacity:0.5; font-size:9px;">КМ</small></div>
+                            <div class="stat-box-blur"><b>${time}</b><br><small style="opacity:0.5; font-size:9px;">МИН</small></div>
+                        </div>
                     `}
                 </div>`;
             document.getElementById('friendModal').style.display = 'flex';
