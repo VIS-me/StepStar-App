@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>StepStar</title>
+    <title>StepStar Gold Standard</title>
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
@@ -13,388 +14,81 @@
             --main-color: #248bcf;
             --bg-color: #1a1c20;
             --text-color: #ffffff;
-            --secondary-bg: rgba(255,255,255,0.03);
             --accent-gold: #FFD700;
             --success-green: #4CAF50;
+            --star-blue: #31a6f5;
+            --vip-purple: #9b59b6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        * { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-            outline: none; 
-        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
 
         body {
-            margin: 0; 
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: -apple-system, system-ui, sans-serif;
-            background: var(--bg-color); 
-            color: var(--text-color);
-            height: 100vh; 
-            width: 100vw; 
-            overflow: hidden;
-            transition: background 0.3s ease;
+            background: var(--bg-color); color: var(--text-color);
+            height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* Динамические фоны */
-        body.bg-cats { 
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-            url('https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
-        }
+        body.bg-cats { background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043') center/cover no-repeat !important; }
+        body.bg-maltese { background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat !important; }
+
+        .app-viewport { height: calc(100vh - 75px); overflow-y: auto; padding-bottom: 20px; position: relative; z-index: 1; }
+        .readable-text { text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+
+        .leader-hero-container { position: relative; width: 100%; height: 38vh; overflow: hidden; background: #222; }
+        .leader-img-full { width: 100%; height: 100%; object-fit: cover; }
+        .leader-badge { position: absolute; top: 25px; left: 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); border: 1px solid var(--accent-gold); color: var(--accent-gold); padding: 7px 14px; border-radius: 12px; font-size: 11px; font-weight: bold; z-index: 6; }
+
+        .overlap-card { background: rgba(30, 32, 36, 0.85); backdrop-filter: blur(15px); margin: -35px 20px 20px; padding: 18px 25px; border-radius: 22px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
         
-        body.bg-maltese { 
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-            url('https://images.pexels.com/photos/3361739/pexels-photo-3361739.jpeg?auto=compress&cs=tinysrgb&w=800') center/cover no-repeat !important; 
-        }
+        .section-title { padding: 15px 25px 8px; font-size: 12px; font-weight: 800; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); }
 
-        .app-viewport { 
-            height: calc(100vh - 70px); 
-            overflow-y: auto; 
-            padding-bottom: 20px; 
-            position: relative; 
-            z-index: 1; 
-        }
+        .table-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+        .clickable-row { cursor: pointer; }
+        .clickable-row:active { background: rgba(255,255,255,0.05); }
 
-        /* Шапка с фото */
-        .leader-hero-container { 
-            position: relative; 
-            width: 100%; 
-            height: 40vh; 
-            overflow: hidden; 
-            background: #222; 
-        }
+        .tab-bar { height: 75px; display: flex; background: rgba(15, 17, 20, 0.98); backdrop-filter: blur(10px); position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--glass-border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+        .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #555; font-size: 10px; font-weight: 500; transition: 0.2s; }
+        .tab-item.active { color: var(--main-color); }
+        .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
 
-        .leader-img-full { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-        }
+        .home-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 25px; margin-top: 10px; }
+        .stat-box-blur { background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); text-align: center; }
 
-        .leader-badge {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 215, 0, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            color: var(--accent-gold);
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            z-index: 6;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content { width: 92%; max-height: 85vh; background: #1a1c20; border-radius: 35px; overflow: hidden; position: relative; border: 1px solid var(--glass-border); }
+        .modal-inner-bg { padding: 40px 25px; min-height: 420px; display: flex; flex-direction: column; align-items: center; }
+        .modal-close { position: absolute; top: 20px; right: 25px; font-size: 30px; color: white; z-index: 10; opacity: 0.5; }
 
-        .leader-info-overlay { 
-            position: absolute; 
-            bottom: 50px; 
-            left: 25px; 
-            text-align: left; 
-            z-index: 5; 
-            text-shadow: 0 2px 10px rgba(0,0,0,0.8); 
-        }
+        .main-button { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 22px; font-size: 16px; font-weight: bold; margin: 20px auto; display: block; box-shadow: 0 10px 20px rgba(36, 139, 207, 0.3); }
+        .shop-btn-prof { width: 90%; background: var(--glass); color: white; border: 1px solid var(--glass-border); padding: 18px; border-radius: 22px; margin: 10px auto; display: block; font-weight: bold; }
+        .shop-bonus-btn { width: 90%; background: rgba(255, 215, 0, 0.05); color: var(--accent-gold); border: 1px solid var(--accent-gold); padding: 16px; border-radius: 20px; margin: 10px auto; display: block; font-weight: 800; font-size: 12px; }
+        .join-btn { background: var(--main-color); color: white; border: none; padding: 10px 20px; border-radius: 15px; font-weight: 800; font-size: 11px; }
+        .join-btn.active-status { background: var(--success-green); }
 
-        .leader-info-overlay h2 { 
-            margin: 0; 
-            font-size: 26px; 
-        }
+        .avatar-wrapper { position: relative; width: 110px; height: 110px; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
+        .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
+        .user-avatar { width: 90%; height: 90%; border-radius: 50%; object-fit: cover; background: #333; z-index: 1; }
 
-        .overlap-card {
-            background: rgba(255, 255, 255, 0.08); 
-            backdrop-filter: blur(20px); 
-            -webkit-backdrop-filter: blur(20px);
-            margin: -30px 20px 20px; 
-            padding: 15px 25px; 
-            border-radius: 20px;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            position: relative; 
-            z-index: 10; 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
+        .shop-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; margin-bottom: 20px; }
+        .shop-item-mini { background: rgba(0,0,0,0.4); padding: 12px 5px; border-radius: 18px; text-align: center; border: 2px solid transparent; }
+        .shop-item-mini.selected { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
+        .bg-preview { width: 40px; height: 40px; border-radius: 10px; margin: 0 auto 8px; border: 1px solid var(--glass-border); }
 
-        .section-title { 
-            padding: 10px 25px 5px; 
-            font-size: 11px; 
-            font-weight: bold; 
-            opacity: 0.4; 
-            letter-spacing: 1.2px; 
-            text-transform: uppercase; 
-        }
-
-        .table-row { 
-            display: flex; 
-            align-items: center; 
-            padding: 12px 25px; 
-            border-bottom: 1px solid rgba(255,255,255,0.03); 
-            cursor: pointer;
-        }
-
-        .table-row:active {
-            background: rgba(255,255,255,0.05);
-        }
-
-        .rank-num { 
-            width: 25px; 
-            font-size: 14px; 
-            opacity: 0.5; 
-            font-weight: bold; 
-        }
-
-        .rank-photo-mini { 
-            width: 38px; 
-            height: 38px; 
-            border-radius: 50%; 
-            margin: 0 15px; 
-            object-fit: cover; 
-            background: #333; 
-        }
-
-        /* Таббар */
-        .tab-bar { 
-            height: 70px; 
-            display: flex; 
-            background: rgba(21, 23, 26, 0.9); 
-            position: fixed; 
-            bottom: 0; 
-            width: 100%; 
-            border-top: 1px solid rgba(255,255,255,0.05); 
-            z-index: 1000;
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-        }
-
-        .tab-item { 
-            flex: 1; 
-            text-align: center; 
-            padding-top: 12px; 
-            color: #666; 
-            font-size: 10px; 
-            cursor: pointer; 
-        }
-
-        .tab-item.active { 
-            color: var(--main-color); 
-        }
-
-        .tab-item i { 
-            display: block; 
-            font-size: 22px; 
-            margin-bottom: 4px; 
-            font-style: normal; 
-        }
-
-        /* ПРОФИЛЬ */
-        .profile-stats-list { 
-            background: rgba(255,255,255,0.01); 
-            margin: 15px 20px; 
-            border-radius: 20px; 
-            padding: 5px 0; 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px); 
-            border: 1px solid rgba(255,255,255,0.15); 
-        }
-
-        .p-stat-row { 
-            display: flex; 
-            justify-content: space-between; 
-            padding: 12px 20px; 
-            border-bottom: 1px solid rgba(255,255,255,0.05); 
-        }
-
-        .p-stat-row:last-child { 
-            border-bottom: none; 
-        }
-
-        .p-value { 
-            font-weight: bold; 
-            text-shadow: 0 1px 4px rgba(0,0,0,0.5); 
-        }
-        
-        .balance-inline-card { 
-            background: rgba(255,255,255,0.01); 
-            margin: 15px 20px; 
-            padding: 16px 20px; 
-            border-radius: 20px; 
-            border: 1px solid rgba(255,215,0,0.25); 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            backdrop-filter: blur(8px); 
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        /* Модальное окно */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-content {
-            width: 85%;
-            background: rgba(30, 32, 36, 0.95);
-            border-radius: 30px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px; right: 20px;
-            font-size: 24px;
-            opacity: 0.5;
-        }
-
-        /* Кнопки */
-        .main-button { 
-            width: 90%; 
-            background: var(--main-color); 
-            color: white; 
-            border: none; 
-            padding: 16px; 
-            border-radius: 20px; 
-            font-size: 15px; 
-            font-weight: bold; 
-            margin: 15px auto; 
-            display: block; 
-            cursor: pointer; 
-        }
-
-        .shop-btn-prof { 
-            width: 90%; 
-            background: rgba(255,255,255,0.05); 
-            color: white; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            padding: 16px; 
-            border-radius: 20px; 
-            font-size: 15px; 
-            font-weight: bold; 
-            margin: 10px auto; 
-            display: block; 
-            backdrop-filter: blur(5px); 
-            cursor: pointer; 
-        }
-        
-        .join-btn { 
-            background: var(--main-color); 
-            color: white; 
-            border: none; 
-            padding: 10px 18px; 
-            border-radius: 14px; 
-            font-weight: bold; 
-            font-size: 13px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-        }
-
-        .join-btn.active-status { 
-            background: var(--success-green); 
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); 
-        }
-
-        /* Аватары */
-        .avatar-wrapper { 
-            position: relative; 
-            width: 100px; 
-            height: 100px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 0 auto; 
-        }
-
-        .profile-frame { 
-            position: absolute; 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            z-index: 2; 
-            pointer-events: none; 
-        }
-
-        .user-avatar { 
-            width: 100%; 
-            height: 100%; 
-            border-radius: 50%; 
-            object-fit: cover; 
-            background: #333; 
-        }
-
-        /* Магазин */
-        .shop-promo-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 8px; 
-            padding: 0 15px; 
-            margin-bottom: 15px; 
-        }
-
-        .promo-card { 
-            background: rgba(255,255,255,0.05); 
-            border-radius: 15px; 
-            padding: 10px 5px; 
-            text-align: center; 
-            cursor: pointer; 
-            border: 1px solid rgba(255,255,255,0.05); 
-            backdrop-filter: blur(10px); 
-        }
-
-        .shop-grid-4 { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-            padding: 0 15px; 
-            margin-bottom: 20px; 
-        }
-
-        .shop-item-mini { 
-            background: rgba(255,255,255,0.05); 
-            padding: 12px 5px; 
-            border-radius: 15px; 
-            text-align: center; 
-            border: 2px solid transparent; 
-            backdrop-filter: blur(10px); 
-            cursor: pointer; 
-        }
-
-        .bg-preview { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 8px; 
-            margin: 0 auto 8px; 
-            background-size: cover; 
-            background-position: center; 
-            border: 1px solid rgba(255,255,255,0.2); 
-        }
-
-        .frame-preview { 
-            width: 40px; 
-            height: 40px; 
-            border-radius: 50%; 
-            margin: 0 auto 8px; 
-            background: rgba(255,255,255,0.05); 
-        }
+        .stars-container { background: rgba(49, 166, 245, 0.05); margin: 15px 20px; border-radius: 22px; padding: 15px; border: 1px solid rgba(49, 166, 245, 0.15); }
+        .star-pack { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .star-pack:last-child { border-bottom: none; }
+        .star-btn { background: var(--star-blue); color: white; border: none; padding: 8px 14px; border-radius: 12px; font-weight: bold; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+        .vip-btn { background: var(--vip-purple); }
     </style>
 </head>
 <body>
 
     <div id="app" class="app-viewport"></div>
 
-    <div id="friendModal" class="modal-overlay" onclick="window.closeModal(event)">
+    <div id="friendModal" class="modal-overlay" onclick="window.closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-close" onclick="window.closeModal()">×</div>
             <div id="modalBody"></div>
@@ -419,35 +113,34 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-
         window.tg = window.Telegram.WebApp;
-        const placeholderImg = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800';
 
         window.userState = { 
-            id: '', frame: 'white', bg: 'default', steps: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0, 
-            coins: 0, inventoryFrames: ['white'], inventoryBgs: ['default'], lastGiftDate: '', isRegistered: false, friends: [],
-            lastWinner: { name: 'Ждем чемпиона', photo_url: placeholderImg },
-            lastWeekFriendWinner: { name: 'Стань лидером!', photo_url: placeholderImg }
+            id: '', name: '', photo_url: '', frame: 'white', bg: 'default', 
+            steps: 0, steps_total: 0, coins: 0, inventoryFrames: ['white'], inventoryBgs: ['default'], 
+            lastGiftDate: '', isRegistered: false, isVip: false, friends: [],
+            lastWinner: { name: '', photo_url: '' },
+            lastWeekFriendWinner: { name: '', photo_url: '' }
         };
+
         window.friendUsers = []; 
         window.tourUsers = []; 
         window.adminPrizePool = 500;
 
         const frameStyles = {
-            'white': '3px solid #ffffff', 'green': '3px solid #4CAF50', 'lightblue': '3px solid #00BCD4',
-            'blue': '3px solid #2196F3', 'pink': '3px solid #E91E63', 'purple': '3px solid #9C27B0', 'gold': '3px solid #FFD700'
+            'white': '4px solid #ffffff', 'green': '4px solid #4CAF50', 
+            'lightblue': '4px solid #00BCD4', 'blue': '4px solid #2196F3', 
+            'pink': '4px solid #E91E63', 'purple': '4px solid #9C27B0', 'gold': '4px solid #FFD700'
         };
 
-        const bgStyles = {
-            'default': 'transparent',
-            'cats': 'https://images.pexels.com/photos/104827/cat-pet-animal-domestic-104827.jpeg?auto=compress&cs=tinysrgb&h=100',
-            'maltese': 'https://images.pexels.com/photos/3361739/pexels-photo-3361739.jpeg?auto=compress&cs=tinysrgb&h=100'
+        const bgStylesFull = {
+            'default': 'var(--bg-color)',
+            'cats': "url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043')",
+            'maltese': "url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png')" 
         };
 
         window.navigate = function(pageId, el) {
-            const user = window.tg.initDataUnsafe?.user || { first_name: "Игрок", photo_url: "" };
             const appDiv = document.getElementById('app');
-            
             document.body.className = '';
             if (window.userState.bg && window.userState.bg !== 'default') {
                 document.body.classList.add('bg-' + window.userState.bg);
@@ -459,364 +152,254 @@
             }
 
             if (pageId === 'home') {
-                const s = { 
-                    dist: (window.userState.steps * 0.00075).toFixed(2), 
-                    kcal: (window.userState.steps * 0.04).toFixed(0), 
-                    time: (window.userState.steps / 100).toFixed(0) 
-                };
-                const offset = 628 - (628 * Math.min(window.userState.steps / 10000, 1));
+                const s = { dist: (window.userState.steps * 0.00075).toFixed(2), kcal: (window.userState.steps * 0.04).toFixed(0), time: (window.userState.steps / 100).toFixed(0) };
                 appDiv.innerHTML = `
-                    <div style="text-align:center; padding-top:20px;">
+                    <div style="text-align:center; padding-top:35px;" class="readable-text">
                         <div class="avatar-wrapper">
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
-                            <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
+                            <img src="${window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:15px;">${user.first_name}</h3>
+                        <h2 style="margin-top:15px; font-weight:800; font-size:22px;">${window.userState.name} ${window.userState.isVip ? '👑' : ''}</h2>
                         <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
                             <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;">
-                                <circle stroke="rgba(255,255,255,0.1)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110"/>
-                                <circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="100" cx="110" cy="110" style="stroke-dashoffset:${offset}; stroke-dasharray:628; transition:0.5s; stroke-linecap:round;"/>
+                                <circle stroke="rgba(255,255,255,0.08)" stroke-width="12" fill="transparent" r="95" cx="110" cy="110"/>
+                                <circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="95" cx="110" cy="110" style="stroke-dashoffset:${600 - (600 * Math.min(window.userState.steps/10000, 1))}; stroke-dasharray:600; transition:1s ease; stroke-linecap:round;"/>
                             </svg>
-                            <div>
-                                <h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1>
-                                <div style="font-size:12px; opacity:0.6; font-weight:bold;">шагов сегодня</div>
-                            </div>
+                            <div><h1 style="margin:0; font-size:46px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.7; font-weight:bold; color:var(--main-color);">ШАГОВ СЕГОДНЯ</div></div>
                         </div>
-                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:0 20px;">
-                            <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:18px;"><b>${s.kcal}</b><br><span style="font-size:10px;opacity:0.5;">ккал</span></div>
-                            <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:18px;"><b>${s.dist}</b><br><span style="font-size:10px;opacity:0.5;">км</span></div>
-                            <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:18px;"><b>${s.time}</b><br><span style="font-size:10px;opacity:0.5;">мин</span></div>
+                        <div class="home-stat-grid">
+                            <div class="stat-box-blur"><b>${s.kcal}</b><br><small style="opacity:0.5; font-size:9px;">ККАЛ</small></div>
+                            <div class="stat-box-blur"><b>${s.dist}</b><br><small style="opacity:0.5; font-size:9px;">КМ</small></div>
+                            <div class="stat-box-blur"><b>${s.time}</b><br><small style="opacity:0.5; font-size:9px;">МИН</small></div>
                         </div>
-                        <button class="main-button" style="margin-top:30px;" onclick="window.shareResult()">Поделиться результатом</button>
+                        <button class="main-button" onclick="window.shareResult()">ПОДЕЛИТЬСЯ УСПЕХОМ</button>
                     </div>`;
             }
 
             if (pageId === 'rank') {
-                const leader = window.userState.lastWeekFriendWinner;
+                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
-                const topFriends = window.friendUsers.slice(0, 3);
-                
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <div class="leader-badge">Лидер прошлой недели</div>
-                        <img src="${leader.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=🏆'">
-                        <div class="leader-info-overlay"><h2>${leader.name}</h2></div>
+                        <div class="leader-badge">ТОП НЕДЕЛИ</div>
+                        <img src="${leaderPhoto}" class="leader-img-full">
                     </div>
-                    <div class="overlap-card">
-                        <div>
-                            <div style="font-size:9px; opacity:0.5;">РАНГ</div>
-                            <div style="font-size:20px; font-weight:bold; color:var(--main-color);">#${myIndex || '-'}</div>
-                        </div>
-                        <div style="text-align:right;">
-                            <div style="font-size:9px; opacity:0.5;">ШАГИ</div>
-                            <div style="font-size:18px; font-weight:bold;">${window.userState.steps.toLocaleString()}</div>
-                        </div>
+                    <div class="overlap-card readable-text">
+                        <div><div style="font-size:10px; opacity:0.7; font-weight:bold;">МОЙ РАНГ</div><div style="font-size:20px; font-weight:900; color:var(--main-color);">#${myIndex || '-'}</div></div>
+                        <div style="text-align:right;"><div style="font-size:10px; opacity:0.7; font-weight:bold;">ШАГИ</div><div style="font-size:18px; font-weight:900;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
-                    <div class="section-title">Топ-3 Друзей (жми на друга)</div>
-                    ${topFriends.map((u, i) => `
-                        <div class="table-row" onclick="window.showFriendCard('${u.id}')">
-                            <span class="rank-num">${i + 1}</span>
-                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini">
-                            <span style="flex:1; font-weight:500;">${u.name}</span>
-                            <b>${(u.stats?.steps_today || 0).toLocaleString()}</b>
+                    <div class="section-title">Топ-3 Друзей</div>
+                    ${window.friendUsers.slice(0, 3).map((u, i) => `
+                        <div class="table-row clickable-row readable-text" onclick="window.showFriendCard('${u.id}')">
+                            <span style="width:25px; font-weight:bold; opacity:0.5;">${i + 1}</span>
+                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:40px; height:40px; border-radius:50%; margin:0 15px; border:1px solid var(--glass-border); object-fit:cover;">
+                            <span style="flex:1; font-weight:600;">${u.name} ${u.isVip ? '👑' : ''}</span>
+                            <b style="font-size:15px;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
                         </div>`).join('')}
-                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">Пригласить друзей</button>`;
+                    <button class="main-button" style="margin-top:20px;" onclick="window.inviteFriends()">ПРИГЛАСИТЬ ДРУЗЕЙ</button>`;
             }
 
             if (pageId === 'tour') {
-                const winner = window.userState.lastWinner;
+                const winnerPhoto = window.userState.lastWinner.photo_url || 'https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=2070';
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
-                        <div class="leader-badge">Победитель прошлого турнира</div>
-                        <img src="${winner.photo_url}" class="leader-img-full" onerror="this.src='https://ui-avatars.com/api/?name=👑'">
-                        <div class="leader-info-overlay"><h2>${winner.name}</h2></div>
+                        <div class="leader-badge">ТУРНИР</div>
+                        <img src="${winnerPhoto}" class="leader-img-full">
                     </div>
-                    <div class="overlap-card">
-                        <div>
-                            <div style="font-size:9px; opacity:0.5; text-transform:uppercase;">Призовой фонд</div>
-                            <div style="font-size:18px; font-weight:bold; color:var(--accent-gold);">${window.adminPrizePool} монет</div>
-                        </div>
-                        <button class="join-btn ${window.userState.isRegistered ? 'active-status' : ''}" onclick="window.joinTournament()">
-                            ${window.userState.isRegistered ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ'}
-                        </button>
+                    <div class="overlap-card readable-text">
+                        <div><div style="font-size:10px; opacity:0.7; font-weight:bold;">ПРИЗОВОЙ ФОНД</div><div style="font-size:18px; font-weight:900; color:var(--accent-gold);">${window.adminPrizePool} 💰</div></div>
+                        <button class="join-btn ${window.userState.isRegistered ? 'active-status' : ''}" onclick="window.joinTournament()">${window.userState.isRegistered ? 'УЧАСТВУЮ' : 'ВСТУПИТЬ (50)'}</button>
                     </div>
-                    <div class="section-title">Топ участников турнира</div>
+                    <div class="section-title">Участники</div>
                     ${window.tourUsers.map((u, i) => `
-                        <div class="table-row">
-                            <span class="rank-num">${i + 1}</span>
-                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" class="rank-photo-mini">
-                            <span style="font-weight:500;">${u.name}</span>
+                        <div class="table-row readable-text">
+                            <span style="width:25px; font-weight:bold; opacity:0.5;">${i + 1}</span>
+                            <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:40px; height:40px; border-radius:50%; margin:0 15px; border:1px solid var(--glass-border); object-fit:cover;">
+                            <span style="font-weight:600;">${u.name} ${u.isVip ? '👑' : ''}</span>
                             <b style="margin-left:auto;">${(u.stats?.steps_today || 0).toLocaleString()}</b>
-                        </div>`).join('')}
-                `;
+                        </div>`).join('')}`;
             }
 
             if (pageId === 'prof') {
                 appDiv.innerHTML = `
-                    <div style="padding-top:30px; text-align:center;">
+                    <div style="padding-top:40px; text-align:center;" class="readable-text">
                         <div class="avatar-wrapper">
                             <div class="profile-frame" style="border: ${frameStyles[window.userState.frame]}"></div>
-                            <img src="${user.photo_url || 'https://ui-avatars.com/api/?name='+user.first_name}" class="user-avatar">
+                            <img src="${window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name}" class="user-avatar">
                         </div>
-                        <h3 style="margin-top:15px; margin-bottom:5px;">${user.first_name}</h3>
-                        <div style="font-size:11px; opacity:0.5; margin-bottom:20px;">ID: ${window.userState.id}</div>
-                        <div class="section-title" style="text-align:left;">История шагов</div>
-                        <div class="profile-stats-list">
-                            <div class="p-stat-row"><span class="p-label">Сегодня</span><span class="p-value">${window.userState.steps.toLocaleString()}</span></div>
-                            <div class="p-stat-row"><span class="p-label">Прошлая неделя</span><span class="p-value">${(window.userState.steps_last_week || 0).toLocaleString()}</span></div>
-                            <div class="p-stat-row"><span class="p-label">Прошлый месяц</span><span class="p-value">${(window.userState.steps_last_month || 0).toLocaleString()}</span></div>
-                            <div class="p-stat-row"><span class="p-label">Всего</span><span class="p-value">${(window.userState.steps_total || 0).toLocaleString()}</span></div>
+                        <h2 style="margin-top:15px; font-weight:800;">${window.userState.name} ${window.userState.isVip ? '👑' : ''}</h2>
+                        <div style="font-size:11px; opacity:0.4; margin-bottom:20px;">ID: ${window.userState.id}</div>
+                        <div class="profile-stats-list" style="padding: 0 25px;">
+                            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom:1px solid var(--glass-border);"><span>Сегодня</span><b style="color:var(--main-color);">${window.userState.steps.toLocaleString()}</b></div>
+                            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom:1px solid var(--glass-border);"><span>За всё время</span><b>${(window.userState.steps_total || 0).toLocaleString()}</b></div>
                         </div>
-                        <div class="balance-inline-card">
-                            <span class="balance-text">Кошелек</span>
-                            <span class="balance-val">${window.userState.coins} 💰</span>
+                        <div class="overlap-card" style="margin: 20px;">
+                            <span style="font-weight:bold; letter-spacing:1px; font-size:12px;">МОЙ КОШЕЛЕК</span>
+                            <b style="color:var(--accent-gold); font-size:18px;">${window.userState.coins} 💰</b>
                         </div>
-                        <button class="shop-btn-prof" onclick="window.navigate('shop')">ЗАГЛЯНУТЬ В МАГАЗИН</button>
+                        <button class="shop-btn-prof" onclick="window.navigate('shop')">МАГАЗИН И ПРИВИЛЕГИИ</button>
                     </div>`;
             }
 
             if (pageId === 'shop') {
-                const frames = [{id:'white', p:0}, {id:'green', p:50}, {id:'lightblue', p:50}, {id:'blue', p:50}, {id:'pink', p:50}, {id:'purple', p:50}, {id:'gold', p:500}];
-                const bgs = [{id:'default', p:0, name:'Стоковый'}, {id:'cats', p:100, name:'Котята'}, {id:'maltese', p:100, name:'Мальтезе'}];
+                const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
+                const bgs = [{id:'default', n:'Стандарт', p:0}, {id:'cats', n:'Котята', p:100}, {id:'maltese', n:'Мальтезе', p:150}];
                 appDiv.innerHTML = `
                     <div style="padding:20px; display:flex; justify-content:space-between; align-items:center;">
-                        <button onclick="window.navigate('prof')" style="background:none; border:none; color:white; font-size:24px;">←</button>
-                        <div style="font-weight:bold; color:var(--accent-gold);">💰 ${window.userState.coins}</div>
+                        <button onclick="window.navigate('prof')" style="background:var(--glass); border:none; color:white; width:40px; height:40px; border-radius:12px;">←</button>
+                        <div style="font-weight:900; color:var(--accent-gold);">${window.userState.coins} 💰</div>
                     </div>
-                    <div class="shop-promo-grid">
-                        <div class="promo-card" onclick="window.claimDailyGift()"><i>🎁</i><b>Подарок</b><span>10 монет</span></div>
-                        <div class="promo-card" onclick="window.buyStars(250, 150)"><i>💰</i><b>250</b><span>150 ⭐</span></div>
-                        <div class="promo-card" onclick="window.buyStars(600, 300)"><i>💎</i><b>600</b><span>300 ⭐</span></div>
-                        <div class="promo-card" onclick="window.buyStars(2500, 1000)"><i>👑</i><b>2500</b><span>1000 ⭐</span></div>
+                    <div class="section-title">Купить монеты (Stars)</div>
+                    <div class="stars-container">
+                        <div class="star-pack"><span>100 монет</span><button class="star-btn" onclick="window.buyStars(100, 50)">50 ⭐️</button></div>
+                        <div class="star-pack"><span>350 монет</span><button class="star-btn" onclick="window.buyStars(350, 150)">150 ⭐️</button></div>
+                        <div class="star-pack"><span>1200 монет</span><button class="star-btn" onclick="window.buyStars(1200, 500)">500 ⭐️</button></div>
                     </div>
-                    <div class="section-title">Рамки профиля</div>
+                    <div class="section-title">VIP Привилегии</div>
+                    <div class="stars-container" style="background:rgba(155, 89, 182, 0.1); border-color:var(--vip-purple);">
+                        <div class="star-pack" style="flex-direction:column; align-items:flex-start; gap:8px;">
+                            <div style="font-weight:bold; color:var(--vip-purple);">👑 VIP СТАТУС (ИНКОГНИТО)</div>
+                            <small style="opacity:0.6; font-size:10px;">Скрывает данные от других в рейтинге.</small>
+                            <button class="star-btn vip-btn" style="width:100%; justify-content:center; margin-top:5px;" onclick="window.buyVip()">${window.userState.isVip ? 'УЖЕ АКТИВЕН' : '1000 ⭐️ — АКТИВИРОВАТЬ'}</button>
+                        </div>
+                    </div>
+                    <div class="section-title">Бонусы</div>
+                    <button class="shop-bonus-btn" onclick="window.claimDailyGift()">🎁 ПОДАРОК ЗА 10 000 ШАГОВ (+20 💰)</button>
+                    <div class="section-title">Рамки профиля (50 💰)</div>
                     <div class="shop-grid-4">
                         ${frames.map(f => `
-                            <div class="shop-item-mini" onclick="window.handleFrameAction('${f.id}', ${f.p})" style="border-color:${window.userState.frame === f.id ? 'var(--main-color)' : 'transparent'}">
-                                <div class="frame-preview" style="border:${frameStyles[f.id]}"></div>
-                                <div style="font-size:10px; opacity:0.8;">${window.userState.frame === f.id ? 'Уст.' : (window.userState.inventoryFrames.includes(f.id) ? 'Взять' : f.p)}</div>
+                            <div class="shop-item-mini ${window.userState.frame === f ? 'selected' : ''}" onclick="window.handleFrameAction('${f}', 50)">
+                                <div style="width:34px; height:34px; border:${frameStyles[f]}; border-radius:50%; margin:0 auto 6px;"></div>
+                                <small style="font-weight:bold; font-size:10px;">${window.userState.inventoryFrames.includes(f) ? 'ВЗЯТЬ' : '50'}</small>
                             </div>`).join('')}
                     </div>
-                    <div class="section-title">Фоны приложения</div>
+                    <div class="section-title">Фоны</div>
                     <div class="shop-grid-4">
                         ${bgs.map(b => `
-                            <div class="shop-item-mini" onclick="window.handleBgAction('${b.id}', ${b.p})" style="border-color:${window.userState.bg === b.id ? 'var(--main-color)' : 'transparent'}">
-                                <div class="bg-preview" style="background-image:url('${bgStyles[b.id]}'); background-color:#333;"></div>
-                                <div style="font-size:9px; line-height:1.2;">${b.name}<br><span style="opacity:0.6;">${window.userState.bg === b.id ? 'Уст.' : (window.userState.inventoryBgs.includes(b.id) ? 'Взять' : b.p)}</span></div>
+                            <div class="shop-item-mini ${window.userState.bg === b.id ? 'selected' : ''}" onclick="window.handleBgAction('${b.id}', ${b.p})">
+                                <div class="bg-preview" style="background:${bgStylesFull[b.id]} center/cover"></div>
+                                <div style="font-size:8px; font-weight:bold; margin-bottom:4px;">${b.n.toUpperCase()}</div>
+                                <small style="font-weight:bold; color:var(--accent-gold); font-size:10px;">${window.userState.inventoryBgs.includes(b.id) ? 'ВЗЯТЬ' : b.p}</small>
                             </div>`).join('')}
                     </div>`;
             }
         };
 
         window.showFriendCard = (friendId) => {
-            const friend = window.friendUsers.find(u => u.id === friendId);
-            if (!friend) return;
-
-            const modal = document.getElementById('friendModal');
-            const body = document.getElementById('modalBody');
-            
-            const steps = friend.stats?.steps_today || 0;
-            const dist = (steps * 0.00075).toFixed(2);
-            const kcal = (steps * 0.04).toFixed(0);
-            const frame = friend.selected?.frame || 'white';
-            const bg = friend.selected?.bg || 'default';
-
-            body.innerHTML = `
-                <div style="background-image: url('${bgStyles[bg]}'); background-size: cover; border-radius: 20px; padding: 20px;">
+            const f = window.friendUsers.find(u => u.id === friendId);
+            if (!f) return;
+            const steps = f.stats?.steps_today || 0;
+            const isVip = f.isVip || false;
+            document.getElementById('modalBody').innerHTML = `
+                <div class="modal-inner-bg readable-text" style="background: ${bgStylesFull[f.selected?.bg || 'default']} center/cover">
                     <div class="avatar-wrapper">
-                        <div class="profile-frame" style="border: ${frameStyles[frame]}"></div>
-                        <img src="${friend.photo_url || 'https://ui-avatars.com/api/?name='+friend.name}" class="user-avatar">
+                        <div class="profile-frame" style="border: ${frameStyles[f.selected?.frame || 'white']}"></div>
+                        <img src="${f.photo_url || 'https://ui-avatars.com/api/?name='+f.name}" class="user-avatar">
                     </div>
-                    <h2 style="margin: 15px 0 5px;">${friend.name}</h2>
-                    <div style="font-size: 18px; font-weight: bold; color: var(--main-color); margin-bottom: 20px;">${steps.toLocaleString()} шагов</div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-                        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px;">
-                            <span style="font-size: 10px; opacity: 0.5;">ДИСТАНЦИЯ</span><br><b>${dist} км</b>
+                    <h2 style="margin: 15px 0 5px; font-size:24px;">${f.name} ${isVip ? '👑' : ''}</h2>
+                    ${isVip ? `
+                        <div style="margin-top:40px; background:rgba(0,0,0,0.5); backdrop-filter:blur(10px); padding:25px; border-radius:25px; border:1px solid var(--vip-purple); width:100%;">
+                            <div style="font-size:32px;">🕵️‍♂️</div>
+                            <div style="color:var(--vip-purple); font-weight:bold; margin-top:10px;">VIP ИНКОГНИТО</div>
+                            <div style="opacity:0.6; font-size:11px;">Данные скрыты</div>
                         </div>
-                        <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 15px;">
-                            <span style="font-size: 10px; opacity: 0.5;">ЭНЕРГИЯ</span><br><b>${kcal} ккал</b>
-                        </div>
-                    </div>
-                    <button class="main-button" style="margin-top: 20px; width: 100%;" onclick="window.closeModal(); window.navigate('shop')">ХОЧУ ТАК ЖЕ</button>
-                </div>
-            `;
-            modal.style.display = 'flex';
+                    ` : `
+                        <h1 style="font-size:48px; margin:0; color:var(--main-color);">${steps.toLocaleString()}</h1>
+                        <p style="margin:0; opacity:0.7; font-weight:bold; font-size:11px;">ШАГОВ СЕГОДНЯ</p>
+                    `}
+                </div>`;
+            document.getElementById('friendModal').style.display = 'flex';
         };
 
-        window.closeModal = (e) => {
-            document.getElementById('friendModal').style.display = 'none';
+        window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
+        window.buyStars = (c, s) => { window.tg.showAlert(`Покупка ${c} монет за ${s} ⭐️ скоро!`); };
+        
+        window.buyVip = async () => {
+            if(window.userState.isVip) return;
+            window.tg.showConfirm("Активировать VIP за 1000 ⭐️?", async (ok) => {
+                if(ok) {
+                    await db.collection("users").doc(window.userState.id).update({ isVip: true });
+                    loadData();
+                }
+            });
         };
 
         window.claimDailyGift = async () => {
+            if (window.userState.steps < 10000) return window.tg.showAlert("Сначала 10 000 шагов!");
             const today = new Date().toLocaleDateString();
-            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Вы уже забирали подарок сегодня!");
-            if (window.userState.steps < 10000) return window.tg.showAlert("Сначала пройдите 10000 шагов!");
-            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 10, "economy.last_gift_date": today });
-            window.tg.showAlert("Ура! +10 монет получено.");
+            if (window.userState.lastGiftDate === today) return window.tg.showAlert("Уже получено!");
+            await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins + 20, "economy.last_gift_date": today });
             loadData();
         };
 
-        window.buyStars = (coins, stars) => { window.tg.showAlert(`Интерфейс оплаты Телеграм: Покупка ${coins} монет за ${stars} ⭐.`); };
-
         window.handleFrameAction = async (id, price) => {
+            const userDoc = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryFrames.includes(id)) { 
-                await db.collection("users").doc(window.userState.id).update({ "selected.frame": id }); 
+                await userDoc.update({ "selected.frame": id }); 
             } else if (window.userState.coins >= price) { 
-                const newInv = [...window.userState.inventoryFrames, id]; 
-                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.frames": newInv, "selected.frame": id }); 
-            }
+                await userDoc.update({ "economy.balance": window.userState.coins - price, "inventory.frames": firebase.firestore.FieldValue.arrayUnion(id), "selected.frame": id }); 
+            } else { window.tg.showAlert("Мало монет!"); }
             loadData();
         };
 
         window.handleBgAction = async (id, price) => {
+            const userDoc = db.collection("users").doc(window.userState.id);
             if (window.userState.inventoryBgs.includes(id)) { 
-                await db.collection("users").doc(window.userState.id).update({ "selected.bg": id }); 
+                await userDoc.update({ "selected.bg": id }); 
             } else if (window.userState.coins >= price) { 
-                const newInv = [...window.userState.inventoryBgs, id]; 
-                await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - price, "inventory.bgs": newInv, "selected.bg": id }); 
-            }
+                await userDoc.update({ "economy.balance": window.userState.coins - price, "inventory.bgs": firebase.firestore.FieldValue.arrayUnion(id), "selected.bg": id }); 
+            } else { window.tg.showAlert("Мало монет!"); }
             loadData();
         };
 
-        window.shareResult = () => { 
-            const steps = window.userState.steps.toLocaleString(); 
-            const text = `👟 Я прошел сегодня ${steps} шагов!`; 
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent(text)}`); 
-        };
-
-        window.inviteFriends = () => { 
-            const inviteText = `Давай ходить вместе в StepStar! 👟\nТвой ID: ${window.userState.id}`; 
-            window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}&text=${encodeURIComponent(inviteText)}`); 
-        };
-
-        async function checkTournamentEnd() {
-            const now = new Date(); 
-            const day = now.getDate(); 
-            const monthYear = `${now.getMonth()}_${now.getFullYear()}`;
-            const gRef = await db.collection("settings").doc("tournament").get(); 
-            const gData = gRef.data() || {};
-            if (day >= 8 && gData.last_processed_month !== monthYear) {
-                const tourSnap = await db.collection("users").where("tournament.is_registered", "==", true).get();
-                if (!tourSnap.empty) {
-                    let winner = null; 
-                    let maxSteps = -1; 
-                    let participants = [];
-                    tourSnap.forEach(doc => { 
-                        const d = doc.data(); 
-                        participants.push(doc.id); 
-                        if (d.stats.steps_today > maxSteps) { 
-                            maxSteps = d.stats.steps_today; 
-                            winner = { id: doc.id, name: d.name, photo_url: d.photo_url, current_balance: d.economy.balance }; 
-                        } 
-                    });
-                    if (winner) {
-                        await db.collection("users").doc(winner.id).update({ "economy.balance": (winner.current_balance || 0) + 500 });
-                        await db.collection("settings").doc("tournament").set({ last_winner: { name: winner.name, photo_url: winner.photo_url }, last_processed_month: monthYear, admin_prize: 500 }, { merge: true });
-                        const batch = db.batch(); 
-                        participants.forEach(pId => { batch.update(db.collection("users").doc(pId), { "tournament.is_registered": false }); }); 
-                        await batch.commit();
-                    }
-                }
-            }
-        }
-
         window.joinTournament = async () => {
-            if (window.userState.isRegistered) return; 
-            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 💰");
+            if (window.userState.isRegistered) return;
+            if (window.userState.coins < 50) return window.tg.showAlert("Нужно 50 монет!");
             await db.collection("users").doc(window.userState.id).update({ "economy.balance": window.userState.coins - 50, "tournament.is_registered": true });
             loadData();
         };
 
+        window.shareResult = () => { window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=${encodeURIComponent('Смотри, я прошел ' + window.userState.steps + ' шагов!')}`); };
+        window.inviteFriends = () => { window.tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app?startapp=${window.userState.id}`); };
+
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
-                if (!tgUser) { window.navigate('home'); return; }
+                if (!tgUser) return;
                 const myId = String(tgUser.id); 
                 window.userState.id = myId;
-                
-                await checkTournamentEnd();
-                
-                const userDocRef = db.collection("users").doc(myId); 
-                const userDoc = await userDocRef.get();
-                
-                if (!userDoc.exists) {
-                    await userDocRef.set({ 
-                        name: tgUser.first_name, 
-                        photo_url: tgUser.photo_url || "", 
-                        last_seen: new Date().getTime(), 
-                        stats: { steps_today: 0, steps_total: 0, steps_last_week: 0, steps_last_month: 0 }, 
-                        economy: { balance: 0, last_gift_date: '' }, 
-                        inventory: { frames: ['white'], bgs: ['default'] }, 
-                        selected: { frame: 'white', bg: 'default' }, 
-                        tournament: { is_registered: false }, 
-                        friends: [] 
-                    });
-                } else { 
-                    await userDocRef.update({ 
-                        name: tgUser.first_name, 
-                        photo_url: tgUser.photo_url || "", 
-                        last_seen: new Date().getTime() 
-                    }); 
+                const userDocRef = db.collection("users").doc(myId);
+
+                let d = (await userDocRef.get()).data();
+                if (!d) {
+                    await userDocRef.set({ name: tgUser.first_name, photo_url: tgUser.photo_url || "", stats: { steps_today: 0, steps_total: 0 }, economy: { balance: 0 }, inventory: { frames: ['white'], bgs: ['default'] }, selected: { frame: 'white', bg: 'default' }, isVip: false, tournament: {is_registered: false}, friends: [] });
+                    d = (await userDocRef.get()).data();
                 }
-                
-                const sp = window.tg.initDataUnsafe?.start_param;
-                if (sp && sp !== myId) {
-                    await db.collection("users").doc(sp).set({ friends: firebase.firestore.FieldValue.arrayUnion(myId) }, { merge: true });
-                    await db.collection("users").doc(myId).set({ friends: firebase.firestore.FieldValue.arrayUnion(sp) }, { merge: true });
-                }
-                
+
                 const gRef = await db.collection("settings").doc("tournament").get();
-                if (gRef.exists && gRef.data().last_winner) { 
-                    window.userState.lastWinner = gRef.data().last_winner; 
-                    window.adminPrizePool = gRef.data().admin_prize || 500; 
+                if (gRef.exists) { 
+                    const gData = gRef.data();
+                    window.userState.lastWinner = gData.last_winner || {name: '', photo_url: ''}; 
+                    window.userState.lastWeekFriendWinner = gData.last_friend_winner || {name: '', photo_url: ''};
+                    window.adminPrizePool = gData.admin_prize || 500;
                 }
-                
-                const wRef = await db.collection("settings").doc("weekly_rating").get();
-                if (wRef.exists && wRef.data().last_winner) { 
-                    window.userState.lastWeekFriendWinner = wRef.data().last_winner; 
-                } else { 
-                    window.userState.lastWeekFriendWinner = { name: tgUser.first_name, photo_url: tgUser.photo_url || 'https://ui-avatars.com/api/?name='+tgUser.first_name }; 
-                }
-                
-                const finalDoc = await userDocRef.get(); 
-                const d = finalDoc.data();
-                
-                window.userState = { 
-                    ...window.userState, 
-                    steps: d.stats?.steps_today || 0, 
-                    steps_total: d.stats?.steps_total || 0, 
-                    steps_last_week: d.stats?.steps_last_week || 0, 
-                    steps_last_month: d.stats?.steps_last_month || 0, 
-                    coins: d.economy?.balance || 0, 
-                    lastGiftDate: d.economy?.last_gift_date || '', 
-                    frame: d.selected?.frame || 'white', 
-                    bg: d.selected?.bg || 'default', 
-                    inventoryFrames: d.inventory?.frames || ['white'], 
-                    inventoryBgs: d.inventory?.bgs || ['default'], 
-                    isRegistered: d.tournament?.is_registered || false, 
-                    friends: d.friends || [] 
-                };
+
+                window.userState = { ...window.userState, name: d.name, photo_url: d.photo_url, steps: d.stats?.steps_today || 0, steps_total: d.stats?.steps_total || 0, coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', bg: d.selected?.bg || 'default', inventoryFrames: d.inventory?.frames || ['white'], inventoryBgs: d.inventory?.bgs || ['default'], lastGiftDate: d.economy?.last_gift_date, isRegistered: d.tournament?.is_registered || false, isVip: d.isVip || false, friends: d.friends || [] };
                 
                 const fIds = [...window.userState.friends, myId];
                 const fSnap = await db.collection("users").where(firebase.firestore.FieldPath.documentId(), 'in', fIds.slice(0, 10)).get();
                 window.friendUsers = fSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 
-                const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(10).get();
+                const tSnap = await db.collection("users").where("tournament.is_registered", "==", true).limit(20).get();
                 window.tourUsers = tSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })).sort((a,b) => (b.stats?.steps_today || 0) - (a.stats?.steps_today || 0));
                 
-                const currentActiveTab = document.querySelector('.tab-item.active span')?.innerText;
-                const tabMap = { 'Дом': 'home', 'Рейтинг': 'rank', 'Турнир': 'tour', 'Профиль': 'prof' };
-                window.navigate(tabMap[currentActiveTab] || 'home');
-            } catch (e) { 
-                console.error(e); 
-                window.navigate('home'); 
-            }
+                const activeTab = document.querySelector('.tab-bar .active span')?.innerText || 'Дом';
+                const map = {'Дом':'home', 'Рейтинг':'rank', 'Турнир':'tour', 'Профиль':'prof'};
+                window.navigate(map[activeTab] || 'home');
+            } catch (e) { console.error(e); }
         }
 
-        window.tg.ready(); 
-        window.tg.expand(); 
-        loadData();
+        window.tg.ready(); window.tg.expand(); loadData();
     </script>
 </body>
 </html>
