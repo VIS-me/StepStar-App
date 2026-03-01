@@ -24,55 +24,48 @@
             height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* Динамические фоны */
+        /* Фоны */
         body.bg-cats { background: url('https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2043') center/cover no-repeat !important; }
         body.bg-maltese { background: url('https://raw.githubusercontent.com/VIS-me/StepStar-App/main/maltese.png') center/cover no-repeat !important; }
 
         .app-viewport { height: calc(100vh - 75px); overflow-y: auto; padding-bottom: 20px; position: relative; z-index: 1; }
         .readable-text { text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
 
-        /* Общие компоненты */
+        /* Компоненты */
         .glass-card { 
             background: rgba(30, 32, 36, 0.85); backdrop-filter: blur(15px); 
             border: 1px solid var(--glass-border); border-radius: 22px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-
-        .hero-container { position: relative; width: 100%; height: 38vh; overflow: hidden; background: #222; }
+        .hero-container { position: relative; width: 100%; height: 35vh; overflow: hidden; background: #222; }
         .hero-img { width: 100%; height: 100%; object-fit: cover; }
         .badge { 
-            position: absolute; top: 25px; left: 20px; background: rgba(0,0,0,0.6); 
-            backdrop-filter: blur(5px); border: 1px solid var(--accent-gold); 
-            color: var(--accent-gold); padding: 7px 14px; border-radius: 12px; 
-            font-size: 11px; font-weight: bold; z-index: 6; 
+            position: absolute; top: 20px; left: 20px; background: rgba(0,0,0,0.6); 
+            border: 1px solid var(--accent-gold); color: var(--accent-gold); 
+            padding: 6px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; 
         }
-
-        .overlap-card { margin: -35px 20px 20px; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; }
+        .overlap-card { margin: -30px 20px 20px; padding: 18px 25px; display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 10; }
         
-        .section-title { padding: 15px 25px 8px; font-size: 11px; font-weight: 800; opacity: 0.6; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); }
-        .list-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); }
+        .section-title { padding: 15px 25px 8px; font-size: 11px; font-weight: 800; opacity: 0.6; text-transform: uppercase; color: var(--accent-gold); }
+        .list-row { display: flex; align-items: center; padding: 14px 25px; border-bottom: 1px solid var(--glass-border); background: rgba(0,0,0,0.1); }
 
-        /* Аватар и рамки */
+        /* Аватар */
         .avatar-box { position: relative; display: flex; align-items: center; justify-content: center; margin: 0 auto; }
-        .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; pointer-events: none; }
-        .user-photo { width: 90%; height: 90%; border-radius: 50%; object-fit: cover; background: #333; z-index: 1; }
+        .profile-frame { position: absolute; width: 100%; height: 100%; border-radius: 50%; z-index: 2; }
+        .user-photo { width: 90%; height: 90%; border-radius: 50%; object-fit: cover; background: #333; }
 
-        /* Кнопки и Навигация */
-        .tab-bar { height: 75px; display: flex; background: rgba(15, 17, 20, 0.98); position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--glass-border); z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-        .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #555; font-size: 10px; font-weight: 500; }
+        /* Табы */
+        .tab-bar { height: 75px; display: flex; background: rgba(15, 17, 20, 0.98); position: fixed; bottom: 0; width: 100%; border-top: 1px solid var(--glass-border); z-index: 1000; }
+        .tab-item { flex: 1; text-align: center; padding-top: 14px; color: #555; font-size: 10px; }
         .tab-item.active { color: var(--main-color); }
-        .tab-item i { display: block; font-size: 22px; margin-bottom: 4px; font-style: normal; }
+        .tab-item i { display: block; font-size: 20px; margin-bottom: 4px; font-style: normal; }
 
-        .btn-main { width: 90%; background: var(--main-color); color: white; border: none; padding: 18px; border-radius: 22px; font-size: 16px; font-weight: bold; margin: 20px auto; display: block; }
-
-        /* Магазин */
+        .btn-main { width: 90%; background: var(--main-color); color: white; border: none; padding: 16px; border-radius: 20px; font-weight: bold; margin: 15px auto; display: block; }
+        
         .shop-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 20px; }
-        .shop-item { background: rgba(0,0,0,0.4); padding: 12px 5px; border-radius: 18px; text-align: center; border: 2px solid transparent; }
-        .shop-item.selected { border-color: var(--main-color); background: rgba(36, 139, 207, 0.1); }
+        .shop-box { background: rgba(0,0,0,0.3); padding: 10px 5px; border-radius: 15px; text-align: center; border: 2px solid transparent; }
+        .shop-box.active { border-color: var(--main-color); }
 
-        /* Модалка */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-content { width: 92%; max-height: 85vh; background: #1a1c20; border-radius: 35px; overflow: hidden; position: relative; border: 1px solid var(--glass-border); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; z-index: 2000; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -80,8 +73,8 @@
     <div id="app" class="app-viewport"></div>
 
     <div id="friendModal" class="modal-overlay" onclick="window.closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div id="modalBody"></div>
+        <div class="glass-card" style="width:90%; padding:30px; position:relative;" onclick="event.stopPropagation()">
+             <div id="modalBody"></div>
         </div>
     </div>
 
@@ -93,7 +86,6 @@
     </div>
 
     <script>
-        // Инициализация Firebase (конфиг оставляем как был)
         const firebaseConfig = {
             apiKey: "AIzaSyD6XgHahHPQ2X0G98sMVGRd-68LigZK4_Q",
             authDomain: "stepstarapp.firebaseapp.com",
@@ -108,15 +100,13 @@
 
         window.userState = { 
             id: '', name: '', photo_url: '', frame: 'white', bg: 'default', 
-            steps: 0, steps_total: 0, coins: 0, invFrames: ['white'], invBgs: ['default'], 
-            isRegistered: false, isVip: false, friends: []
+            steps: 0, coins: 0, invFrames: ['white'], invBgs: ['default'], 
+            isRegistered: false, friends: [], lastWinner: {name: 'Загрузка...', photo_url: ''}
         };
 
-        const frameStyles = { 'white': '#ffffff', 'green': '#4CAF50', 'lightblue': '#00BCD4', 'blue': '#2196F3', 'pink': '#E91E63', 'purple': '#9C27B0', 'gold': '#FFD700' };
-        const bgStyles = { 'default': 'var(--bg-color)', 'cats': "url('...')", 'maltese': "url('...')" };
+        const frameStyles = { 'white': '#fff', 'green': '#4CAF50', 'lightblue': '#00BCD4', 'blue': '#2196F3', 'pink': '#E91E63', 'purple': '#9C27B0', 'gold': '#FFD700' };
 
-        // Хелпер для отрисовки аватара (убираем дублирование кода)
-        const renderAvatar = (photo, frame, size = 110) => `
+        const renderAvatar = (photo, frame, size = 100) => `
             <div class="avatar-box" style="width:${size}px; height:${size}px;">
                 <div class="profile-frame" style="border: 4px solid ${frameStyles[frame] || '#fff'}"></div>
                 <img src="${photo || 'https://ui-avatars.com/api/?name=U'}" class="user-photo">
@@ -132,51 +122,107 @@
 
             if (pageId === 'home') {
                 app.innerHTML = `
-                    <div style="text-align:center; padding-top:35px;" class="readable-text">
+                    <div style="text-align:center; padding-top:30px;" class="readable-text">
                         ${renderAvatar(window.userState.photo_url, window.userState.frame)}
-                        <h2 style="margin-top:15px; font-weight:800;">${window.userState.name}</h2>
-                        <div style="position:relative; width:220px; height:220px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
-                            <svg width="220" height="220" style="transform: rotate(-90deg); position:absolute;">
-                                <circle stroke="rgba(255,255,255,0.08)" stroke-width="12" fill="transparent" r="95" cx="110" cy="110"/>
-                                <circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="95" cx="110" cy="110" style="stroke-dashoffset:${600 - (600 * Math.min(window.userState.steps/10000, 1))}; stroke-dasharray:600; transition:1s ease; stroke-linecap:round;"/>
+                        <h2 style="margin:15px 0 10px;">${window.userState.name}</h2>
+                        <div style="position:relative; width:210px; height:210px; margin:20px auto; display:flex; align-items:center; justify-content:center;">
+                            <svg width="210" height="210" style="transform: rotate(-90deg); position:absolute;">
+                                <circle stroke="rgba(255,255,255,0.08)" stroke-width="12" fill="transparent" r="90" cx="105" cy="105"/>
+                                <circle stroke="var(--main-color)" stroke-width="12" fill="transparent" r="90" cx="105" cy="105" 
+                                    style="stroke-dashoffset:${565 - (565 * Math.min(window.userState.steps/10000, 1))}; stroke-dasharray:565; transition:1s ease; stroke-linecap:round;"/>
                             </svg>
-                            <div><h1 style="margin:0; font-size:46px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:12px; opacity:0.7;">ШАГОВ СЕГОДНЯ</div></div>
+                            <div><h1 style="margin:0; font-size:42px;">${window.userState.steps.toLocaleString()}</h1><div style="font-size:10px; opacity:0.6;">ШАГОВ СЕГОДНЯ</div></div>
                         </div>
-                        <div class="stat-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:0 25px;">
-                            <div class="glass-card" style="padding:15px; text-align:center;"><b>${(window.userState.steps * 0.04).toFixed(0)}</b><br><small style="opacity:0.5; font-size:9px;">ККАЛ</small></div>
-                            <div class="glass-card" style="padding:15px; text-align:center;"><b>${(window.userState.steps * 0.00075).toFixed(2)}</b><br><small style="opacity:0.5; font-size:9px;">КМ</small></div>
-                            <div class="glass-card" style="padding:15px; text-align:center;"><b>${(window.userState.steps / 100).toFixed(0)}</b><br><small style="opacity:0.5; font-size:9px;">МИН</small></div>
+                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:0 25px;">
+                            <div class="glass-card" style="padding:12px;"><b>${(window.userState.steps * 0.04).toFixed(0)}</b><br><small style="font-size:9px; opacity:0.5;">ККАЛ</small></div>
+                            <div class="glass-card" style="padding:12px;"><b>${(window.userState.steps * 0.00075).toFixed(2)}</b><br><small style="font-size:9px; opacity:0.5;">КМ</small></div>
+                            <div class="glass-card" style="padding:12px;"><b>${(window.userState.steps / 100).toFixed(0)}</b><br><small style="font-size:9px; opacity:0.5;">МИН</small></div>
                         </div>
                         <button class="btn-main" onclick="window.shareResult()">ПОДЕЛИТЬСЯ</button>
                     </div>`;
             }
 
+            if (pageId === 'rank') {
+                app.innerHTML = `
+                    <div class="hero-container"><div class="badge">ТОП НЕДЕЛИ</div><img src="${window.userState.photo_url}" class="hero-img"></div>
+                    <div class="glass-card overlap-card readable-text">
+                        <div><small style="font-size:9px; opacity:0.6;">МОЙ РАНГ</small><div style="font-size:18px; font-weight:900; color:var(--main-color);">#1</div></div>
+                        <div style="text-align:right;"><small style="font-size:9px; opacity:0.6;">ШАГИ</small><div style="font-size:18px; font-weight:900;">${window.userState.steps}</div></div>
+                    </div>
+                    <div class="section-title">Друзья</div>
+                    <div class="list-row">${renderAvatar(window.userState.photo_url, window.userState.frame, 40)}<span style="margin-left:15px; flex:1;">${window.userState.name}</span><b>${window.userState.steps}</b></div>
+                `;
+            }
+
+            if (pageId === 'tour') {
+                app.innerHTML = `
+                    <div class="hero-container"><div class="badge">ТУРНИР</div><img src="https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=2070" class="hero-img"></div>
+                    <div class="glass-card overlap-card readable-text">
+                        <div><small style="font-size:9px; opacity:0.6;">ФОНД</small><div style="font-size:18px; font-weight:900; color:var(--accent-gold);">500 💰</div></div>
+                        <button style="background:var(--main-color); border:none; color:white; padding:8px 15px; border-radius:12px; font-size:11px; font-weight:bold;">ВСТУПИТЬ</button>
+                    </div>
+                    <div class="section-title">Лидеры</div>
+                    <div class="list-row">${renderAvatar('', 'white', 40)}<span style="margin-left:15px; flex:1;">Ожидание...</span><b>0</b></div>
+                `;
+            }
+
             if (pageId === 'prof') {
                 app.innerHTML = `
                     <div style="padding-top:40px; text-align:center;" class="readable-text">
-                        ${renderAvatar(window.userState.photo_url, window.userState.frame)}
-                        <h2 style="margin-top:15px;">${window.userState.name}</h2>
-                        <div class="glass-card overlap-card" style="margin:20px;">
-                            <span style="font-weight:bold; font-size:12px;">МОЙ КОШЕЛЕК</span>
-                            <b style="color:var(--accent-gold); font-size:18px;">${window.userState.coins} 💰</b>
+                        ${renderAvatar(window.userState.photo_url, window.userState.frame, 110)}
+                        <h2 style="margin:15px 0;">${window.userState.name}</h2>
+                        <div class="glass-card overlap-card" style="margin:20px; justify-content:center; gap:20px;">
+                            <div style="text-align:center;"><small style="opacity:0.5;">БАЛАНС</small><div style="color:var(--accent-gold); font-size:20px; font-weight:900;">${window.userState.coins} 💰</div></div>
                         </div>
                         <button class="btn-main" style="background:var(--glass); border:1px solid var(--glass-border);" onclick="window.navigate('shop')">МАГАЗИН</button>
                     </div>`;
             }
 
-            // Остальные страницы (rank, tour, shop) отрисовываются аналогично с использованием glass-card
+            if (pageId === 'shop') {
+                const frames = ['white', 'green', 'lightblue', 'blue', 'pink', 'purple', 'gold'];
+                app.innerHTML = `
+                    <div style="padding:20px;"><button onclick="window.navigate('prof')" style="background:var(--glass); border:none; color:white; padding:10px 15px; border-radius:12px;">← Назад</button></div>
+                    <div class="section-title">Рамки профиля (50 💰)</div>
+                    <div class="shop-grid">
+                        ${frames.map(f => `
+                            <div class="shop-box ${window.userState.frame === f ? 'active' : ''}" onclick="window.handleFrame('${f}')">
+                                <div style="width:30px; height:30px; border:3px solid ${frameStyles[f]}; border-radius:50%; margin:0 auto 5px;"></div>
+                                <small style="font-size:10px; font-weight:bold;">${window.userState.invFrames.includes(f) ? 'ВЗЯТЬ' : '50'}</small>
+                            </div>`).join('')}
+                    </div>
+                `;
+            }
         };
 
-        // Загрузка данных (без изменений логики)
+        window.handleFrame = async (f) => {
+            if (window.userState.invFrames.includes(f)) {
+                window.userState.frame = f;
+                await db.collection("users").doc(window.userState.id).update({"selected.frame": f});
+                window.navigate('shop');
+            } else if (window.userState.coins >= 50) {
+                window.userState.coins -= 50;
+                window.userState.invFrames.push(f);
+                window.userState.frame = f;
+                await db.collection("users").doc(window.userState.id).update({
+                    "economy.balance": window.userState.coins,
+                    "inventory.frames": window.userState.invFrames,
+                    "selected.frame": f
+                });
+                window.navigate('shop');
+            } else { tg.showAlert("Недостаточно монет!"); }
+        };
+
+        window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
+        window.shareResult = () => { tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/StepStarAppBot/app&text=Я прошел ${window.userState.steps} шагов!`); };
+
         async function loadData() {
             const tgUser = tg.initDataUnsafe?.user;
             if (!tgUser) return;
-            const myId = String(tgUser.id); 
-            window.userState.id = myId;
-            const doc = await db.collection("users").doc(myId).get();
+            window.userState.id = String(tgUser.id);
+            const doc = await db.collection("users").doc(window.userState.id).get();
             if (doc.exists) {
                 const d = doc.data();
-                window.userState = { ...window.userState, name: d.name, photo_url: d.photo_url, steps: d.stats?.steps_today || 0, coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', bg: d.selected?.bg || 'default', invFrames: d.inventory?.frames || ['white'], invBgs: d.inventory?.bgs || ['default'], isVip: d.isVip || false };
+                window.userState = { ...window.userState, name: d.name, photo_url: d.photo_url, steps: d.stats?.steps_today || 0, coins: d.economy?.balance || 0, frame: d.selected?.frame || 'white', bg: d.selected?.bg || 'default', invFrames: d.inventory?.frames || ['white'] };
             }
             window.navigate('home');
         }
