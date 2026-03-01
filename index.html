@@ -177,7 +177,7 @@
             }
 
             if (pageId === 'rank') {
-                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || 'https://images.unsplash.com/photo-1557683316-973673baf926?q=80&w=2029';
+                const leaderPhoto = window.userState.lastWeekFriendWinner.photo_url || window.userState.photo_url || 'https://ui-avatars.com/api/?name='+window.userState.name;
                 const myIndex = window.friendUsers.findIndex(u => u.id === window.userState.id) + 1;
                 appDiv.innerHTML = `
                     <div class="leader-hero-container">
@@ -188,8 +188,8 @@
                         <div><div style="font-size:10px; opacity:0.7; font-weight:bold;">МОЙ РАНГ</div><div style="font-size:20px; font-weight:900; color:var(--main-color);">#${myIndex || '-'}</div></div>
                         <div style="text-align:right;"><div style="font-size:10px; opacity:0.7; font-weight:bold;">ШАГИ</div><div style="font-size:18px; font-weight:900;">${window.userState.steps.toLocaleString()}</div></div>
                     </div>
-                    <div class="section-title">Топ Друзей</div>
-                    ${window.friendUsers.slice(0, 5).map((u, i) => `
+                    <div class="section-title">Топ-3 Друзей</div>
+                    ${window.friendUsers.slice(0, 3).map((u, i) => `
                         <div class="table-row clickable-row readable-text" onclick="window.showFriendCard('${u.id}')">
                             <span style="width:25px; font-weight:bold; opacity:0.5;">${i + 1}</span>
                             <img src="${u.photo_url || 'https://ui-avatars.com/api/?name='+u.name}" style="width:40px; height:40px; border-radius:50%; margin:0 15px; border:1px solid var(--glass-border); object-fit:cover;">
@@ -312,7 +312,6 @@
         };
 
         window.closeModal = () => { document.getElementById('friendModal').style.display = 'none'; };
-
         window.buyStars = (c, s) => { window.tg.showAlert(`Покупка ${c} монет за ${s} ⭐️ скоро!`); };
         
         window.buyVip = async () => {
@@ -366,7 +365,7 @@
         async function loadData() {
             try {
                 const tgUser = window.tg.initDataUnsafe?.user;
-                if (!tgUser) return window.navigate('home');
+                if (!tgUser) return;
                 const myId = String(tgUser.id); 
                 window.userState.id = myId;
                 const userDocRef = db.collection("users").doc(myId);
